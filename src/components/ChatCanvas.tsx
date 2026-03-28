@@ -1,12 +1,15 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, MicOff, Volume2 } from "lucide-react";
+import { Send, Paperclip, Mic, MicOff, Volume2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
 import AnimatedBee from "./AnimatedBee";
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
+
+const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
 const suggestions = [
   "Analyze my website's UX",
@@ -18,11 +21,13 @@ const suggestions = [
 const ChatCanvas = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,7 +36,6 @@ const ChatCanvas = () => {
   const speakText = useCallback((text: string) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = 1;
     utterance.pitch = 1.1;
@@ -42,22 +46,108 @@ const ChatCanvas = () => {
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  const handleSend = useCallback((text?: string) => {
+  const streamChat = useCallback(async (allMessages: Message[]) => {
+    const resp = await fetch(CHAT_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({ messages: allMessages }),
+    });
+
+    if (!resp.ok) {
+      const errorData = await resp.json().catch(() => ({ error: "Request failed" }));
+      const errorMsg = errorData.error || `Error ${resp.status}`;
+      if (resp.status === 429 || resp.status === 402) {
+        toast({ variant: "destructive", title: "AI Error", description: errorMsg });
+      }
+      throw new Error(errorMsg);
+    }
+
+    if (!resp.body) throw new Error("No response body");
+
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let textBuffer = "";
+    let assistantSoFar = "";
+    let streamDone = false;
+
+    while (!streamDone) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      textBuffer += decoder.decode(value, { stream: true });
+
+      let newlineIndex: number;
+      while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+        let line = textBuffer.slice(0, newlineIndex);
+        textBuffer = textBuffer.slice(newlineIndex + 1);
+
+        if (line.endsWith("\r")) line = line.slice(0, -1);
+        if (line.startsWith(":") || line.trim() === "") continue;
+        if (!line.startsWith("data: ")) continue;
+
+        const jsonStr = line.slice(6).trim();
+        if (jsonStr === "[DONE]") { streamDone = true; break; }
+
+        try {
+          const parsed = JSON.parse(jsonStr);
+          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+          if (content) {
+            assistantSoFar += content;
+            setMessages((prev) => {
+              const last = prev[prev.length - 1];
+              if (last?.role === "assistant") {
+                return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
+              }
+              return [...prev, { role: "assistant", content: assistantSoFar }];
+            });
+          }
+        } catch {
+          textBuffer = line + "\n" + textBuffer;
+          break;
+        }
+      }
+    }
+
+    return assistantSoFar;
+  }, [toast]);
+
+  const handleSend = useCallback(async (text?: string) => {
     const msg = text || input;
-    if (!msg.trim()) return;
+    if (!msg.trim() || isLoading) return;
 
-    const assistantReply = "I'm buzzing with ideas! 🐝 This is a demo response — connect me to Lovable Cloud to enable real AI capabilities with voice and text.";
-
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: msg },
-      { role: "assistant", content: assistantReply },
-    ]);
+    const userMsg: Message = { role: "user", content: msg };
+    const newMessages = [...messages, userMsg];
+    setMessages(newMessages);
     setInput("");
+    setIsLoading(true);
 
-    // Speak the response
-    setTimeout(() => speakText(assistantReply), 300);
-  }, [input, speakText]);
+    try {
+      const response = await streamChat(newMessages);
+      // Speak the final response
+      if (response) {
+        setTimeout(() => speakText(response), 300);
+      }
+    } catch (e) {
+      console.error("Chat error:", e);
+      toast({
+        variant: "destructive",
+        title: "Chat Error",
+        description: e instanceof Error ? e.message : "Failed to get response",
+      });
+      // Remove the failed assistant message if any partial was added
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant" && !last.content) {
+          return prev.slice(0, -1);
+        }
+        return prev;
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [input, isLoading, messages, streamChat, speakText, toast]);
 
   const toggleListening = useCallback(() => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -134,9 +224,8 @@ const ChatCanvas = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Small bee avatar floating when there are messages */}
               <div className="flex justify-center mb-4">
-                <AnimatedBee isSpeaking={isSpeaking} />
+                <AnimatedBee isSpeaking={isSpeaking || isLoading} />
               </div>
 
               {messages.map((msg, i) => (
@@ -164,6 +253,16 @@ const ChatCanvas = () => {
                   </div>
                 </div>
               ))}
+
+              {isLoading && messages[messages.length - 1]?.role === "user" && (
+                <div className="flex justify-start animate-fade-in">
+                  <div className="glass glass-highlight px-4 py-3 rounded-2xl text-sm text-muted-foreground flex items-center gap-2">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    Buzzing...
+                  </div>
+                </div>
+              )}
+
               <div ref={bottomRef} />
             </div>
           )}
@@ -182,14 +281,15 @@ const ChatCanvas = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               placeholder={isListening ? "Listening... 🐝" : "Describe your vision..."}
+              disabled={isLoading}
               className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/50"
             />
-            {/* Voice button */}
             <button
               onClick={toggleListening}
+              disabled={isLoading}
               className={`p-2 rounded-xl transition-all ${
                 isListening
-                  ? "bg-bee/20 text-bee glow-bee"
+                  ? "bg-bee/20 text-bee"
                   : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               }`}
               title={isListening ? "Stop listening" : "Voice input"}
@@ -198,10 +298,10 @@ const ChatCanvas = () => {
             </button>
             <button
               onClick={() => handleSend()}
-              disabled={!input.trim()}
+              disabled={!input.trim() || isLoading}
               className="p-2 rounded-xl bg-bee/15 text-bee hover:bg-bee/25 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >
-              <Send className="w-4 h-4" />
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </button>
           </div>
           <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
