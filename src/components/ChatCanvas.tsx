@@ -33,12 +33,39 @@ const ChatCanvas = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const cleanTextForSpeech = (text: string): string => {
+    return text
+      .replace(/```[\s\S]*?```/g, ' code block ')
+      .replace(/`([^`]+)`/g, '$1')
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/__([^_]+)__/g, '$1')
+      .replace(/_([^_]+)_/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/!\[.*?\]\(.*?\)/g, 'image')
+      .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
+      .replace(/[>\-•~|]/g, '')
+      .replace(/\n{2,}/g, '. ')
+      .replace(/\n/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim();
+  };
+
   const speakText = useCallback((text: string) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 1;
-    utterance.pitch = 1.1;
+    const cleaned = cleanTextForSpeech(text);
+    const utterance = new SpeechSynthesisUtterance(cleaned);
+    utterance.rate = 1.05;
+    utterance.pitch = 1.2;
+
+    // Try to pick a young, energetic voice
+    const voices = window.speechSynthesis.getVoices();
+    const preferred = voices.find(v =>
+      /samantha|zira|google.*female|microsoft.*zira|karen|moira|fiona/i.test(v.name)
+    ) || voices.find(v => /female|woman/i.test(v.name)) || voices[0];
+    if (preferred) utterance.voice = preferred;
+
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
@@ -168,6 +195,12 @@ const ChatCanvas = () => {
     recognition.lang = "en-US";
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
+      // Stop AI speech when user starts talking
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+      }
+
       const transcript = Array.from(event.results)
         .map((result) => result[0].transcript)
         .join("");
