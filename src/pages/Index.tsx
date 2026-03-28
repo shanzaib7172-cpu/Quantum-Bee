@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Menu, LogIn, UserPlus } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import ChatCanvas from "@/components/ChatCanvas";
