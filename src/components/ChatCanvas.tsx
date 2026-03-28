@@ -195,6 +195,12 @@ const ChatCanvas = () => {
     recognition.lang = "en-US";
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
+      // Stop AI speech when user starts talking
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+      }
+
       const transcript = Array.from(event.results)
         .map((result) => result[0].transcript)
         .join("");
