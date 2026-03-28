@@ -43,17 +43,23 @@ const Index = () => {
             variant="ghost"
             size="sm"
             className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+            asChild
           >
-            <LogIn className="w-3.5 h-3.5" />
-            Login
+            <Link to="/login">
+              <LogIn className="w-3.5 h-3.5" />
+              Login
+            </Link>
           </Button>
           <Button
             size="sm"
             className="text-xs bg-bee/15 text-bee border border-bee/20 hover:bg-bee/25 hover:border-bee/40 gap-1.5"
             variant="ghost"
+            asChild
           >
-            <UserPlus className="w-3.5 h-3.5" />
-            Sign up
+            <Link to="/signup">
+              <UserPlus className="w-3.5 h-3.5" />
+              Sign up
+            </Link>
           </Button>
         </div>
       </header>
