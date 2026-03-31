@@ -18,10 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 const agentCards = [
-  { name: "VisionCraft AI", desc: "Image analysis & generation", icon: Eye, price: "$20" },
-  { name: "CodePilot", desc: "Full-stack code assistant", icon: Bot, price: "$20" },
-  { name: "DataSense", desc: "Analytics & insights engine", icon: Zap, price: "$20" },
-  { name: "MindMap Pro", desc: "Knowledge graph builder", icon: Brain, price: "$20" },
+  { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
+  { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
+  { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
+  { name: "Anna", desc: "Personal Business Assistant", icon: Bot, price: "$20" },
 ];
 
 const visionHistory = [
