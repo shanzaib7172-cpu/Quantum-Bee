@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Send, Paperclip, Mic, MicOff, Volume2, Loader2 } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import AnimatedBee from "./AnimatedBee";
@@ -56,14 +57,16 @@ const ChatCanvas = () => {
     window.speechSynthesis.cancel();
     const cleaned = cleanTextForSpeech(text);
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    utterance.rate = 1.05;
-    utterance.pitch = 1.2;
+    utterance.rate = 1.0;
+    utterance.pitch = 1.1;
 
-    // Try to pick a young, energetic voice
+    // Pick the most natural-sounding female voice available
     const voices = window.speechSynthesis.getVoices();
     const preferred = voices.find(v =>
-      /samantha|zira|google.*female|microsoft.*zira|karen|moira|fiona/i.test(v.name)
-    ) || voices.find(v => /female|woman/i.test(v.name)) || voices[0];
+      /samantha|google uk english female|microsoft aria|microsoft jenny|karen|moira|fiona|tessa|ava|zira/i.test(v.name)
+    ) || voices.find(v => /female|woman/i.test(v.name) && /natural|neural|enhanced/i.test(v.name))
+      || voices.find(v => /female|woman/i.test(v.name))
+      || voices[0];
     if (preferred) utterance.voice = preferred;
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -273,7 +276,13 @@ const ChatCanvas = () => {
                         : "glass glass-highlight text-foreground/90"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-heading prose-headings:mt-4 prose-headings:mb-2 prose-p:mb-3 prose-p:leading-relaxed prose-strong:text-bee prose-li:text-foreground/90 prose-code:text-primary prose-pre:bg-secondary/50 prose-pre:border prose-pre:border-border/50">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                     {msg.role === "assistant" && (
                       <button
                         onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
