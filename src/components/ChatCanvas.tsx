@@ -274,7 +274,13 @@ const ChatCanvas = () => {
                         : "glass glass-highlight text-foreground/90"
                     }`}
                   >
-                    {msg.content}
+                    {msg.role === "assistant" ? (
+                      <div className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-heading prose-headings:mt-4 prose-headings:mb-2 prose-p:mb-3 prose-p:leading-relaxed prose-strong:text-bee prose-li:text-foreground/90 prose-code:text-primary prose-pre:bg-secondary/50 prose-pre:border prose-pre:border-border/50">
+                        <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      msg.content
+                    )}
                     {msg.role === "assistant" && (
                       <button
                         onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
