@@ -41,6 +41,7 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analyzeUrl, setAnalyzeUrl] = useState("");
+  const navigate = useNavigate();
 
   return (
     <>
