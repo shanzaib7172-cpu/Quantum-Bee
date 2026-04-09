@@ -12,7 +12,9 @@ import {
   Zap,
   Brain,
   Eye,
+  Camera,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -22,6 +24,7 @@ const agentCards = [
   { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
   { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
   { name: "Anna", desc: "Personal Business Assistant", icon: Bot, price: "$20" },
+  { name: "Sofia", desc: "Product Model Shoot AI", icon: Camera, price: "$20", link: "/product-shoot" },
 ];
 
 const visionHistory = [
@@ -38,6 +41,7 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analyzeUrl, setAnalyzeUrl] = useState("");
+  const navigate = useNavigate();
 
   return (
     <>
@@ -119,6 +123,12 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
               {agentCards.map((agent) => (
                 <div
                   key={agent.name}
+                  onClick={() => {
+                    if ((agent as any).link) {
+                      onClose();
+                      navigate((agent as any).link);
+                    }
+                  }}
                   className="glass rounded-xl p-3 hover:bg-secondary/40 transition-all cursor-pointer group relative overflow-hidden"
                 >
                   <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
