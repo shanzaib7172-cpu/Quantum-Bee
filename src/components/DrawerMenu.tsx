@@ -123,6 +123,12 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
               {agentCards.map((agent) => (
                 <div
                   key={agent.name}
+                  onClick={() => {
+                    if ((agent as any).link) {
+                      onClose();
+                      navigate((agent as any).link);
+                    }
+                  }}
                   className="glass rounded-xl p-3 hover:bg-secondary/40 transition-all cursor-pointer group relative overflow-hidden"
                 >
                   <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
