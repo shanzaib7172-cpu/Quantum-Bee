@@ -143,7 +143,7 @@ const LeadsGenerator = () => {
         <img src={beeLogo} alt="Beee AI" className="w-7 h-7 object-contain" />
         <div>
           <h1 className="text-base font-heading font-semibold text-gradient">Anna — Leads Generator</h1>
-          <p className="text-[10px] text-muted-foreground">Powered by your n8n workflow</p>
+          <p className="text-[10px] text-muted-foreground">Powered by Beee AI</p>
         </div>
       </header>
 
@@ -200,35 +200,6 @@ const LeadsGenerator = () => {
               <h2 className="text-xl font-heading font-semibold text-foreground">Anna Leads Agent</h2>
               <p className="text-xs text-muted-foreground mt-1">Fill the form to generate authentic leads...</p>
             </div>
-          </div>
-
-          {/* Webhook Setup */}
-          <div className="glass glass-highlight rounded-2xl p-5 space-y-3">
-            <div className="flex items-center gap-2">
-              <Bot className="w-4 h-4 text-bee" />
-              <Label className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                n8n Webhook URL
-              </Label>
-            </div>
-            <div className="flex gap-2">
-              <Input
-                placeholder="https://your-n8n.app/webhook/leads..."
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                className="bg-secondary/50 border-border/50 text-sm h-10 flex-1"
-              />
-              <Button
-                onClick={handleSaveWebhook}
-                size="sm"
-                variant="ghost"
-                className="bg-bee/10 text-bee hover:bg-bee/20 border border-bee/20 h-10"
-              >
-                <Save className="w-3.5 h-3.5" />
-              </Button>
-            </div>
-            <p className="text-[10px] text-muted-foreground">
-              In n8n: add a <strong>Webhook</strong> trigger node (POST), copy the production URL, paste it here.
-            </p>
           </div>
 
           {/* Lead Criteria */}
