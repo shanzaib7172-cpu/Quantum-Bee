@@ -23,7 +23,7 @@ const agentCards = [
   { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
   { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
   { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
-  { name: "Anna", desc: "Personal Business Assistant", icon: Bot, price: "$20" },
+  { name: "Anna", desc: "Leads Generator (n8n)", icon: Bot, price: "$20", link: "/leads-generator" },
   { name: "Sofia", desc: "Product Model Shoot AI", icon: Camera, price: "$20", link: "/product-shoot" },
 ];
 
