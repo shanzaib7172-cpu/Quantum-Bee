@@ -5,16 +5,47 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
+import annaCharacter from "@/assets/anna-character.png";
 
 const STORAGE_KEY = "beee_n8n_webhook_url";
 
+const SENIORITY_OPTIONS = [
+  "Founder",
+  "Owner",
+  "Director",
+  "Partner",
+  "Head",
+  "Manager",
+  "Senior",
+  "Trainee",
+];
+
+const COMPANY_SIZE_OPTIONS = [
+  "1-10",
+  "11-20",
+  "21-50",
+  "51-100",
+  "101-200",
+  "201-500",
+  "501-1000",
+  "1001-2000",
+];
+
 const LeadsGenerator = () => {
   const [webhookUrl, setWebhookUrl] = useState("");
+  const [seniority, setSeniority] = useState("");
+  const [companySize, setCompanySize] = useState("");
   const [industry, setIndustry] = useState("");
-  const [audience, setAudience] = useState("");
-  const [location, setLocation] = useState("");
+  const [country, setCountry] = useState("");
   const [count, setCount] = useState("10");
   const [notes, setNotes] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +67,8 @@ const LeadsGenerator = () => {
       toast({ variant: "destructive", title: "Missing webhook", description: "Paste your n8n webhook URL first." });
       return;
     }
-    if (!industry && !audience) {
-      toast({ variant: "destructive", title: "Missing input", description: "Add at least industry or target audience." });
+    if (!seniority || !companySize || !industry || !country || !count) {
+      toast({ variant: "destructive", title: "Missing fields", description: "Please fill in all required fields." });
       return;
     }
 
@@ -45,9 +76,10 @@ const LeadsGenerator = () => {
     setResult(null);
 
     const payload = {
+      seniority_level: seniority,
+      company_size: companySize,
       industry,
-      target_audience: audience,
-      location,
+      country,
       count: parseInt(count) || 10,
       notes,
       timestamp: new Date().toISOString(),
@@ -118,6 +150,58 @@ const LeadsGenerator = () => {
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-2xl space-y-6">
 
+          {/* Anna Character — futuristic animated avatar */}
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="relative w-40 h-40 flex items-center justify-center">
+              {/* Outer aura */}
+              <div
+                className="absolute inset-0 rounded-full opacity-40"
+                style={{
+                  background: "radial-gradient(circle, hsl(45, 100%, 50%, 0.35) 0%, transparent 70%)",
+                  animation: "orb-pulse 3s ease-in-out infinite",
+                }}
+              />
+              {/* Rotating futuristic ring */}
+              <div
+                className="absolute w-40 h-40 rounded-full border border-bee/30"
+                style={{
+                  borderTopColor: "hsl(45, 100%, 60%)",
+                  borderRightColor: "transparent",
+                  animation: "spin 6s linear infinite",
+                }}
+              />
+              <div
+                className="absolute w-44 h-44 rounded-full border border-bee/15"
+                style={{
+                  borderBottomColor: "hsl(45, 100%, 60%, 0.5)",
+                  borderLeftColor: "transparent",
+                  animation: "spin 9s linear infinite reverse",
+                }}
+              />
+              {/* Pulsing ring */}
+              <div
+                className="absolute w-36 h-36 rounded-full border border-bee/20"
+                style={{ animation: "sound-ring 2.4s ease-out infinite" }}
+              />
+              {/* Anna image */}
+              <img
+                src={annaCharacter}
+                alt="Anna AI Leads Agent"
+                width={512}
+                height={512}
+                className="relative w-32 h-32 rounded-full object-cover z-10 border-2 border-bee/30"
+                style={{
+                  animation: "orb-float 4s ease-in-out infinite",
+                  filter: "drop-shadow(0 0 18px hsl(45, 100%, 50%, 0.45))",
+                }}
+              />
+            </div>
+            <div>
+              <h2 className="text-xl font-heading font-semibold text-foreground">Anna Leads Agent</h2>
+              <p className="text-xs text-muted-foreground mt-1">Fill the form to generate authentic leads...</p>
+            </div>
+          </div>
+
           {/* Webhook Setup */}
           <div className="glass glass-highlight rounded-2xl p-5 space-y-3">
             <div className="flex items-center gap-2">
@@ -153,28 +237,90 @@ const LeadsGenerator = () => {
               <Sparkles className="w-3.5 h-3.5 text-bee" /> Lead Criteria
             </Label>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label className="text-xs text-foreground/70">Industry</Label>
-                <Input value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. SaaS, e-commerce" className="bg-secondary/50 border-border/50 text-sm h-9" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-foreground/70">Target Audience</Label>
-                <Input value={audience} onChange={(e) => setAudience(e.target.value)} placeholder="e.g. CTOs, marketing managers" className="bg-secondary/50 border-border/50 text-sm h-9" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-foreground/70">Location</Label>
-                <Input value={location} onChange={(e) => setLocation(e.target.value)} placeholder="e.g. United States, Europe" className="bg-secondary/50 border-border/50 text-sm h-9" />
-              </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs text-foreground/70">Number of leads</Label>
-                <Input type="number" value={count} onChange={(e) => setCount(e.target.value)} min="1" max="500" className="bg-secondary/50 border-border/50 text-sm h-9" />
-              </div>
+            {/* Seniority */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-foreground/70">
+                Seniority level <span className="text-bee">*</span>
+              </Label>
+              <Select value={seniority} onValueChange={setSeniority}>
+                <SelectTrigger className="bg-secondary/50 border-border/50 text-sm h-10">
+                  <SelectValue placeholder="Select an option ..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {SENIORITY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
+            {/* Company Size */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-foreground/70">
+                Company Size <span className="text-bee">*</span>
+              </Label>
+              <Select value={companySize} onValueChange={setCompanySize}>
+                <SelectTrigger className="bg-secondary/50 border-border/50 text-sm h-10">
+                  <SelectValue placeholder="Select an option ..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {COMPANY_SIZE_OPTIONS.map((opt) => (
+                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Industry */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-foreground/70">
+                Industry <span className="text-bee">*</span>
+              </Label>
+              <Input
+                value={industry}
+                onChange={(e) => setIndustry(e.target.value)}
+                placeholder="e.g. SaaS, e-commerce, fintech"
+                className="bg-secondary/50 border-border/50 text-sm h-10"
+              />
+            </div>
+
+            {/* Country */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-foreground/70">
+                Country <span className="text-bee">*</span>
+              </Label>
+              <Input
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                placeholder="e.g. United States, Germany, India"
+                className="bg-secondary/50 border-border/50 text-sm h-10"
+              />
+            </div>
+
+            {/* Number of Leads */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-foreground/70">
+                Number of Leads <span className="text-bee">*</span>
+              </Label>
+              <Input
+                type="number"
+                value={count}
+                onChange={(e) => setCount(e.target.value)}
+                min="1"
+                max="500"
+                className="bg-secondary/50 border-border/50 text-sm h-10"
+              />
+            </div>
+
+            {/* Notes */}
             <div className="space-y-1.5">
               <Label className="text-xs text-foreground/70">Extra notes (optional)</Label>
-              <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything specific you want Anna to know..." className="bg-secondary/50 border-border/50 text-sm min-h-[70px]" />
+              <Textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Anything specific you want Anna to know..."
+                className="bg-secondary/50 border-border/50 text-sm min-h-[70px]"
+              />
             </div>
 
             <Button
