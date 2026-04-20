@@ -13,11 +13,15 @@ import {
   Brain,
   Eye,
   Camera,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
+import { AnalysisResult, type AnalysisData } from "@/components/AnalysisResult";
 
 const agentCards = [
   { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
@@ -41,7 +45,31 @@ interface DrawerMenuProps {
 
 const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analyzeUrl, setAnalyzeUrl] = useState("");
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const navigate = useNavigate();
+
+  const runAnalyze = async () => {
+    if (!analyzeUrl.trim() || analyzing) return;
+    setAnalyzing(true);
+    setAnalysis(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("analyze-website", {
+        body: { url: analyzeUrl.trim() },
+      });
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any).error);
+      setAnalysis(data as AnalysisData);
+    } catch (e) {
+      toast({
+        title: "Analysis failed",
+        description: e instanceof Error ? e.message : "Could not analyze the site",
+        variant: "destructive",
+      });
+    } finally {
+      setAnalyzing(false);
+    }
+  };
 
   return (
     <>
@@ -95,18 +123,32 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                   placeholder="Paste URL to analyze..."
                   value={analyzeUrl}
                   onChange={(e) => setAnalyzeUrl(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && runAnalyze()}
+                  disabled={analyzing}
                   className="pl-9 bg-secondary/50 border-border/50 text-sm h-9 placeholder:text-muted-foreground/60"
                 />
               </div>
               <Button
                 size="sm"
+                onClick={runAnalyze}
+                disabled={analyzing || !analyzeUrl.trim()}
                 className="w-full h-8 text-xs bg-bee/15 text-bee border border-bee/20 hover:bg-bee/25 hover:border-bee/40 transition-all"
                 variant="ghost"
               >
-                <Sparkles className="w-3 h-3 mr-1.5" />
-                Analyze
+                {analyzing ? (
+                  <>
+                    <Loader2 className="w-3 h-3 mr-1.5 animate-spin" />
+                    Scanning website...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-3 h-3 mr-1.5" />
+                    Analyze
+                  </>
+                )}
               </Button>
             </div>
+            {analysis && <AnalysisResult data={analysis} onClose={() => setAnalysis(null)} />}
           </div>
 
           <Separator className="bg-border/50" />
