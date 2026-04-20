@@ -52,6 +52,7 @@ export default {
         bee: {
           DEFAULT: "hsl(var(--bee))",
           glow: "hsl(var(--bee-glow))",
+          blue: "hsl(195, 100%, 60%)",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
