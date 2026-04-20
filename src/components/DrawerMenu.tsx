@@ -23,7 +23,7 @@ const agentCards = [
   { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
   { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
   { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
-  { name: "Anna", desc: "Leads Generator (n8n)", icon: Bot, price: "$20", link: "/leads-generator" },
+  { name: "Anna", desc: "Leads Generator", icon: Bot, price: "$20", link: "/leads-generator" },
   { name: "Sofia", desc: "Product Model Shoot AI", icon: Camera, price: "$20", link: "/product-shoot" },
 ];
 
@@ -58,7 +58,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
         }`}
       >
         <div className="flex items-center justify-between p-5 border-b border-border">
-          <h2 className="text-lg font-semibold font-heading text-gradient">Beee AI</h2>
+          <h2 className="text-lg font-semibold font-heading text-gradient">Bee AI</h2>
           <button
             onClick={onClose}
             className="p-1.5 rounded-lg hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
