@@ -1,9 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, MicOff, Volume2, Loader2 } from "lucide-react";
+import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import AnimatedBee from "./AnimatedBee";
+import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
+import { generatePlanPdf } from "@/lib/pdfPlan";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,7 +17,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 const suggestions = [
   "Analyze my website's UX",
   "Generate a marketing plan",
-  "Build a data pipeline",
+  "Show Q1 sales analytics",
   "Design a brand identity",
 ];
 
@@ -25,30 +27,57 @@ const ChatCanvas = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
+  const [voicesReady, setVoicesReady] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
-  const synthRef = useRef<SpeechSynthesisUtterance | null>(null);
+  const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  // Lock a single female voice once available so the agent always sounds the same.
+  useEffect(() => {
+    if (!("speechSynthesis" in window)) return;
+    const pickVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices.length) return;
+      const preferred =
+        voices.find((v) => /samantha/i.test(v.name) && v.lang.startsWith("en")) ||
+        voices.find((v) => /google uk english female/i.test(v.name)) ||
+        voices.find((v) => /microsoft (aria|jenny|zira)/i.test(v.name)) ||
+        voices.find((v) => /(karen|moira|fiona|tessa|ava)/i.test(v.name) && v.lang.startsWith("en")) ||
+        voices.find((v) => /female|woman/i.test(v.name) && v.lang.startsWith("en")) ||
+        voices.find((v) => v.lang.startsWith("en")) ||
+        voices[0];
+      lockedVoiceRef.current = preferred || null;
+      setVoicesReady(true);
+    };
+    pickVoice();
+    window.speechSynthesis.onvoiceschanged = pickVoice;
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, []);
+
   const cleanTextForSpeech = (text: string): string => {
     return text
-      .replace(/```[\s\S]*?```/g, ' code block ')
-      .replace(/`([^`]+)`/g, '$1')
-      .replace(/\*\*([^*]+)\*\*/g, '$1')
-      .replace(/\*([^*]+)\*/g, '$1')
-      .replace(/__([^_]+)__/g, '$1')
-      .replace(/_([^_]+)_/g, '$1')
-      .replace(/#{1,6}\s/g, '')
-      .replace(/!\[.*?\]\(.*?\)/g, 'image')
-      .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
-      .replace(/[>\-•~|]/g, '')
-      .replace(/\n{2,}/g, '. ')
-      .replace(/\n/g, ' ')
-      .replace(/\s{2,}/g, ' ')
+      .replace(/^PLAN:\s*.*$/m, "")
+      .replace(/```chart[\s\S]*?```/g, " ")
+      .replace(/```[\s\S]*?```/g, " code block ")
+      .replace(/`([^`]+)`/g, "$1")
+      .replace(/\*\*([^*]+)\*\*/g, "$1")
+      .replace(/\*([^*]+)\*/g, "$1")
+      .replace(/__([^_]+)__/g, "$1")
+      .replace(/_([^_]+)_/g, "$1")
+      .replace(/#{1,6}\s/g, "")
+      .replace(/!\[.*?\]\(.*?\)/g, "image")
+      .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")
+      .replace(/[>\-•~|]/g, "")
+      .replace(/\n{2,}/g, ". ")
+      .replace(/\n/g, " ")
+      .replace(/\s{2,}/g, " ")
       .trim();
   };
 
@@ -56,128 +85,131 @@ const ChatCanvas = () => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
     const cleaned = cleanTextForSpeech(text);
+    if (!cleaned) return;
     const utterance = new SpeechSynthesisUtterance(cleaned);
     utterance.rate = 1.0;
     utterance.pitch = 1.1;
-
-    // Pick the most natural-sounding female voice available
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v =>
-      /samantha|google uk english female|microsoft aria|microsoft jenny|karen|moira|fiona|tessa|ava|zira/i.test(v.name)
-    ) || voices.find(v => /female|woman/i.test(v.name) && /natural|neural|enhanced/i.test(v.name))
-      || voices.find(v => /female|woman/i.test(v.name))
-      || voices[0];
-    if (preferred) utterance.voice = preferred;
-
+    if (lockedVoiceRef.current) {
+      utterance.voice = lockedVoiceRef.current;
+      utterance.lang = lockedVoiceRef.current.lang;
+    }
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = () => setIsSpeaking(false);
-    synthRef.current = utterance;
     window.speechSynthesis.speak(utterance);
   }, []);
 
-  const streamChat = useCallback(async (allMessages: Message[]) => {
-    const resp = await fetch(CHAT_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-      },
-      body: JSON.stringify({ messages: allMessages }),
-    });
+  const streamChat = useCallback(
+    async (allMessages: Message[]) => {
+      const resp = await fetch(CHAT_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ messages: allMessages }),
+      });
 
-    if (!resp.ok) {
-      const errorData = await resp.json().catch(() => ({ error: "Request failed" }));
-      const errorMsg = errorData.error || `Error ${resp.status}`;
-      if (resp.status === 429 || resp.status === 402) {
-        toast({ variant: "destructive", title: "AI Error", description: errorMsg });
+      if (!resp.ok) {
+        const errorData = await resp.json().catch(() => ({ error: "Request failed" }));
+        const errorMsg = errorData.error || `Error ${resp.status}`;
+        if (resp.status === 429 || resp.status === 402) {
+          toast({ variant: "destructive", title: "AI Error", description: errorMsg });
+        }
+        throw new Error(errorMsg);
       }
-      throw new Error(errorMsg);
-    }
 
-    if (!resp.body) throw new Error("No response body");
+      if (!resp.body) throw new Error("No response body");
 
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let textBuffer = "";
-    let assistantSoFar = "";
-    let streamDone = false;
+      const reader = resp.body.getReader();
+      const decoder = new TextDecoder();
+      let textBuffer = "";
+      let assistantSoFar = "";
+      let streamDone = false;
 
-    while (!streamDone) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      textBuffer += decoder.decode(value, { stream: true });
+      while (!streamDone) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        textBuffer += decoder.decode(value, { stream: true });
 
-      let newlineIndex: number;
-      while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
-        let line = textBuffer.slice(0, newlineIndex);
-        textBuffer = textBuffer.slice(newlineIndex + 1);
+        let newlineIndex: number;
+        while ((newlineIndex = textBuffer.indexOf("\n")) !== -1) {
+          let line = textBuffer.slice(0, newlineIndex);
+          textBuffer = textBuffer.slice(newlineIndex + 1);
 
-        if (line.endsWith("\r")) line = line.slice(0, -1);
-        if (line.startsWith(":") || line.trim() === "") continue;
-        if (!line.startsWith("data: ")) continue;
+          if (line.endsWith("\r")) line = line.slice(0, -1);
+          if (line.startsWith(":") || line.trim() === "") continue;
+          if (!line.startsWith("data: ")) continue;
 
-        const jsonStr = line.slice(6).trim();
-        if (jsonStr === "[DONE]") { streamDone = true; break; }
-
-        try {
-          const parsed = JSON.parse(jsonStr);
-          const content = parsed.choices?.[0]?.delta?.content as string | undefined;
-          if (content) {
-            assistantSoFar += content;
-            setMessages((prev) => {
-              const last = prev[prev.length - 1];
-              if (last?.role === "assistant") {
-                return prev.map((m, i) => i === prev.length - 1 ? { ...m, content: assistantSoFar } : m);
-              }
-              return [...prev, { role: "assistant", content: assistantSoFar }];
-            });
+          const jsonStr = line.slice(6).trim();
+          if (jsonStr === "[DONE]") {
+            streamDone = true;
+            break;
           }
-        } catch {
-          textBuffer = line + "\n" + textBuffer;
-          break;
+
+          try {
+            const parsed = JSON.parse(jsonStr);
+            const content = parsed.choices?.[0]?.delta?.content as string | undefined;
+            if (content) {
+              assistantSoFar += content;
+              setMessages((prev) => {
+                const last = prev[prev.length - 1];
+                if (last?.role === "assistant") {
+                  return prev.map((m, i) =>
+                    i === prev.length - 1 ? { ...m, content: assistantSoFar } : m,
+                  );
+                }
+                return [...prev, { role: "assistant", content: assistantSoFar }];
+              });
+            }
+          } catch {
+            textBuffer = line + "\n" + textBuffer;
+            break;
+          }
         }
       }
-    }
 
-    return assistantSoFar;
-  }, [toast]);
+      return assistantSoFar;
+    },
+    [toast],
+  );
 
-  const handleSend = useCallback(async (text?: string) => {
-    const msg = text || input;
-    if (!msg.trim() || isLoading) return;
+  const handleSend = useCallback(
+    async (text?: string) => {
+      const msg = text || input;
+      if (!msg.trim() || isLoading) return;
 
-    const userMsg: Message = { role: "user", content: msg };
-    const newMessages = [...messages, userMsg];
-    setMessages(newMessages);
-    setInput("");
-    setIsLoading(true);
+      const userMsg: Message = { role: "user", content: msg };
+      const newMessages = [...messages, userMsg];
+      setMessages(newMessages);
+      setInput("");
+      setIsLoading(true);
 
-    try {
-      const response = await streamChat(newMessages);
-      // Speak the final response
-      if (response) {
-        setTimeout(() => speakText(response), 300);
-      }
-    } catch (e) {
-      console.error("Chat error:", e);
-      toast({
-        variant: "destructive",
-        title: "Chat Error",
-        description: e instanceof Error ? e.message : "Failed to get response",
-      });
-      // Remove the failed assistant message if any partial was added
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (last?.role === "assistant" && !last.content) {
-          return prev.slice(0, -1);
+      try {
+        const response = await streamChat(newMessages);
+        if (response) {
+          setTimeout(() => speakText(response), 300);
         }
-        return prev;
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [input, isLoading, messages, streamChat, speakText, toast]);
+      } catch (e) {
+        console.error("Chat error:", e);
+        toast({
+          variant: "destructive",
+          title: "Chat Error",
+          description: e instanceof Error ? e.message : "Failed to get response",
+        });
+        setMessages((prev) => {
+          const last = prev[prev.length - 1];
+          if (last?.role === "assistant" && !last.content) {
+            return prev.slice(0, -1);
+          }
+          return prev;
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [input, isLoading, messages, streamChat, speakText, toast],
+  );
 
   const toggleListening = useCallback(() => {
     if (!("webkitSpeechRecognition" in window || "SpeechRecognition" in window)) {
@@ -191,23 +223,21 @@ const ChatCanvas = () => {
       return;
     }
 
-    const SpeechRecognitionAPI = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognitionAPI =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
     const recognition = new SpeechRecognitionAPI();
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = "en-US";
 
     recognition.onresult = (event: SpeechRecognitionEvent) => {
-      // Stop AI speech when user starts talking
       if (window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         setIsSpeaking(false);
       }
-
       const transcript = Array.from(event.results)
         .map((result) => result[0].transcript)
         .join("");
-
       if (event.results[0].isFinal) {
         setInput("");
         handleSend(transcript);
@@ -231,6 +261,72 @@ const ChatCanvas = () => {
   }, []);
 
   const isEmpty = messages.length === 0;
+
+  // Renders an assistant message: detects plan, extracts charts, color-codes markdown, splices charts in.
+  const renderAssistant = (raw: string) => {
+    let working = raw;
+    let planTitle: string | null = null;
+    const planMatch = working.match(/^PLAN:\s*(.+?)\s*\n/);
+    if (planMatch) {
+      planTitle = planMatch[1].trim();
+      working = working.slice(planMatch[0].length);
+    }
+
+    const { cleaned, charts } = extractCharts(working);
+    const segments = cleaned.split(/\{\{CHART:(\d+)\}\}/);
+
+    return (
+      <div className="space-y-2">
+        {segments.map((seg, i) => {
+          if (i % 2 === 1) {
+            const idx = Number(seg);
+            const spec = charts[idx];
+            return spec ? <ChartBlock key={`c-${i}`} spec={spec} /> : null;
+          }
+          if (!seg.trim()) return null;
+          return (
+            <div
+              key={`t-${i}`}
+              className="prose prose-invert prose-sm max-w-none
+                prose-headings:font-heading prose-headings:mt-4 prose-headings:mb-2
+                prose-h1:text-bee-blue prose-h2:text-bee-blue prose-h3:text-bee-blue
+                prose-h4:text-bee-blue prose-h5:text-bee-blue prose-h6:text-bee-blue
+                prose-p:text-white prose-p:mb-3 prose-p:leading-relaxed
+                prose-strong:text-bee
+                prose-li:text-bee prose-li:marker:text-bee
+                prose-ol:text-bee prose-ul:text-bee
+                prose-blockquote:text-bee prose-blockquote:border-l-bee prose-blockquote:not-italic
+                prose-code:text-bee-blue prose-pre:bg-secondary/50 prose-pre:border prose-pre:border-border/50
+                prose-a:text-bee-blue"
+            >
+              <ReactMarkdown
+                components={{
+                  // Inside list items, keep the inner text white while the bullet/number stays yellow.
+                  li: ({ children }) => (
+                    <li>
+                      <span className="text-white">{children}</span>
+                    </li>
+                  ),
+                }}
+              >
+                {seg}
+              </ReactMarkdown>
+            </div>
+          );
+        })}
+
+        {planTitle && (
+          <button
+            onClick={() => generatePlanPdf(planTitle!, working)}
+            className="mt-2 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-bee-blue/15 text-bee-blue border border-bee-blue/30 hover:bg-bee-blue/25 transition-all"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            Download plan PDF
+          </button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="flex-1 flex flex-col h-full">
@@ -270,27 +366,25 @@ const ChatCanvas = () => {
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
                 >
                   <div
-                    className={`max-w-[80%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                    className={`max-w-[85%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                       msg.role === "user"
                         ? "bg-bee/15 text-foreground border border-bee/20"
-                        : "glass glass-highlight text-foreground/90"
+                        : "glass glass-highlight text-white"
                     }`}
                   >
                     {msg.role === "assistant" ? (
-                      <div className="prose prose-invert prose-sm max-w-none prose-headings:text-foreground prose-headings:font-heading prose-headings:mt-4 prose-headings:mb-2 prose-p:mb-3 prose-p:leading-relaxed prose-strong:text-bee prose-li:text-foreground/90 prose-code:text-primary prose-pre:bg-secondary/50 prose-pre:border prose-pre:border-border/50">
-                        <ReactMarkdown>{msg.content}</ReactMarkdown>
-                      </div>
+                      <>
+                        {renderAssistant(msg.content)}
+                        <button
+                          onClick={() => (isSpeaking ? stopSpeaking() : speakText(msg.content))}
+                          className="mt-2 inline-flex p-1 rounded text-muted-foreground hover:text-bee transition-colors"
+                          title={isSpeaking ? "Stop speaking" : "Read aloud"}
+                        >
+                          <Volume2 className={`w-3.5 h-3.5 ${isSpeaking ? "text-bee animate-pulse" : ""}`} />
+                        </button>
+                      </>
                     ) : (
                       msg.content
-                    )}
-                    {msg.role === "assistant" && (
-                      <button
-                        onClick={() => isSpeaking ? stopSpeaking() : speakText(msg.content)}
-                        className="ml-2 inline-flex p-1 rounded text-muted-foreground hover:text-primary transition-colors"
-                        title={isSpeaking ? "Stop speaking" : "Read aloud"}
-                      >
-                        <Volume2 className={`w-3.5 h-3.5 ${isSpeaking ? "text-bee animate-pulse" : ""}`} />
-                      </button>
                     )}
                   </div>
                 </div>
@@ -347,7 +441,7 @@ const ChatCanvas = () => {
             </button>
           </div>
           <p className="text-[10px] text-muted-foreground/50 text-center mt-2">
-            Beee AI may produce inaccurate results. Verify important information.
+            Bee AI may produce inaccurate results. Verify important information.
           </p>
         </div>
       </div>
