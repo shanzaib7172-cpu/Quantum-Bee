@@ -50,11 +50,11 @@ const AnimatedBee = ({ isSpeaking = false }: AnimatedBeeProps) => {
         className="relative w-32 h-32 object-contain drop-shadow-lg z-10"
         style={{
           animation: isSpeaking
-            ? "bee-bounce 0.4s ease-in-out infinite alternate, orb-float 4s ease-in-out infinite"
-            : "orb-float 4s ease-in-out infinite",
+            ? "bee-bounce 0.4s ease-in-out infinite alternate, bee-fly-slow 9s ease-in-out infinite"
+            : "bee-fly-slow 9s ease-in-out infinite",
           filter: isSpeaking
-            ? "drop-shadow(0 0 20px hsl(45, 100%, 50%, 0.5))"
-            : "drop-shadow(0 0 10px hsl(45, 100%, 50%, 0.2))",
+            ? "drop-shadow(0 0 20px hsl(195, 100%, 55%, 0.6))"
+            : "drop-shadow(0 0 12px hsl(195, 100%, 55%, 0.35))",
           transition: "filter 0.3s ease",
         }}
       />

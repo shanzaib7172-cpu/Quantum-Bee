@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import beeLogo from "@/assets/bee-logo.png";
 
 const Home = () => {
   return (
@@ -77,9 +78,17 @@ const Home = () => {
       {/* Header */}
       <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-[hsl(200,100%,60%)]/10">
         <Link to="/" className="flex items-center gap-2.5">
-          <div className="relative">
-            <Atom className="w-7 h-7 text-[hsl(195,100%,60%)] animate-[orb-rotate_12s_linear_infinite]" />
-            <div className="absolute inset-0 blur-md bg-[hsl(195,100%,60%)]/40 rounded-full" />
+          <div className="relative w-10 h-10 flex items-center justify-center">
+            <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-[orb-pulse_3s_ease-in-out_infinite]" />
+            <img
+              src={beeLogo}
+              alt="Quantum Bee"
+              className="relative w-10 h-10 object-contain z-10"
+              style={{
+                animation: "bee-fly 6s ease-in-out infinite",
+                filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.6))",
+              }}
+            />
           </div>
           <span className="text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(195,100%,70%)] via-[hsl(210,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Bee
