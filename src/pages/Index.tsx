@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Menu, LogIn, UserPlus } from "lucide-react";
+import { Menu, LogIn, UserPlus, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DrawerMenu } from "@/components/DrawerMenu";
@@ -26,6 +26,13 @@ const Index = () => {
       {/* Header */}
       <header className="relative z-30 flex items-center justify-between px-5 py-3 border-b border-border/50">
         <div className="flex items-center gap-3">
+          <Link
+            to="/"
+            className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+            aria-label="Back to home"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
           <button
             onClick={() => setDrawerOpen(true)}
             className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
@@ -33,8 +40,8 @@ const Index = () => {
             <Menu className="w-5 h-5" />
           </button>
           <div className="flex items-center gap-2">
-            <img src={beeLogo} alt="Beee AI" className="w-7 h-7 object-contain" />
-            <span className="text-base font-heading font-semibold text-gradient">Beee AI</span>
+            <img src={beeLogo} alt="Bee AI" className="w-7 h-7 object-contain" />
+            <span className="text-base font-heading font-semibold text-gradient">Bee AI</span>
           </div>
         </div>
 

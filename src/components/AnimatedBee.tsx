@@ -46,7 +46,7 @@ const AnimatedBee = ({ isSpeaking = false }: AnimatedBeeProps) => {
       {/* Bee image */}
       <img
         src={beeLogo}
-        alt="Beee AI"
+        alt="Bee AI"
         className="relative w-32 h-32 object-contain drop-shadow-lg z-10"
         style={{
           animation: isSpeaking
