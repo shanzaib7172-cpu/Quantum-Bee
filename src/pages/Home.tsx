@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import beeLogo from "@/assets/bee-logo.png";
 
@@ -96,6 +96,17 @@ const Home = () => {
         </Link>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1.5 text-[hsl(45,100%,75%)] hover:text-[hsl(45,100%,85%)] border border-[hsl(40,100%,55%)]/30 hover:border-[hsl(40,100%,55%)]/60 hover:bg-[hsl(40,100%,55%)]/10"
+            asChild
+          >
+            <Link to="/about">
+              <Info className="w-3.5 h-3.5" />
+              About
+            </Link>
+          </Button>
           <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
             <Link to="/login">
               <LogIn className="w-3.5 h-3.5" />
@@ -118,9 +129,9 @@ const Home = () => {
 
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(200,100%,60%)]/30 bg-[hsl(200,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in">
-          <Sparkles className="w-3 h-3 text-[hsl(195,100%,75%)]" />
-          <span className="text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,80%)]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(40,100%,55%)]/30 bg-[hsl(40,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in">
+          <Sparkles className="w-3 h-3 text-[hsl(45,100%,70%)]" />
+          <span className="text-xs font-mono uppercase tracking-widest text-[hsl(45,100%,80%)]">
             Quantum × AI
           </span>
         </div>
@@ -130,7 +141,7 @@ const Home = () => {
             Beyond the
           </span>
           <br />
-          <span className="bg-gradient-to-r from-[hsl(195,100%,65%)] via-[hsl(210,100%,70%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[hsl(40,100%,60%)] via-[hsl(195,100%,70%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Singularity
           </span>
         </h1>
