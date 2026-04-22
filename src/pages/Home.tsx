@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import beeLogo from "@/assets/bee-logo.png";
 
@@ -96,6 +96,17 @@ const Home = () => {
         </Link>
 
         <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1.5 text-[hsl(45,100%,75%)] hover:text-[hsl(45,100%,85%)] border border-[hsl(40,100%,55%)]/30 hover:border-[hsl(40,100%,55%)]/60 hover:bg-[hsl(40,100%,55%)]/10"
+            asChild
+          >
+            <Link to="/about">
+              <Info className="w-3.5 h-3.5" />
+              About
+            </Link>
+          </Button>
           <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
             <Link to="/login">
               <LogIn className="w-3.5 h-3.5" />
