@@ -1,10 +1,24 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
 
 const Home = () => {
-  return (
+  useReveal();
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 80 }).map(() => ({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 2 + 0.5,
+        delay: Math.random() * 4,
+        dur: 2 + Math.random() * 4,
+        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
+      })),
+    []
+  );
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       {/* Animated blue wave background */}
       <div className="absolute inset-0 pointer-events-none">
