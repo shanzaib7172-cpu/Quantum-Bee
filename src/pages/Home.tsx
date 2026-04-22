@@ -161,14 +161,14 @@ const Home = () => {
 
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(40,100%,55%)]/30 bg-[hsl(40,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(40,100%,55%)]/30 bg-[hsl(40,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in" data-reveal>
           <Sparkles className="w-3 h-3 text-[hsl(45,100%,70%)]" />
           <span className="text-xs font-mono uppercase tracking-widest text-[hsl(45,100%,80%)]">
             Quantum × AI
           </span>
         </div>
 
-        <h1 className="font-heading font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight max-w-5xl animate-fade-in">
+        <h1 className="font-heading font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight max-w-5xl animate-fade-in" data-reveal>
           <span className="bg-gradient-to-br from-white via-[hsl(200,100%,85%)] to-[hsl(220,100%,70%)] bg-clip-text text-transparent">
             Beyond the
           </span>
@@ -178,14 +178,14 @@ const Home = () => {
           </span>
         </h1>
 
-        <p className="mt-8 max-w-2xl text-base sm:text-lg text-foreground/70 leading-relaxed animate-fade-in">
+        <p className="mt-8 max-w-2xl text-base sm:text-lg text-foreground/70 leading-relaxed animate-fade-in" data-reveal>
           Quantum Bee fuses <span className="text-[hsl(195,100%,75%)] font-medium">Quantum Computing</span> with{" "}
           <span className="text-[hsl(210,100%,80%)] font-medium">Artificial Intelligence</span> to spark a new
           revolution — solving the unsolvable, thinking beyond classical limits, and building the future of
           intelligence for the world.
         </p>
 
-        <div className="mt-10 flex flex-col sm:flex-row items-center gap-3 animate-fade-in">
+        <div className="mt-10 flex flex-col sm:flex-row items-center gap-3 animate-fade-in" data-reveal>
           <Button
             asChild
             size="lg"
@@ -208,7 +208,7 @@ const Home = () => {
         </div>
 
         {/* About / Feature cards */}
-        <section id="about" className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl w-full">
+        <section id="about" data-reveal className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl w-full">
           {[
             {
               icon: Atom,
@@ -226,9 +226,7 @@ const Home = () => {
               desc: "Reimagining medicine, energy, finance, and creativity for humanity's next leap forward.",
             },
           ].map(({ icon: Icon, title, desc }) => (
-            <div
-              key={title}
-              className="group relative rounded-2xl p-6 text-left bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(200,100%,60%)]/40 transition-all overflow-hidden"
+            <div data-reveal="scale" key={title} className="group relative rounded-2xl p-6 text-left bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(200,100%,60%)]/40 transition-all overflow-hidden"
             >
               <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[hsl(200,100%,55%)]/20 blur-2xl group-hover:bg-[hsl(200,100%,55%)]/40 transition-all" />
               <Icon className="w-7 h-7 text-[hsl(195,100%,70%)] mb-4 relative z-10" />
