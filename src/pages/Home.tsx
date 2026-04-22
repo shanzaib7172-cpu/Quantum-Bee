@@ -129,9 +129,9 @@ const Home = () => {
 
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(200,100%,60%)]/30 bg-[hsl(200,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in">
-          <Sparkles className="w-3 h-3 text-[hsl(195,100%,75%)]" />
-          <span className="text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,80%)]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(40,100%,55%)]/30 bg-[hsl(40,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in">
+          <Sparkles className="w-3 h-3 text-[hsl(45,100%,70%)]" />
+          <span className="text-xs font-mono uppercase tracking-widest text-[hsl(45,100%,80%)]">
             Quantum × AI
           </span>
         </div>
@@ -141,7 +141,7 @@ const Home = () => {
             Beyond the
           </span>
           <br />
-          <span className="bg-gradient-to-r from-[hsl(195,100%,65%)] via-[hsl(210,100%,70%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-[hsl(40,100%,60%)] via-[hsl(195,100%,70%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Singularity
           </span>
         </h1>
