@@ -11,6 +11,7 @@ import Signup from "./pages/Signup.tsx";
 import ProductShoot from "./pages/ProductShoot.tsx";
 import LeadsGenerator from "./pages/LeadsGenerator.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import BeeCursor from "./components/BeeCursor.tsx";
 
 const queryClient = new QueryClient();
 
@@ -19,6 +20,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <BeeCursor />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />

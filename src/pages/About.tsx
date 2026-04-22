@@ -1,9 +1,24 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
 
 const About = () => {
+  useReveal();
+  const stars = useMemo(
+    () =>
+      Array.from({ length: 80 }).map(() => ({
+        top: Math.random() * 100,
+        left: Math.random() * 100,
+        size: Math.random() * 2 + 0.5,
+        delay: Math.random() * 4,
+        dur: 2 + Math.random() * 4,
+        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
+      })),
+    []
+  );
   const agents = [
     { num: "01", icon: Target, name: "ANNA", role: "Lead Generation Agent", color: "hsl(40,100%,55%)", desc: "Anna is your autonomous business development force. She sources, qualifies, and nurtures thousands of leads simultaneously — across LinkedIn, email, and social media — populating your CRM in real time, 24/7.", caps: ["Multi-channel lead sourcing & qualification", "Personalised outreach email sequences", "Real-time CRM population & enrichment", "Pipeline forecasting & opportunity scoring", "Competitor analysis & market mapping"] },
     { num: "02", icon: MessageSquare, name: "JACK", role: "WhatsApp Automation & Sales Agent", color: "hsl(200,100%,60%)", desc: "Jack transforms WhatsApp from a messaging app into a full-stack sales engine. He manages conversations, recommends products, books appointments, processes payments, and handles support — all autonomously.", caps: ["WhatsApp Business API automation", "Intelligent sales funnel management", "Product recommendations & upselling", "Appointment booking & order processing", "Broadcast campaigns with segmentation"] },
@@ -67,6 +82,22 @@ const About = () => {
             maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
           }}
         />
+        {/* Twinkling stars */}
+        {stars.map((s, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              top: `${s.top}%`,
+              left: `${s.left}%`,
+              width: `${s.size}px`,
+              height: `${s.size}px`,
+              background: s.color,
+              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
+              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
+            }}
+          />
+        ))}
       </div>
 
       {/* Header */}
@@ -93,7 +124,7 @@ const About = () => {
       </header>
 
       {/* Hero */}
-      <section className="relative z-10 px-6 pt-20 pb-24 text-center max-w-5xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 pt-20 pb-24 text-center max-w-5xl mx-auto">
         <p className="font-mono text-xs tracking-[0.4em] text-[hsl(195,100%,75%)] uppercase mb-5 animate-fade-in">
           [ About Quantum Bee Technologies ]
         </p>
@@ -108,14 +139,14 @@ const About = () => {
       </section>
 
       {/* Story */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="grid md:grid-cols-[1fr_2fr] gap-12">
           <div className="md:sticky md:top-24 self-start">
             <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-3">— Our Journey</div>
             <h2 className="font-heading font-bold text-2xl text-[hsl(40,100%,60%)] mb-8">The Quantum Bee Story</h2>
             <div className="space-y-6">
               {timeline.map((t) => (
-                <div key={t.label} className="flex gap-4 items-start">
+                <div data-reveal="left" key={t.label} className="flex gap-4 items-start">
                   <div className="w-3 h-3 mt-1.5 rounded-full border-2 border-[hsl(40,100%,55%)] bg-[hsl(40,100%,55%)]/30 shadow-[0_0_12px_hsl(40,100%,55%,0.5)]" />
                   <div>
                     <div className="font-mono text-xs text-[hsl(40,100%,60%)] tracking-widest">{t.year}</div>
@@ -132,7 +163,7 @@ const About = () => {
               { h: "03 — The First Product", p: "We started with Bee AI — a multi-agent business automation platform featuring four specialised autonomous agents: Anna, Jack, David, and Sophia. These agents fully automate lead generation, WhatsApp sales, web development, and creative advertising." },
               { h: "04 — The Bigger Picture", p: "But Quantum Bee was never just about business automation. From day one, the vision stretched further: quantum computing infrastructure for healthcare, finance, energy, agriculture, defence — and ultimately, technology capable of supporting human civilisation on Mars and beyond." },
             ].map((b) => (
-              <div key={b.h} className="rounded-xl bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 p-6">
+              <div data-reveal="right" key={b.h} className="rounded-xl bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 p-6">
                 <h3 className="font-heading font-semibold text-[hsl(40,100%,60%)] tracking-wide mb-3">{b.h}</h3>
                 <p className="text-foreground/70 leading-relaxed">{b.p}</p>
               </div>
@@ -142,7 +173,7 @@ const About = () => {
       </section>
 
       {/* Founder */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="text-center mb-14">
           <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Visionary Leadership</div>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)]">Meet the Founder</h2>
@@ -162,7 +193,7 @@ const About = () => {
             </div>
             <div className="grid grid-cols-2 gap-3 mt-8 w-full max-w-xs">
               {[{ n: "4", l: "AI Agents Built" }, { n: "8+", l: "Sectors Targeted" }, { n: "2025", l: "Year Founded" }, { n: "∞", l: "Cosmic Ambition" }].map((s) => (
-                <div key={s.l} className="bg-[hsl(220,40%,8%)]/60 border border-[hsl(200,100%,60%)]/20 p-4 hover:border-[hsl(40,100%,55%)]/50 transition-all">
+                <div data-reveal="scale" key={s.l} className="bg-[hsl(220,40%,8%)]/60 border border-[hsl(200,100%,60%)]/20 p-4 hover:border-[hsl(40,100%,55%)]/50 transition-all">
                   <div className="font-heading font-bold text-2xl text-[hsl(40,100%,60%)]">{s.n}</div>
                   <div className="font-mono text-[10px] text-foreground/60 tracking-widest uppercase mt-1">{s.l}</div>
                 </div>
@@ -195,13 +226,13 @@ const About = () => {
       </section>
 
       {/* Agents */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Our AI Platform</div>
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-4">Bee AI — Four Agents,<br />Infinite Possibilities</h2>
         <p className="text-foreground/65 max-w-2xl mb-12">Our flagship platform deploys four specialised autonomous AI agents that own and execute entire business functions end-to-end — 24/7, no human bottleneck.</p>
         <div className="grid md:grid-cols-2 gap-5">
           {agents.map((a) => (
-            <div key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
+            <div data-reveal="scale" key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
               <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity" style={{ background: a.color }} />
               <div className="absolute top-4 right-6 font-heading font-black text-5xl text-white/[0.04]">{a.num}</div>
               <a.icon className="w-8 h-8 mb-3" style={{ color: a.color }} />
@@ -221,13 +252,13 @@ const About = () => {
       </section>
 
       {/* Values */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— What Drives Us</div>
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-4">Our Core Values</h2>
         <p className="text-foreground/65 max-w-2xl mb-12">Not words on a wall — the operating system of everything we build.</p>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-px bg-[hsl(200,100%,60%)]/10">
           {values.map((v) => (
-            <div key={v.title} className="bg-[hsl(220,40%,6%)] hover:bg-[hsl(220,40%,9%)] p-7 transition-colors relative group border-b-2 border-transparent hover:border-[hsl(40,100%,55%)]">
+            <div data-reveal key={v.title} className="bg-[hsl(220,40%,6%)] hover:bg-[hsl(220,40%,9%)] p-7 transition-colors relative group border-b-2 border-transparent hover:border-[hsl(40,100%,55%)]">
               <v.icon className="w-7 h-7 text-[hsl(40,100%,60%)] mb-4" />
               <h3 className="font-heading font-bold text-sm tracking-widest uppercase text-[hsl(40,100%,60%)] mb-2">{v.title}</h3>
               <p className="text-sm text-foreground/60 leading-relaxed">{v.desc}</p>
@@ -237,13 +268,13 @@ const About = () => {
       </section>
 
       {/* Vision Layers */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Our Architecture of Impact</div>
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-4">Three Layers of Vision</h2>
         <p className="text-foreground/65 max-w-2xl mb-12">Quantum Bee operates across three interlocking layers — from today's business automation to tomorrow's civilisational infrastructure.</p>
         <div className="space-y-1">
           {visionLayers.map((l) => (
-            <div key={l.num} className="flex items-stretch border" style={{ borderColor: `${l.color}33`, background: `${l.color}08` }}>
+            <div data-reveal="left" key={l.num} className="flex items-stretch border" style={{ borderColor: `${l.color}33`, background: `${l.color}08` }}>
               <div className="w-20 flex items-center justify-center font-heading font-black text-2xl" style={{ color: l.color, background: `${l.color}1a` }}>{l.num}</div>
               <div className="flex-1 px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
@@ -258,12 +289,12 @@ const About = () => {
       </section>
 
       {/* Sectors */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto">
         <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Where We Operate</div>
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-12">Sectors We Transform</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[hsl(200,100%,60%)]/10">
           {sectors.map((s) => (
-            <div key={s.name} className="bg-[hsl(220,40%,6%)] hover:bg-[hsl(220,40%,9%)] p-6 text-center transition-colors">
+            <div data-reveal="scale" key={s.name} className="bg-[hsl(220,40%,6%)] hover:bg-[hsl(220,40%,9%)] p-6 text-center transition-colors">
               <div className="text-3xl mb-3">{s.icon}</div>
               <div className="font-heading font-semibold text-white mb-1">{s.name}</div>
               <div className="font-mono text-[10px] text-foreground/55 leading-relaxed">{s.desc}</div>
@@ -273,7 +304,7 @@ const About = () => {
       </section>
 
       {/* CTA */}
-      <section className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
+      <section data-reveal className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-white mb-5">Ready to Experience Bee AI?</h2>
         <p className="text-foreground/65 mb-8">Launch our flagship multi-agent platform and put Anna, Jack, David, and Sophia to work for your business.</p>
         <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
