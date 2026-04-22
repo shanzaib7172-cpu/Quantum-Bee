@@ -206,7 +206,7 @@ const About = () => {
             </h3>
             <div className="font-mono text-xs tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mt-2 mb-6">Founder & Chief Executive Officer</div>
             <p className="text-foreground/70 leading-relaxed mb-4">
-              Shanzaib Asghar is a visionary entrepreneur, technologist, and deep-tech pioneer from Rawalpindi, Pakistan. From an early age, he demonstrated an extraordinary ability to see possibilities where others saw complexity — and the relentless drive to build what others only imagined.
+              Shanzaib Asghar is a visionary entrepreneur, technologist, and deep-tech pioneer. From an early age, he demonstrated an extraordinary ability to see possibilities where others saw complexity — and the relentless drive to build what others only imagined.
             </p>
             <p className="text-foreground/70 leading-relaxed mb-4">
               He founded Quantum Bee Technologies in 2025 with the conviction that the next great technological leap would not come from incremental improvement, but from an entirely new paradigm: autonomous AI agents powered by quantum-speed computation.
@@ -215,7 +215,7 @@ const About = () => {
               "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it."
             </blockquote>
             <div className="flex flex-wrap gap-2 mt-5">
-              {["Quantum Computing", "AI Architecture", "Deep Tech", "Space Technology", "Business Automation", "Rawalpindi, PK"].map((t) => (
+              {["Quantum Computing", "AI Architecture", "Deep Tech", "Space Technology", "Business Automation"].map((t) => (
                 <span key={t} className="font-mono text-[10px] tracking-wider uppercase px-3 py-1.5 border border-[hsl(200,100%,60%)]/30 text-[hsl(195,100%,75%)] hover:bg-[hsl(200,100%,55%)]/10 transition-colors">
                   {t}
                 </span>
