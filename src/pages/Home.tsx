@@ -19,9 +19,27 @@ const Home = () => {
       })),
     []
   );
+
+  return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       {/* Animated blue wave background */}
       <div className="absolute inset-0 pointer-events-none">
+        {/* Twinkling stars */}
+        {stars.map((s, i) => (
+          <span
+            key={i}
+            className="absolute rounded-full"
+            style={{
+              top: `${s.top}%`,
+              left: `${s.left}%`,
+              width: `${s.size}px`,
+              height: `${s.size}px`,
+              background: s.color,
+              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
+              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
+            }}
+          />
+        ))}
         <div
           className="absolute inset-0"
           style={{
