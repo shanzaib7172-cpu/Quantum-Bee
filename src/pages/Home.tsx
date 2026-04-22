@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
@@ -236,6 +236,139 @@ const Home = () => {
           ))}
         </section>
       </main>
+
+      {/* Stats strip */}
+      <section data-reveal className="relative z-10 px-6 py-14 max-w-6xl mx-auto w-full">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[hsl(200,100%,60%)]/10 rounded-2xl overflow-hidden border border-[hsl(200,100%,60%)]/15">
+          {[
+            { n: "4", l: "Autonomous Agents" },
+            { n: "8+", l: "Sectors Targeted" },
+            { n: "24/7", l: "Always Working" },
+            { n: "∞", l: "Cosmic Ambition" },
+          ].map((s) => (
+            <div key={s.l} className="bg-[hsl(220,40%,7%)]/80 p-6 text-center">
+              <div className="font-heading font-black text-3xl bg-gradient-to-br from-[hsl(40,100%,60%)] to-[hsl(195,100%,70%)] bg-clip-text text-transparent">{s.n}</div>
+              <div className="font-mono text-[10px] tracking-widest text-foreground/55 uppercase mt-1">{s.l}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Agents preview */}
+      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div data-reveal className="text-center mb-12">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Bee AI Platform</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Four Agents, One Swarm</h2>
+          <p className="text-foreground/65 max-w-2xl mx-auto mt-4">Specialised autonomous AI agents that own and execute entire business functions end-to-end.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { icon: Target, name: "ANNA", role: "Lead Generation", color: "hsl(40,100%,55%)" },
+            { icon: MessageSquare, name: "JACK", role: "WhatsApp Sales", color: "hsl(200,100%,60%)" },
+            { icon: Code2, name: "DAVID", role: "Web Developer", color: "hsl(170,100%,55%)" },
+            { icon: Palette, name: "SOPHIA", role: "Creative & UGC", color: "hsl(280,80%,70%)" },
+          ].map((a) => (
+            <div data-reveal="scale" key={a.name} className="relative group rounded-2xl p-6 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-40 group-hover:opacity-80 transition-opacity" style={{ background: a.color }} />
+              <a.icon className="w-7 h-7 mb-4 relative z-10" style={{ color: a.color }} />
+              <h3 className="font-heading font-bold text-lg text-white relative z-10">{a.name}</h3>
+              <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 relative z-10">{a.role}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Vision layers */}
+      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div data-reveal className="mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Architecture of Impact</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Three Layers of Vision</h2>
+        </div>
+        <div className="space-y-2">
+          {[
+            { num: "01", title: "Bee AI — Now", sub: "Commercial Ready · 2025", desc: "Autonomous AI agents delivering immediate ROI to businesses globally.", color: "hsl(40,100%,55%)" },
+            { num: "02", title: "Quantum Computing — Scaling", sub: "Sector Transformation · 2026–2030", desc: "Sector-specific quantum algorithms for healthcare, finance, energy, defence and more.", color: "hsl(200,100%,60%)" },
+            { num: "03", title: "Interplanetary Quantum — Future", sub: "Beyond Earth · 2030+", desc: "Mars-ready quantum systems and autonomous colony AI infrastructure.", color: "hsl(280,80%,70%)" },
+          ].map((l) => (
+            <div data-reveal="left" key={l.num} className="flex items-stretch rounded-xl border overflow-hidden" style={{ borderColor: `${l.color}40`, background: `${l.color}10` }}>
+              <div className="w-16 sm:w-20 flex items-center justify-center font-heading font-black text-2xl" style={{ color: l.color, background: `${l.color}1f` }}>{l.num}</div>
+              <div className="flex-1 px-5 py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <div>
+                  <div className="font-heading font-bold tracking-wide" style={{ color: l.color }}>{l.title}</div>
+                  <div className="font-mono text-[10px] tracking-widest text-foreground/50 mt-1 uppercase">{l.sub}</div>
+                </div>
+                <div className="text-sm text-foreground/65 max-w-md leading-relaxed">{l.desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Sectors */}
+      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div data-reveal className="mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Where We Operate</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Sectors We Transform</h2>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[hsl(200,100%,60%)]/10 rounded-2xl overflow-hidden border border-[hsl(200,100%,60%)]/15">
+          {[
+            { icon: "🏥", name: "Healthcare" },
+            { icon: "💰", name: "Finance" },
+            { icon: "🚚", name: "Logistics" },
+            { icon: "⚡", name: "Energy" },
+            { icon: "🛡️", name: "Defence" },
+            { icon: "🌾", name: "Agriculture" },
+            { icon: "🎓", name: "Education" },
+            { icon: "🏭", name: "Manufacturing" },
+          ].map((s) => (
+            <div data-reveal="scale" key={s.name} className="bg-[hsl(220,40%,7%)]/80 hover:bg-[hsl(220,40%,10%)] p-6 text-center transition-colors">
+              <div className="text-3xl mb-2">{s.icon}</div>
+              <div className="font-heading font-semibold text-sm text-white">{s.name}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Values strip */}
+      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div data-reveal className="mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— What Drives Us</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Core Values</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {[
+            { icon: Zap, title: "Quantum Leap", desc: "We don't improve incrementally — we reinvent entirely." },
+            { icon: Sparkles, title: "Collaborative Swarm", desc: "Collective intelligence outperforms the individual." },
+            { icon: Rocket, title: "Cosmic Ambition", desc: "Mars-scale benchmarks make Earth-scale work extraordinary." },
+            { icon: Shield, title: "Ethical AI", desc: "Transparency, fairness and human oversight by design." },
+            { icon: Atom, title: "Relentless Build", desc: "Execute fast, iterate faster, never stop shipping." },
+            { icon: Cpu, title: "Open Sectors", desc: "Quantum AI for every industry — not just the biggest budgets." },
+          ].map((v) => (
+            <div data-reveal key={v.title} className="rounded-xl bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/40 p-6 transition-all">
+              <v.icon className="w-6 h-6 text-[hsl(40,100%,60%)] mb-3" />
+              <h3 className="font-heading font-bold text-sm tracking-widest uppercase text-[hsl(40,100%,60%)] mb-2">{v.title}</h3>
+              <p className="text-sm text-foreground/65 leading-relaxed">{v.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section data-reveal className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
+        <h2 className="font-heading font-black text-3xl md:text-5xl leading-tight">
+          <span className="text-white">Ready to go </span>
+          <span className="bg-gradient-to-r from-[hsl(40,100%,60%)] to-[hsl(40,100%,75%)] bg-clip-text text-transparent">Beyond the Quantum Singularity?</span>
+        </h2>
+        <p className="text-foreground/65 mt-5 mb-8">Launch Bee AI and put Anna, Jack, David and Sophia to work for your business — today.</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
+            <Link to="/bee-ai">Launch Bee AI <ArrowRight className="w-4 h-4 ml-2" /></Link>
+          </Button>
+          <Button asChild size="lg" variant="ghost" className="h-12 px-8 border border-[hsl(200,100%,60%)]/30 hover:bg-[hsl(200,100%,55%)]/10">
+            <Link to="/about">Learn our story</Link>
+          </Button>
+        </div>
+      </section>
 
       <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
         © {new Date().getFullYear()} Quantum Bee — Beyond the Quantum Singularity.
