@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { AnalysisResult, type AnalysisData } from "@/components/AnalysisResult";
+import { UnlockSoonDialog } from "@/components/UnlockSoonDialog";
 import annaCharacter from "@/assets/anna-character.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import jackCharacter from "@/assets/jack-character.png";
@@ -57,6 +58,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analyzeUrl, setAnalyzeUrl] = useState("");
   const [analyzing, setAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
+  const [unlockAgent, setUnlockAgent] = useState<AgentCard | null>(null);
   const navigate = useNavigate();
 
   const runAnalyze = async () => {
@@ -177,10 +179,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                   key={agent.name}
                   onClick={() => {
                     if (agent.locked) {
-                      toast({
-                        title: `${agent.name} is coming soon 🔒`,
-                        description: "This agent is still being trained. Stay tuned!",
-                      });
+                      setUnlockAgent(agent);
                       return;
                     }
                     if (agent.link) {
@@ -252,6 +251,12 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
           </div>
         </div>
       </div>
+
+      <UnlockSoonDialog
+        open={!!unlockAgent}
+        onOpenChange={(o) => !o && setUnlockAgent(null)}
+        agent={unlockAgent}
+      />
     </>
   );
 };
