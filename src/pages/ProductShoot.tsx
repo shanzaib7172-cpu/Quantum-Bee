@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
 
 const PRODUCT_SHOOT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/product-shoot`;
 
