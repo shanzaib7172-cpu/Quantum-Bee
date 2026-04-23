@@ -95,13 +95,58 @@ const ProductShoot = () => {
         </Link>
         <img src={beeLogo} alt="Beee AI" className="w-7 h-7 object-contain" />
         <div>
-          <h1 className="text-base font-heading font-semibold text-gradient">Sofia — Product Shoot AI</h1>
+          <h1 className="text-base font-heading font-semibold text-gradient">Sophia — Product Shoot AI</h1>
           <p className="text-[10px] text-muted-foreground">Transform product images into pro model shoots</p>
         </div>
       </header>
 
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-3xl space-y-6">
+
+          {/* Sophia Character — futuristic animated avatar */}
+          <div className="flex flex-col items-center text-center space-y-3">
+            <div className="relative w-40 h-40 flex items-center justify-center">
+              <div
+                className="absolute inset-0 rounded-full opacity-40"
+                style={{
+                  background: "radial-gradient(circle, hsl(45, 100%, 50%, 0.35) 0%, transparent 70%)",
+                  animation: "orb-pulse 3s ease-in-out infinite",
+                }}
+              />
+              <div
+                className="absolute w-40 h-40 rounded-full border border-bee/30"
+                style={{
+                  borderTopColor: "hsl(45, 100%, 60%)",
+                  borderRightColor: "transparent",
+                  animation: "spin 6s linear infinite",
+                }}
+              />
+              <div
+                className="absolute w-44 h-44 rounded-full border border-bee/15"
+                style={{
+                  borderBottomColor: "hsl(45, 100%, 60%, 0.5)",
+                  borderLeftColor: "transparent",
+                  animation: "spin 9s linear infinite reverse",
+                }}
+              />
+              <img
+                src={sophiaCharacter}
+                alt="Sophia AI Product Shoot Agent"
+                width={512}
+                height={512}
+                className="relative w-32 h-32 rounded-full object-cover z-10 border-2 border-bee/30"
+                style={{
+                  animation: "orb-float 4s ease-in-out infinite",
+                  filter: "drop-shadow(0 0 18px hsl(45, 100%, 50%, 0.45))",
+                }}
+              />
+            </div>
+            <div>
+              <h2 className="text-xl font-heading font-semibold text-foreground">Sophia Product Shoot Agent</h2>
+              <p className="text-xs text-muted-foreground mt-1">Upload your product below — Sophia turns it into a pro shoot.</p>
+              <p className="text-[11px] text-bee mt-1 font-medium">$20 / month · Unlimited shoots</p>
+            </div>
+          </div>
 
           {/* Upload Area */}
           <div
