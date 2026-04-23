@@ -8,11 +8,7 @@ import {
   Link as LinkIcon,
   ChevronRight,
   X,
-  Bot,
-  Zap,
-  Brain,
-  Eye,
-  Camera,
+  Lock,
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,13 +18,27 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { AnalysisResult, type AnalysisData } from "@/components/AnalysisResult";
+import annaCharacter from "@/assets/anna-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
 
-const agentCards = [
-  { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
-  { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
-  { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
-  { name: "Anna", desc: "Leads Generator", icon: Bot, price: "$20", link: "/leads-generator" },
-  { name: "Sofia", desc: "Product Model Shoot AI", icon: Camera, price: "$20", link: "/product-shoot" },
+type AgentCard = {
+  name: string;
+  desc: string;
+  avatar: string;
+  price: string;
+  link?: string;
+  locked?: boolean;
+};
+
+const agentCards: AgentCard[] = [
+  { name: "Anna", desc: "Leads Generator", avatar: annaCharacter, price: "$20", link: "/leads-generator" },
+  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, price: "$20", link: "/product-shoot" },
+  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, price: "$20", link: "/leads-generator" },
+  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, price: "$20", locked: true },
+  { name: "Mark", desc: "Business Management", avatar: davidCharacter, price: "$20", locked: true },
+  { name: "Peter", desc: "Product image & UGC ads video", avatar: davidCharacter, price: "$20", locked: true },
 ];
 
 const visionHistory = [
