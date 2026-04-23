@@ -176,17 +176,49 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                 <div
                   key={agent.name}
                   onClick={() => {
-                    if ((agent as any).link) {
+                    if (agent.locked) {
+                      toast({
+                        title: `${agent.name} is coming soon 🔒`,
+                        description: "This agent is still being trained. Stay tuned!",
+                      });
+                      return;
+                    }
+                    if (agent.link) {
                       onClose();
-                      navigate((agent as any).link);
+                      navigate(agent.link);
                     }
                   }}
-                  className="glass rounded-xl p-3 hover:bg-secondary/40 transition-all cursor-pointer group relative overflow-hidden"
+                  className={`glass rounded-xl p-3 transition-all group relative overflow-hidden ${
+                    agent.locked
+                      ? "cursor-not-allowed opacity-70"
+                      : "hover:bg-secondary/40 cursor-pointer"
+                  }`}
                 >
-                  <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
-                    {agent.price}
+                  {agent.locked ? (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-bee-blue bg-bee-blue/10 border border-bee-blue/20 px-1.5 py-0.5 rounded-md">
+                      <Lock className="w-2.5 h-2.5" />
+                      Soon
+                    </div>
+                  ) : (
+                    <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
+                      {agent.price}
+                    </div>
+                  )}
+                  <div className="relative w-10 h-10 mb-2 rounded-full overflow-hidden border border-bee/20 bg-secondary/40">
+                    <img
+                      src={agent.avatar}
+                      alt={`${agent.name} avatar`}
+                      width={64}
+                      height={64}
+                      loading="lazy"
+                      className={`w-full h-full object-cover ${agent.locked ? "grayscale" : ""}`}
+                    />
+                    {agent.locked && (
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                        <Lock className="w-4 h-4 text-bee-blue" />
+                      </div>
+                    )}
                   </div>
-                  <agent.icon className="w-5 h-5 text-accent mb-2 group-hover:text-bee transition-colors" />
                   <p className="text-xs font-medium text-foreground leading-tight">{agent.name}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{agent.desc}</p>
                 </div>
