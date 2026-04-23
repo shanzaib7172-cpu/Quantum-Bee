@@ -233,7 +233,7 @@ const ProductShoot = () => {
               <div className="w-20 h-20 rounded-full bg-bee/10 flex items-center justify-center animate-pulse">
                 <Sparkles className="w-8 h-8 text-bee" />
               </div>
-              <p className="mt-4 text-sm text-muted-foreground">Sofia is working her magic... 🐝✨</p>
+              <p className="mt-4 text-sm text-muted-foreground">Sophia is working her magic... 🐝✨</p>
               <p className="text-xs text-muted-foreground/50 mt-1">This usually takes 10-30 seconds</p>
             </div>
           )}
