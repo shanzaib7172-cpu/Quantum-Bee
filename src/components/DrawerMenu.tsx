@@ -195,7 +195,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                   }`}
                 >
                   {agent.locked ? (
-                    <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-bee-blue bg-bee-blue/10 border border-bee-blue/20 px-1.5 py-0.5 rounded-md">
+                    <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
                       <Lock className="w-2.5 h-2.5" />
                       Soon
                     </div>
@@ -215,7 +215,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                     />
                     {agent.locked && (
                       <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
-                        <Lock className="w-4 h-4 text-bee-blue" />
+                        <Lock className="w-4 h-4 text-primary" />
                       </div>
                     )}
                   </div>
