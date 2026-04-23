@@ -8,11 +8,7 @@ import {
   Link as LinkIcon,
   ChevronRight,
   X,
-  Bot,
-  Zap,
-  Brain,
-  Eye,
-  Camera,
+  Lock,
   Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -22,13 +18,27 @@ import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { AnalysisResult, type AnalysisData } from "@/components/AnalysisResult";
+import annaCharacter from "@/assets/anna-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
 
-const agentCards = [
-  { name: "Mike", desc: "Marketing Expert", icon: Zap, price: "$20" },
-  { name: "Peter", desc: "Product image & UGC ads video", icon: Eye, price: "$20" },
-  { name: "Mark", desc: "Business Management", icon: Brain, price: "$20" },
-  { name: "Anna", desc: "Leads Generator", icon: Bot, price: "$20", link: "/leads-generator" },
-  { name: "Sofia", desc: "Product Model Shoot AI", icon: Camera, price: "$20", link: "/product-shoot" },
+type AgentCard = {
+  name: string;
+  desc: string;
+  avatar: string;
+  price: string;
+  link?: string;
+  locked?: boolean;
+};
+
+const agentCards: AgentCard[] = [
+  { name: "Anna", desc: "Leads Generator", avatar: annaCharacter, price: "$20", link: "/leads-generator" },
+  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, price: "$20", link: "/product-shoot" },
+  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, price: "$20", link: "/leads-generator" },
+  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, price: "$20", locked: true },
+  { name: "Mark", desc: "Business Management", avatar: davidCharacter, price: "$20", locked: true },
+  { name: "Peter", desc: "Product image & UGC ads video", avatar: davidCharacter, price: "$20", locked: true },
 ];
 
 const visionHistory = [
@@ -166,17 +176,49 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                 <div
                   key={agent.name}
                   onClick={() => {
-                    if ((agent as any).link) {
+                    if (agent.locked) {
+                      toast({
+                        title: `${agent.name} is coming soon 🔒`,
+                        description: "This agent is still being trained. Stay tuned!",
+                      });
+                      return;
+                    }
+                    if (agent.link) {
                       onClose();
-                      navigate((agent as any).link);
+                      navigate(agent.link);
                     }
                   }}
-                  className="glass rounded-xl p-3 hover:bg-secondary/40 transition-all cursor-pointer group relative overflow-hidden"
+                  className={`glass rounded-xl p-3 transition-all group relative overflow-hidden ${
+                    agent.locked
+                      ? "cursor-not-allowed opacity-70"
+                      : "hover:bg-secondary/40 cursor-pointer"
+                  }`}
                 >
-                  <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
-                    {agent.price}
+                  {agent.locked ? (
+                    <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
+                      <Lock className="w-2.5 h-2.5" />
+                      Soon
+                    </div>
+                  ) : (
+                    <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
+                      {agent.price}
+                    </div>
+                  )}
+                  <div className="relative w-10 h-10 mb-2 rounded-full overflow-hidden border border-bee/20 bg-secondary/40">
+                    <img
+                      src={agent.avatar}
+                      alt={`${agent.name} avatar`}
+                      width={64}
+                      height={64}
+                      loading="lazy"
+                      className={`w-full h-full object-cover ${agent.locked ? "grayscale" : ""}`}
+                    />
+                    {agent.locked && (
+                      <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                        <Lock className="w-4 h-4 text-primary" />
+                      </div>
+                    )}
                   </div>
-                  <agent.icon className="w-5 h-5 text-accent mb-2 group-hover:text-bee transition-colors" />
                   <p className="text-xs font-medium text-foreground leading-tight">{agent.name}</p>
                   <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{agent.desc}</p>
                 </div>
