@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import beeLogo from "@/assets/bee-logo.png";
+import cosmos from "@/assets/intro-cosmos.jpg";
+import tower from "@/assets/intro-tower.jpg";
 
-const STORAGE_KEY = "beee_intro_played_v2";
+const STORAGE_KEY = "beee_intro_played_v3";
 
 const IntroAnimation = () => {
   const [show, setShow] = useState(() => {
@@ -12,11 +14,11 @@ const IntroAnimation = () => {
 
   useEffect(() => {
     if (!show) return;
-    const fadeTimer = setTimeout(() => setFadeOut(true), 8200);
+    const fadeTimer = setTimeout(() => setFadeOut(true), 10500);
     const endTimer = setTimeout(() => {
       sessionStorage.setItem(STORAGE_KEY, "1");
       setShow(false);
-    }, 9000);
+    }, 11400);
     return () => {
       clearTimeout(fadeTimer);
       clearTimeout(endTimer);
@@ -25,493 +27,436 @@ const IntroAnimation = () => {
 
   if (!show) return null;
 
+  const skip = () => {
+    sessionStorage.setItem(STORAGE_KEY, "1");
+    setShow(false);
+  };
+
   return (
     <div
-      className={`fixed inset-0 z-[9999] overflow-hidden bg-[hsl(240,60%,3%)] ${
+      className={`fixed inset-0 z-[9999] overflow-hidden bg-black ${
         fadeOut ? "intro-fade-out" : ""
       }`}
       aria-hidden="true"
     >
-      {/* Skip button */}
       <button
-        onClick={() => {
-          sessionStorage.setItem(STORAGE_KEY, "1");
-          setShow(false);
-        }}
+        onClick={skip}
         className="absolute top-4 right-4 z-[10000] px-3 py-1.5 text-xs rounded-full bg-white/10 text-white/80 hover:bg-white/20 backdrop-blur-md border border-white/20"
       >
         Skip intro →
       </button>
 
-      {/* Starfield */}
-      <div className="absolute inset-0">
-        {Array.from({ length: 90 }).map((_, i) => {
-          const top = (i * 37 + 7) % 100;
-          const left = (i * 53 + 13) % 100;
-          const size = ((i * 7) % 3) + 1;
-          return (
-            <span
-              key={i}
-              className="absolute rounded-full bg-white"
-              style={{
-                top: `${top}%`,
-                left: `${left}%`,
-                width: size,
-                height: size,
-                opacity: 0.6,
-                animation: `twinkle ${2 + (i % 4)}s ease-in-out ${(i % 5) * 0.3}s infinite`,
-              }}
-            />
-          );
-        })}
-      </div>
-
-      {/* ============ SCENE 1: Pink + Blue energy swirling into black hole (0-3s) ============ */}
-      <div className="intro-scene intro-scene-1">
-        {/* Energy streams */}
-        {Array.from({ length: 24 }).map((_, i) => {
-          const angle = (i / 24) * 360;
-          const isPink = i % 2 === 0;
-          return (
-            <span
-              key={i}
-              className="intro-energy-stream"
-              style={
-                {
-                  ["--angle" as any]: `${angle}deg`,
-                  ["--delay" as any]: `${(i % 6) * 0.1}s`,
-                  background: `linear-gradient(90deg, transparent, ${
-                    isPink ? "hsl(330,100%,75%)" : "hsl(200,100%,70%)"
-                  }, transparent)`,
-                } as React.CSSProperties
-              }
-            />
-          );
-        })}
-
-        {/* Black hole */}
-        <div className="intro-blackhole">
-          <div className="intro-bh-core" />
-          <div className="intro-bh-disk" />
-          <div className="intro-bh-disk intro-bh-disk-2" />
-          <div className="intro-bh-glow" />
-        </div>
-      </div>
-
-      {/* ============ SCENE 2: Beam shoots out (2.6-3.6s) ============ */}
-      <div className="intro-beam-out" />
-      <div className="intro-beam-flash" />
-
-      {/* ============ SCENE 3: World map (3.2-6s) ============ */}
-      <div className="intro-world-wrap">
-        <svg
-          className="intro-world"
-          viewBox="0 0 1000 500"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <radialGradient id="worldGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="hsl(200,100%,70%)" stopOpacity="0.9" />
-              <stop offset="60%" stopColor="hsl(260,80%,55%)" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="hsl(330,80%,40%)" stopOpacity="0.2" />
-            </radialGradient>
-            <filter id="worldGlow">
-              <feGaussianBlur stdDeviation="3" />
-              <feMerge>
-                <feMergeNode />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-          {/* Globe sphere */}
-          <circle cx="500" cy="250" r="220" fill="url(#worldGrad)" opacity="0.3" />
-          {/* Latitude lines */}
-          {[0.2, 0.4, 0.6, 0.8].map((p, i) => (
-            <ellipse
-              key={`lat-${i}`}
-              cx="500"
-              cy="250"
-              rx="220"
-              ry={220 * p}
-              fill="none"
-              stroke="hsl(200,100%,70%)"
-              strokeWidth="0.6"
-              opacity="0.5"
-            />
-          ))}
-          {/* Longitude lines */}
-          {[0.2, 0.4, 0.6, 0.8, 1].map((p, i) => (
-            <ellipse
-              key={`lon-${i}`}
-              cx="500"
-              cy="250"
-              rx={220 * p}
-              ry="220"
-              fill="none"
-              stroke="hsl(330,100%,75%)"
-              strokeWidth="0.6"
-              opacity="0.4"
-            />
-          ))}
-          {/* Continent dots */}
-          {Array.from({ length: 220 }).map((_, i) => {
-            const a = (i * 137.5) % 360;
-            const r = Math.sqrt((i * 11) % 220 / 220) * 215;
-            const x = 500 + Math.cos((a * Math.PI) / 180) * r;
-            const y = 250 + Math.sin((a * Math.PI) / 180) * r * 0.85;
+      {/* ============ ACT 1: Cosmic backdrop with black hole + earth (0 - 4.5s) ============ */}
+      <div className="intro-act intro-act-1">
+        <img src={cosmos} alt="" className="intro-cosmos-img" />
+        {/* Pink + blue energy streams converging */}
+        <div className="intro-vortex">
+          {Array.from({ length: 32 }).map((_, i) => {
+            const angle = (i / 32) * 360;
+            const isPink = i % 2 === 0;
             return (
-              <circle
-                key={`d-${i}`}
-                cx={x}
-                cy={y}
-                r={1.4}
-                fill={i % 3 === 0 ? "hsl(330,100%,80%)" : "hsl(200,100%,75%)"}
-                filter="url(#worldGlow)"
+              <span
+                key={i}
+                className="intro-stream"
+                style={
+                  {
+                    ["--angle" as any]: `${angle}deg`,
+                    ["--delay" as any]: `${(i % 8) * 0.12}s`,
+                    background: `linear-gradient(90deg, transparent, ${
+                      isPink ? "hsl(330,100%,72%)" : "hsl(200,100%,68%)"
+                    }, transparent)`,
+                  } as React.CSSProperties
+                }
               />
             );
           })}
-        </svg>
+          {/* Black hole singularity at galaxy center */}
+          <div className="intro-singularity">
+            <div className="intro-sing-disk" />
+            <div className="intro-sing-core" />
+          </div>
+        </div>
+
+        {/* Tagline 1 */}
+        <div className="intro-tagline intro-tagline-1">
+          <span className="intro-tagline-kicker">In a universe of noise</span>
+          <span className="intro-tagline-line">one signal cuts through.</span>
+        </div>
       </div>
 
-      {/* ============ SCENE 4: HQ Building rises with logo (5-7s) ============ */}
-      <div className="intro-hq-wrap">
-        <div className="intro-hq-glow" />
-        <div className="intro-hq-building">
-          {/* Windows */}
-          <div className="intro-hq-windows">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <span key={i} style={{ animationDelay: `${(i % 8) * 0.08}s` }} />
-            ))}
-          </div>
+      {/* ============ ACT 2: Beam from black hole hits Earth (3.8 - 5.5s) ============ */}
+      <div className="intro-beam" />
+      <div className="intro-earth-impact" />
 
-          {/* Big logo on top */}
-          <div className="intro-hq-logo">
-            <img src={beeLogo} alt="" className="w-full h-full object-contain" />
-          </div>
-          <div className="intro-hq-logo-text">QUANTUM BEE</div>
+      {/* ============ ACT 3: Zoom into Earth → city grid (5 - 7s) ============ */}
+      <div className="intro-act intro-act-3">
+        <div className="intro-grid-floor" />
+        <div className="intro-horizon-glow" />
+      </div>
 
-          {/* Gate at the bottom */}
-          <div className="intro-hq-gate">
-            <div className="intro-hq-gate-light" />
+      {/* ============ ACT 4: HQ Tower rises with logo (6 - 9.5s) ============ */}
+      <div className="intro-act intro-act-4">
+        <div className="intro-tower-wrap">
+          <img src={tower} alt="" className="intro-tower-img" />
+          {/* Logo halo on top of the tower */}
+          <div className="intro-tower-logo">
+            <div className="intro-logo-pulse" />
+            <img src={beeLogo} alt="" className="w-full h-full object-contain relative z-10" />
+          </div>
+          <div className="intro-tower-name">QUANTUM&nbsp;BEE</div>
+          <div className="intro-tower-tagline">
+            Where intelligence meets infinity
           </div>
         </div>
       </div>
 
-      {/* ============ SCENE 5: Push through gate — final white burst (7-8.2s) ============ */}
-      <div className="intro-push-burst" />
+      {/* ============ ACT 5: Push through gate (9 - 10.5s) ============ */}
+      <div className="intro-gate-burst" />
 
       <style>{`
-        @keyframes intro-fade {
-          to { opacity: 0; }
-        }
-        .intro-fade-out {
-          animation: intro-fade 0.8s ease-out forwards;
-        }
+        @keyframes intro-fade { to { opacity: 0; } }
+        .intro-fade-out { animation: intro-fade 0.9s ease-out forwards; }
 
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.2; }
-          50%      { opacity: 1; }
-        }
+        .intro-act { position: absolute; inset: 0; opacity: 0; }
 
-        /* ===== Scene 1: Black hole + energy ===== */
-        .intro-scene-1 {
+        /* ============== ACT 1 ============== */
+        .intro-act-1 {
+          animation: act1-life 4.8s ease-out 0s forwards;
+        }
+        @keyframes act1-life {
+          0%   { opacity: 0; transform: scale(1.08); }
+          10%  { opacity: 1; }
+          75%  { opacity: 1; transform: scale(1.18); }
+          100% { opacity: 0; transform: scale(1.35); }
+        }
+        .intro-cosmos-img {
           position: absolute;
           inset: 0;
-          opacity: 0;
-          animation: scene1-life 3.4s ease-out 0s forwards;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          filter: brightness(0.85) contrast(1.1) saturate(1.2);
+          animation: cosmos-drift 12s ease-in-out infinite alternate;
         }
-        @keyframes scene1-life {
-          0%   { opacity: 0; }
-          15%  { opacity: 1; }
-          80%  { opacity: 1; }
-          100% { opacity: 0; transform: scale(1.4); }
+        @keyframes cosmos-drift {
+          from { transform: scale(1) translateX(0); }
+          to   { transform: scale(1.06) translateX(-2%); }
         }
 
-        .intro-blackhole {
+        .intro-vortex {
           position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 260px;
-          height: 260px;
-          transform: translate(-50%, -50%);
+          left: 32%;
+          top: 62%;
+          width: 1px;
+          height: 1px;
         }
-        .intro-bh-core {
+        .intro-stream {
           position: absolute;
-          inset: 30%;
-          border-radius: 50%;
-          background: radial-gradient(circle, #000 50%, hsl(260,80%,12%) 80%, transparent 100%);
-          box-shadow:
-            inset 0 0 30px #000,
-            0 0 50px hsl(330,90%,45%),
-            0 0 110px hsl(200,90%,55%);
+          top: 0;
+          left: 0;
+          width: 70vmax;
+          height: 2.5px;
+          transform-origin: 0 50%;
+          transform: rotate(var(--angle));
+          opacity: 0;
+          filter: blur(1px);
+          animation: stream-suck 2.6s ease-in var(--delay) infinite;
         }
-        .intro-bh-disk {
+        @keyframes stream-suck {
+          0%   { opacity: 0; transform: rotate(var(--angle)) scaleX(1); }
+          25%  { opacity: 1; }
+          100% { opacity: 0; transform: rotate(var(--angle)) scaleX(0.04); }
+        }
+        .intro-singularity {
+          position: absolute;
+          top: -80px;
+          left: -80px;
+          width: 160px;
+          height: 160px;
+        }
+        .intro-sing-disk {
           position: absolute;
           inset: 0;
           border-radius: 50%;
           background: conic-gradient(from 0deg,
             hsl(330,100%,70%),
             hsl(280,90%,65%),
-            hsl(200,100%,70%),
+            hsl(200,100%,72%),
             hsl(330,100%,70%));
-          -webkit-mask: radial-gradient(circle, transparent 50%, #000 56%, #000 72%, transparent 78%);
-                  mask: radial-gradient(circle, transparent 50%, #000 56%, #000 72%, transparent 78%);
+          -webkit-mask: radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%);
+                  mask: radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%);
           filter: blur(2px);
-          animation: bh-spin 3s linear infinite;
+          animation: sing-spin 3s linear infinite;
         }
-        .intro-bh-disk-2 {
-          transform: scale(1.25) rotate(30deg);
-          animation-duration: 5s;
-          animation-direction: reverse;
-          opacity: 0.6;
-        }
-        .intro-bh-glow {
+        .intro-sing-core {
           position: absolute;
-          inset: -80%;
+          inset: 32%;
           border-radius: 50%;
-          background: radial-gradient(circle, hsl(280,80%,50%/0.25) 0%, transparent 60%);
-          animation: bh-glow-pulse 2.4s ease-in-out infinite;
-        }
-        @keyframes bh-spin { to { transform: rotate(360deg); } }
-        @keyframes bh-glow-pulse {
-          0%, 100% { opacity: 0.6; transform: scale(1); }
-          50%      { opacity: 1;   transform: scale(1.1); }
-        }
-
-        /* Energy streams sucking into the hole */
-        .intro-energy-stream {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 60vmax;
-          height: 3px;
-          transform-origin: 0 50%;
-          transform: translate(0, -50%) rotate(var(--angle));
-          opacity: 0;
-          filter: blur(1px);
-          animation: energy-suck 2.4s ease-in var(--delay) infinite;
-        }
-        @keyframes energy-suck {
-          0%   { opacity: 0; transform: translate(0, -50%) rotate(var(--angle)) scaleX(1); }
-          25%  { opacity: 1; }
-          100% { opacity: 0; transform: translate(0, -50%) rotate(var(--angle)) scaleX(0.05); }
-        }
-
-        /* ===== Beam ===== */
-        .intro-beam-out {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          width: 0;
-          height: 6px;
-          transform-origin: 0 50%;
-          transform: translate(0, -50%);
-          background: linear-gradient(90deg,
-            hsl(330,100%,80%) 0%,
-            hsl(280,100%,75%) 50%,
-            hsl(200,100%,80%) 100%);
+          background: radial-gradient(circle, #000 55%, hsl(260,80%,12%) 85%, transparent);
           box-shadow:
-            0 0 20px hsl(330,100%,70%),
-            0 0 50px hsl(200,100%,65%);
-          opacity: 0;
-          animation: beam-out 1.2s cubic-bezier(0.7,0,0.3,1) 2.6s forwards;
+            inset 0 0 25px #000,
+            0 0 40px hsl(330,90%,50%),
+            0 0 100px hsl(200,90%,55%);
         }
-        @keyframes beam-out {
+        @keyframes sing-spin { to { transform: rotate(360deg); } }
+
+        /* ============== Taglines ============== */
+        .intro-tagline {
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          text-align: center;
+          font-family: 'Space Grotesk', sans-serif;
+          color: white;
+          opacity: 0;
+          z-index: 5;
+          padding: 0 1rem;
+          width: min(92vw, 800px);
+        }
+        .intro-tagline-kicker {
+          display: block;
+          font-size: clamp(11px, 1.4vw, 14px);
+          letter-spacing: 0.5em;
+          text-transform: uppercase;
+          color: hsl(200,100%,80%);
+          margin-bottom: 0.6rem;
+          opacity: 0.85;
+        }
+        .intro-tagline-line {
+          display: block;
+          font-size: clamp(22px, 4.2vw, 48px);
+          font-weight: 300;
+          letter-spacing: -0.01em;
+          line-height: 1.15;
+          background: linear-gradient(90deg, hsl(330,100%,82%), white 50%, hsl(200,100%,82%));
+          -webkit-background-clip: text;
+                  background-clip: text;
+          color: transparent;
+          text-shadow: 0 0 40px hsl(280,80%,60%/0.6);
+        }
+        .intro-tagline-1 {
+          top: 18%;
+          animation: tag-in 3.2s ease-out 0.6s forwards;
+        }
+        @keyframes tag-in {
+          0%   { opacity: 0; transform: translate(-50%, 20px); filter: blur(8px); }
+          25%  { opacity: 1; transform: translate(-50%, 0);    filter: blur(0); }
+          80%  { opacity: 1; }
+          100% { opacity: 0; filter: blur(4px); }
+        }
+
+        /* ============== ACT 2: Beam ============== */
+        .intro-beam {
+          position: absolute;
+          top: 62%;
+          left: 32%;
+          width: 0;
+          height: 5px;
+          transform-origin: 0 50%;
+          background: linear-gradient(90deg,
+            hsl(280,100%,80%),
+            hsl(330,100%,75%),
+            hsl(200,100%,82%));
+          box-shadow:
+            0 0 18px hsl(330,100%,70%),
+            0 0 50px hsl(200,100%,65%),
+            0 0 90px hsl(280,100%,70%);
+          opacity: 0;
+          transform: rotate(-12deg);
+          animation: beam-fire 1.4s cubic-bezier(0.7,0,0.3,1) 3.8s forwards;
+          z-index: 3;
+        }
+        @keyframes beam-fire {
           0%   { width: 0;     opacity: 0; }
           15%  {                opacity: 1; }
-          100% { width: 70vmax; opacity: 0; }
+          85%  { width: 80vmax; opacity: 1; }
+          100% { width: 80vmax; opacity: 0; }
         }
-        .intro-beam-flash {
+        .intro-earth-impact {
           position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at center, hsl(280,100%,85%) 0%, hsl(330,100%,70%) 20%, transparent 60%);
+          top: 35%;
+          right: 8%;
+          width: 30vmax;
+          height: 30vmax;
+          border-radius: 50%;
+          background: radial-gradient(circle, white 0%, hsl(200,100%,75%) 25%, hsl(330,100%,60%) 50%, transparent 75%);
           opacity: 0;
-          animation: beam-flash 0.5s ease-out 3.4s forwards;
+          animation: impact 1s ease-out 4.8s forwards;
+          z-index: 4;
         }
-        @keyframes beam-flash {
+        @keyframes impact {
+          0%   { opacity: 0; transform: scale(0.2); }
+          40%  { opacity: 1; transform: scale(1.1); }
+          100% { opacity: 0; transform: scale(1.8); }
+        }
+
+        /* ============== ACT 3: City grid floor ============== */
+        .intro-act-3 {
+          background: radial-gradient(ellipse at 50% 100%, hsl(220,60%,15%) 0%, hsl(240,60%,4%) 60%, #000 100%);
+          animation: act3-life 2.2s ease-out 5s forwards;
+        }
+        @keyframes act3-life {
           0%   { opacity: 0; }
-          50%  { opacity: 0.9; }
-          100% { opacity: 0; }
+          25%  { opacity: 1; }
+          100% { opacity: 1; }
         }
-
-        /* ===== World map ===== */
-        .intro-world-wrap {
+        .intro-grid-floor {
           position: absolute;
-          top: 50%;
           left: 50%;
-          width: min(90vw, 700px);
-          height: min(90vw, 700px);
-          transform: translate(-50%, -50%) scale(0.4);
-          opacity: 0;
-          animation: world-life 3s cubic-bezier(0.22,1,0.36,1) 3.4s forwards;
+          bottom: 0;
+          width: 300%;
+          height: 60%;
+          transform: translateX(-50%) perspective(600px) rotateX(60deg);
+          transform-origin: 50% 100%;
+          background-image:
+            linear-gradient(hsl(200,100%,60%/0.5) 1px, transparent 1px),
+            linear-gradient(90deg, hsl(200,100%,60%/0.5) 1px, transparent 1px);
+          background-size: 60px 60px;
+          mask-image: linear-gradient(to top, black 30%, transparent 90%);
+          -webkit-mask-image: linear-gradient(to top, black 30%, transparent 90%);
+          animation: grid-rush 3s linear 5s infinite;
         }
-        @keyframes world-life {
-          0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotateY(40deg); }
-          25%  { opacity: 1; transform: translate(-50%, -50%) scale(1)   rotateY(0deg); }
-          80%  { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-          100% { opacity: 0; transform: translate(-50%, -50%) scale(1.6); }
+        @keyframes grid-rush {
+          from { background-position: 0 0; }
+          to   { background-position: 0 60px; }
         }
-        .intro-world {
-          width: 100%;
-          height: 100%;
-          filter: drop-shadow(0 0 30px hsl(200,100%,60%/0.6))
-                  drop-shadow(0 0 60px hsl(330,100%,60%/0.4));
-          animation: world-spin 8s linear infinite;
-        }
-        @keyframes world-spin {
-          to { transform: rotate(360deg); }
+        .intro-horizon-glow {
+          position: absolute;
+          left: 0;
+          right: 0;
+          top: 38%;
+          height: 4px;
+          background: hsl(200,100%,70%);
+          box-shadow: 0 0 30px hsl(200,100%,60%), 0 0 80px hsl(330,100%,55%);
+          opacity: 0.85;
         }
 
-        /* ===== HQ Building ===== */
-        .intro-hq-wrap {
+        /* ============== ACT 4: Tower ============== */
+        .intro-act-4 {
+          animation: act4-life 4s cubic-bezier(0.22,1,0.36,1) 6s forwards;
+        }
+        @keyframes act4-life {
+          0%   { opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { opacity: 1; }
+        }
+        .intro-tower-wrap {
           position: absolute;
           bottom: 0;
           left: 50%;
+          width: min(70vw, 520px);
+          height: 100vh;
           transform: translateX(-50%) translateY(100%);
-          width: min(80vw, 380px);
-          height: min(85vh, 560px);
-          opacity: 0;
-          animation: hq-life 3.5s cubic-bezier(0.22,1,0.36,1) 5s forwards;
+          animation: tower-rise 3.5s cubic-bezier(0.22,1,0.36,1) 6s forwards,
+                     tower-zoom 1.5s cubic-bezier(0.6,0,0.4,1) 9s forwards;
         }
-        @keyframes hq-life {
-          0%   { opacity: 0; transform: translateX(-50%) translateY(100%); }
-          25%  { opacity: 1; transform: translateX(-50%) translateY(0%); }
-          70%  { opacity: 1; transform: translateX(-50%) translateY(0%) scale(1); }
-          100% { opacity: 1; transform: translateX(-50%) translateY(-10%) scale(2.2); }
+        @keyframes tower-rise {
+          0%   { transform: translateX(-50%) translateY(100%); }
+          100% { transform: translateX(-50%) translateY(0%); }
         }
-        .intro-hq-glow {
-          position: absolute;
-          inset: -50% -50% 0 -50%;
-          background: radial-gradient(ellipse at center bottom, hsl(280,100%,55%/0.4) 0%, transparent 60%);
-          pointer-events: none;
+        @keyframes tower-zoom {
+          0%   { transform: translateX(-50%) translateY(0%) scale(1); }
+          100% { transform: translateX(-50%) translateY(-15%) scale(2.4); }
         }
-        .intro-hq-building {
+        .intro-tower-img {
           position: absolute;
           bottom: 0;
           left: 50%;
           transform: translateX(-50%);
-          width: 100%;
           height: 100%;
-          background:
-            linear-gradient(180deg, hsl(240,40%,14%) 0%, hsl(240,50%,6%) 100%);
-          border: 1px solid hsl(200,60%,30%);
-          border-bottom: none;
-          clip-path: polygon(15% 0, 85% 0, 100% 8%, 100% 100%, 0 100%, 0 8%);
-          box-shadow:
-            inset 0 0 60px hsl(240,60%,3%),
-            0 0 60px hsl(330,80%,50%/0.4),
-            0 0 120px hsl(200,90%,55%/0.3);
+          width: auto;
+          max-width: none;
+          object-fit: contain;
+          filter: drop-shadow(0 0 60px hsl(200,100%,55%/0.7))
+                  drop-shadow(0 0 120px hsl(330,80%,50%/0.4));
         }
-        .intro-hq-windows {
+        .intro-tower-logo {
           position: absolute;
-          left: 8%;
-          right: 8%;
-          top: 38%;
-          bottom: 28%;
-          display: grid;
-          grid-template-columns: repeat(6, 1fr);
-          grid-auto-rows: 1fr;
-          gap: 6px;
-        }
-        .intro-hq-windows span {
-          background: hsl(45,90%,60%);
-          opacity: 0.25;
-          border-radius: 1px;
-          box-shadow: 0 0 6px hsl(45,100%,65%);
-          animation: window-flicker 2.4s ease-in-out infinite;
-        }
-        @keyframes window-flicker {
-          0%, 100% { opacity: 0.25; }
-          50%      { opacity: 0.9; }
-        }
-        .intro-hq-logo {
-          position: absolute;
-          top: 6%;
+          top: 4%;
           left: 50%;
-          transform: translateX(-50%) scale(0);
-          width: 38%;
+          width: 22%;
           aspect-ratio: 1;
+          transform: translateX(-50%) scale(0);
           opacity: 0;
-          filter: drop-shadow(0 0 20px hsl(45,100%,55%))
-                  drop-shadow(0 0 50px hsl(330,100%,60%));
-          animation: hq-logo-pop 1s cubic-bezier(0.34,1.56,0.64,1) 5.6s forwards,
-                     hq-logo-pulse 2s ease-in-out 6.6s infinite;
+          animation: logo-pop 1.1s cubic-bezier(0.34,1.56,0.64,1) 7.2s forwards;
         }
-        @keyframes hq-logo-pop {
-          0%   { opacity: 0; transform: translateX(-50%) scale(0) rotate(-90deg); }
-          70%  { opacity: 1; transform: translateX(-50%) scale(1.2) rotate(10deg); }
+        @keyframes logo-pop {
+          0%   { opacity: 0; transform: translateX(-50%) scale(0) rotate(-180deg); }
+          70%  { opacity: 1; transform: translateX(-50%) scale(1.25) rotate(15deg); }
           100% { opacity: 1; transform: translateX(-50%) scale(1) rotate(0deg); }
         }
-        @keyframes hq-logo-pulse {
-          0%, 100% { filter: drop-shadow(0 0 20px hsl(45,100%,55%)) drop-shadow(0 0 50px hsl(330,100%,60%)); }
-          50%      { filter: drop-shadow(0 0 35px hsl(45,100%,75%)) drop-shadow(0 0 70px hsl(200,100%,65%)); }
-        }
-        .intro-hq-logo-text {
+        .intro-logo-pulse {
           position: absolute;
-          top: 30%;
-          left: 0;
-          right: 0;
-          text-align: center;
+          inset: -40%;
+          border-radius: 50%;
+          background: radial-gradient(circle, hsl(45,100%,70%/0.6) 0%, hsl(330,100%,60%/0.3) 40%, transparent 70%);
+          animation: logo-pulse 2s ease-in-out 7.5s infinite;
+        }
+        @keyframes logo-pulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50%      { transform: scale(1.2); opacity: 1; }
+        }
+        .intro-tower-name {
+          position: absolute;
+          top: 24%;
+          left: 50%;
+          transform: translateX(-50%);
           font-family: 'Space Grotesk', sans-serif;
           font-weight: 700;
-          font-size: clamp(14px, 2.6vw, 22px);
-          letter-spacing: 0.3em;
-          background: linear-gradient(90deg, hsl(330,100%,75%), hsl(200,100%,75%));
+          font-size: clamp(16px, 2.4vw, 26px);
+          letter-spacing: 0.4em;
+          background: linear-gradient(90deg, hsl(45,100%,75%), white, hsl(200,100%,80%));
           -webkit-background-clip: text;
                   background-clip: text;
           color: transparent;
           opacity: 0;
-          animation: hq-text-in 0.8s ease-out 6s forwards;
+          white-space: nowrap;
+          text-shadow: 0 0 30px hsl(200,100%,60%/0.6);
+          animation: name-in 0.9s ease-out 7.8s forwards;
         }
-        @keyframes hq-text-in {
-          from { opacity: 0; letter-spacing: 0.6em; }
-          to   { opacity: 1; letter-spacing: 0.3em; }
+        @keyframes name-in {
+          from { opacity: 0; letter-spacing: 0.7em; filter: blur(6px); }
+          to   { opacity: 1; letter-spacing: 0.4em; filter: blur(0); }
         }
-        .intro-hq-gate {
+        .intro-tower-tagline {
           position: absolute;
-          bottom: 0;
+          top: 30%;
           left: 50%;
           transform: translateX(-50%);
-          width: 28%;
-          height: 22%;
-          background: linear-gradient(180deg, hsl(240,40%,8%), #000);
-          border: 2px solid hsl(200,80%,55%);
-          border-bottom: none;
-          border-radius: 50% 50% 0 0 / 30% 30% 0 0;
-          box-shadow:
-            0 0 30px hsl(200,100%,60%),
-            inset 0 -10px 40px hsl(330,100%,60%/0.6);
-          overflow: hidden;
-        }
-        .intro-hq-gate-light {
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(ellipse at 50% 80%, hsl(45,100%,80%) 0%, hsl(330,100%,65%) 30%, transparent 70%);
+          font-family: 'Space Grotesk', sans-serif;
+          font-weight: 300;
+          font-size: clamp(10px, 1.2vw, 13px);
+          letter-spacing: 0.25em;
+          text-transform: uppercase;
+          color: hsl(200,100%,85%);
           opacity: 0;
-          animation: gate-light 1.6s ease-in 6.8s forwards;
+          white-space: nowrap;
+          animation: tag2-in 0.9s ease-out 8.2s forwards;
         }
-        @keyframes gate-light {
-          0%   { opacity: 0; }
-          100% { opacity: 1; }
+        @keyframes tag2-in {
+          from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+          to   { opacity: 0.9; transform: translateX(-50%) translateY(0); }
         }
 
-        /* ===== Final push-through burst ===== */
-        .intro-push-burst {
+        /* ============== ACT 5: Final burst through gate ============== */
+        .intro-gate-burst {
           position: absolute;
           inset: 0;
           background: radial-gradient(circle at 50% 70%,
-            hsl(45,100%,90%) 0%,
-            hsl(330,100%,75%) 25%,
-            hsl(200,100%,70%) 55%,
-            transparent 80%);
+            white 0%,
+            hsl(45,100%,85%) 15%,
+            hsl(330,100%,72%) 35%,
+            hsl(200,100%,68%) 60%,
+            transparent 85%);
           opacity: 0;
-          transform: scale(0.2);
-          animation: push-burst 1.4s cubic-bezier(0.4,0,0.2,1) 7s forwards;
+          transform: scale(0.15);
+          animation: gate-burst 1.6s cubic-bezier(0.4,0,0.2,1) 9s forwards;
         }
-        @keyframes push-burst {
-          0%   { opacity: 0; transform: scale(0.2); }
-          50%  { opacity: 1; transform: scale(1.4); }
-          100% { opacity: 1; transform: scale(3); }
+        @keyframes gate-burst {
+          0%   { opacity: 0; transform: scale(0.15); }
+          50%  { opacity: 1; transform: scale(1.5); }
+          100% { opacity: 1; transform: scale(3.2); }
         }
       `}</style>
     </div>
