@@ -13,6 +13,7 @@ import LeadsGenerator from "./pages/LeadsGenerator.tsx";
 import Jack from "./pages/Jack.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import BeeCursor from "./components/BeeCursor.tsx";
+import IntroAnimation from "./components/IntroAnimation.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BeeCursor />
+      <IntroAnimation />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
