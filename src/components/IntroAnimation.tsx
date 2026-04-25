@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import beeLogo from "@/assets/bee-logo.png";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
-import city from "@/assets/intro-city.png";
+import city from "@/assets/intro-city.jpg";
 import hq from "@/assets/intro-hq.png";
 import rocket from "@/assets/intro-rocket.png";
 
-const STORAGE_KEY = "beee_intro_played_v4";
+const STORAGE_KEY = "beee_intro_played_v5";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
@@ -397,7 +397,7 @@ const IntroAnimation = () => {
           position: absolute; inset: 0;
           width: 100%; height: 100%;
           object-fit: cover;
-          filter: brightness(0.9) contrast(1.1) saturate(1.1);
+          filter: brightness(0.78) contrast(1.18) saturate(1.05);
           animation: city-pan 6s ease-out 7.5s forwards;
         }
         @keyframes city-pan {
