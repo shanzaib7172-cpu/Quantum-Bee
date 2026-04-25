@@ -3,7 +3,7 @@ import beeLogo from "@/assets/bee-logo.png";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 import city from "@/assets/intro-city.jpg";
-import hq from "@/assets/intro-hq.png";
+
 
 
 const STORAGE_KEY = "beee_intro_played_v5";
