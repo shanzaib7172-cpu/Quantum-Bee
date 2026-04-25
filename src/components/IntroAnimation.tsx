@@ -4,7 +4,7 @@ import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 import city from "@/assets/intro-city.jpg";
 import hq from "@/assets/intro-hq.png";
-import rocket from "@/assets/intro-rocket.png";
+
 
 const STORAGE_KEY = "beee_intro_played_v5";
 const TOTAL_MS = 14500;
@@ -151,29 +151,61 @@ const IntroAnimation = () => {
         </div>
       </div>
 
-      {/* ============ ACT 4: Zoom into Quantum City (7.5 - 11.5s) ============ */}
+      {/* ============ ACT 4: Quantum City — cinematic cyberpunk (7.5 - 12.5s) ============ */}
       <div className="intro-act intro-act-city">
         <img src={city} alt="" className="intro-city-img" />
-        <div className="intro-city-vignette" />
 
-        {/* HQ building emerges */}
+        {/* Atmospheric fog layers (parallax) */}
+        <div className="intro-city-fog intro-city-fog-1" />
+        <div className="intro-city-fog intro-city-fog-2" />
+
+        {/* Rain streaks */}
+        <div className="intro-city-rain" />
+
+        {/* Flying cars streaking across skyline */}
+        {Array.from({ length: 6 }).map((_, i) => (
+          <span
+            key={`fc-${i}`}
+            className="intro-flycar"
+            style={{
+              top: `${15 + i * 9}%`,
+              animationDelay: `${8 + i * 0.45}s`,
+              animationDuration: `${2.4 + (i % 3) * 0.6}s`,
+              ["--hue" as any]: i % 2 === 0 ? "200" : "330",
+            } as React.CSSProperties}
+          />
+        ))}
+
+        {/* Neon window flicker overlay */}
+        <div className="intro-city-flicker" />
+
+        {/* HUD scan line sweeping the city */}
+        <div className="intro-city-scan" />
+
+        {/* HUD targeting brackets */}
+        <div className="intro-city-hud">
+          <span className="intro-hud-corner intro-hud-tl" />
+          <span className="intro-hud-corner intro-hud-tr" />
+          <span className="intro-hud-corner intro-hud-bl" />
+          <span className="intro-hud-corner intro-hud-br" />
+          <span className="intro-hud-readout">42.7°N · 74.0°W // QNTM-CITY · NODE 001</span>
+        </div>
+
+        <div className="intro-city-vignette" />
+        <div className="intro-city-chroma" />
+
+        {/* HQ holographic logo lock */}
         <div className="intro-hq-wrap">
-          <img src={hq} alt="" className="intro-hq-img" />
+          <div className="intro-hq-beam" />
           <div className="intro-hq-logo">
             <div className="intro-logo-pulse" />
             <img src={beeLogo} alt="" className="w-full h-full object-contain relative z-10" />
           </div>
         </div>
 
-        {/* Rocket on the side */}
-        <div className="intro-rocket-wrap">
-          <img src={rocket} alt="" className="intro-rocket-img" />
-          <div className="intro-rocket-flame" />
-        </div>
-
         {/* City label */}
         <div className="intro-city-label">
-          <span className="intro-city-kicker">Welcome to</span>
+          <span className="intro-city-kicker">// Welcome to</span>
           <span className="intro-city-name">QUANTUM&nbsp;CITY</span>
           <span className="intro-city-tag">Home of Quantum Bee</span>
         </div>
