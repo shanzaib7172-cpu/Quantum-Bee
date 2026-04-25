@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import beeLogo from "@/assets/bee-logo.png";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
-import city from "@/assets/intro-city.png";
+import city from "@/assets/intro-city.jpg";
 import hq from "@/assets/intro-hq.png";
 import rocket from "@/assets/intro-rocket.png";
 
