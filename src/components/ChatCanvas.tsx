@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown } from "lucide-react";
+import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import AnimatedBee from "./AnimatedBee";
+import VoicePopup from "./VoicePopup";
 import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
 import { generatePlanPdf } from "@/lib/pdfPlan";
 
@@ -28,6 +29,7 @@ const ChatCanvas = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voicesReady, setVoicesReady] = useState(false);
+  const [voicePopupOpen, setVoicePopupOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
@@ -190,6 +192,7 @@ const ChatCanvas = () => {
         if (response) {
           setTimeout(() => speakText(response), 300);
         }
+        return response;
       } catch (e) {
         console.error("Chat error:", e);
         toast({
@@ -421,6 +424,14 @@ const ChatCanvas = () => {
               className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/50"
             />
             <button
+              onClick={() => setVoicePopupOpen(true)}
+              disabled={isLoading}
+              className="p-2 rounded-xl text-bee-blue hover:bg-bee-blue/15 transition-all"
+              title="Open voice chat"
+            >
+              <AudioLines className="w-4 h-4" />
+            </button>
+            <button
               onClick={toggleListening}
               disabled={isLoading}
               className={`p-2 rounded-xl transition-all ${
@@ -445,6 +456,15 @@ const ChatCanvas = () => {
           </p>
         </div>
       </div>
+      <VoicePopup
+        open={voicePopupOpen}
+        onClose={() => setVoicePopupOpen(false)}
+        messages={messages}
+        onSendMessage={handleSend}
+        speakText={speakText}
+        stopSpeaking={stopSpeaking}
+        isSpeaking={isSpeaking}
+      />
     </div>
   );
 };
