@@ -29,6 +29,7 @@ const ChatCanvas = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [voicesReady, setVoicesReady] = useState(false);
+  const [voicePopupOpen, setVoicePopupOpen] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<any>(null);
   const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
