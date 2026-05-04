@@ -424,6 +424,14 @@ const ChatCanvas = () => {
               className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 text-sm placeholder:text-muted-foreground/50"
             />
             <button
+              onClick={() => setVoicePopupOpen(true)}
+              disabled={isLoading}
+              className="p-2 rounded-xl text-bee-blue hover:bg-bee-blue/15 transition-all"
+              title="Open voice chat"
+            >
+              <AudioLines className="w-4 h-4" />
+            </button>
+            <button
               onClick={toggleListening}
               disabled={isLoading}
               className={`p-2 rounded-xl transition-all ${
