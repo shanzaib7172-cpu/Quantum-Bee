@@ -190,6 +190,7 @@ const ChatCanvas = () => {
         if (response) {
           setTimeout(() => speakText(response), 300);
         }
+        return response;
       } catch (e) {
         console.error("Chat error:", e);
         toast({
