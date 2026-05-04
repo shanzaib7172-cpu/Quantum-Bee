@@ -456,6 +456,15 @@ const ChatCanvas = () => {
           </p>
         </div>
       </div>
+      <VoicePopup
+        open={voicePopupOpen}
+        onClose={() => setVoicePopupOpen(false)}
+        messages={messages}
+        onSendMessage={handleSend}
+        speakText={speakText}
+        stopSpeaking={stopSpeaking}
+        isSpeaking={isSpeaking}
+      />
     </div>
   );
 };
