@@ -97,11 +97,16 @@ const About = () => {
             Quantum Bee
           </span>
         </Link>
-        <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
-          <Link to="/">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
+            <Link to="/blogs"><BookOpen className="w-3.5 h-3.5" /> Blogs</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
+            <Link to="/">
+              <ArrowLeft className="w-3.5 h-3.5" /> Home
+            </Link>
+          </Button>
+        </div>
       </header>
 
       {/* Hero */}
