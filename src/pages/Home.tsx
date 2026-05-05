@@ -353,6 +353,45 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Founder spotlight */}
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div className="text-center mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Visionary Leadership</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Meet the Founder</h2>
+        </div>
+        <div className="grid md:grid-cols-[auto_1fr] gap-10 items-center">
+          <div className="relative mx-auto">
+            <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/40 via-[hsl(195,100%,60%)]/30 to-[hsl(280,80%,65%)]/40 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
+            <div
+              className="relative w-60 h-60 md:w-72 md:h-72 rounded-full p-[3px]"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(280,80%,65%), hsl(40,100%,55%))",
+                animation: "orb-rotate 10s linear infinite",
+              }}
+            >
+              <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
+                <img src={founderImg} alt="Shanzaib Asghar — Founder of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-heading font-black text-3xl md:text-4xl text-white">Shanzaib <span className="text-[hsl(40,100%,60%)]">Asghar</span></h3>
+            <div className="font-mono text-xs tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mt-2 mb-5">Founder & Chief Executive Officer</div>
+            <Quote className="w-6 h-6 text-[hsl(40,100%,60%)]/60 mb-2" />
+            <p className="italic text-foreground/80 leading-relaxed border-l-2 border-[hsl(40,100%,55%)]/60 pl-4">
+              "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it."
+            </p>
+            <p className="mt-5 text-foreground/65 leading-relaxed">
+              Shanzaib founded Quantum Bee in 2025 with one conviction: the next great leap won't come from incremental improvement, but from autonomous AI agents powered by quantum-speed computation.
+            </p>
+            <Button asChild variant="ghost" size="sm" className="mt-5 border border-[hsl(40,100%,55%)]/40 hover:bg-[hsl(40,100%,55%)]/10 text-[hsl(45,100%,75%)]">
+              <Link to="/about">Read the full story <ArrowRight className="w-3.5 h-3.5 ml-1.5" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section data-reveal className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
         <h2 className="font-heading font-black text-3xl md:text-5xl leading-tight">
@@ -370,9 +409,20 @@ const Home = () => {
         </div>
       </section>
 
-      <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
-        © {new Date().getFullYear()} Quantum Bee — Beyond the Quantum Singularity.
+      <footer className="relative z-10 px-6 py-12 border-t border-[hsl(200,100%,60%)]/10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase">— Connect with the Swarm</p>
+          <SocialLinks />
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-foreground/60">
+            <Link to="/about" className="hover:text-[hsl(40,100%,70%)] transition-colors">About</Link>
+            <Link to="/blogs" className="hover:text-[hsl(40,100%,70%)] transition-colors">Blogs</Link>
+            <Link to="/bee-ai" className="hover:text-[hsl(40,100%,70%)] transition-colors">Bee AI</Link>
+            <Link to="/login" className="hover:text-[hsl(40,100%,70%)] transition-colors">Login</Link>
+          </div>
+          <div className="text-xs text-foreground/50">© {new Date().getFullYear()} Quantum Bee — Beyond the Quantum Singularity.</div>
+        </div>
       </footer>
+
     </div>
   );
 };
