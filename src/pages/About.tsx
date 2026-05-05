@@ -318,8 +318,18 @@ const About = () => {
         </Button>
       </section>
 
-      <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
-        © {new Date().getFullYear()} Quantum Bee Technologies — Beyond the Quantum Singularity.
+      <footer className="relative z-10 px-6 py-12 border-t border-[hsl(200,100%,60%)]/10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase">— Connect with the Swarm</p>
+          <SocialLinks />
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-foreground/60">
+            <Link to="/" className="hover:text-[hsl(40,100%,70%)] transition-colors">Home</Link>
+            <Link to="/blogs" className="hover:text-[hsl(40,100%,70%)] transition-colors">Blogs</Link>
+            <Link to="/bee-ai" className="hover:text-[hsl(40,100%,70%)] transition-colors">Bee AI</Link>
+            <Link to="/login" className="hover:text-[hsl(40,100%,70%)] transition-colors">Login</Link>
+          </div>
+          <div className="text-xs text-foreground/50">© {new Date().getFullYear()} Quantum Bee Technologies — Beyond the Quantum Singularity.</div>
+        </div>
       </footer>
     </div>
   );
