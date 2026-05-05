@@ -1,24 +1,18 @@
-import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles, BookOpen, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
+import founderImg from "@/assets/founder-shanzaib.png";
+import annaCharacter from "@/assets/anna-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import SpaceBackground from "@/components/SpaceBackground";
+import SocialLinks from "@/components/SocialLinks";
 
 const About = () => {
   useReveal();
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 80 }).map(() => ({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        delay: Math.random() * 4,
-        dur: 2 + Math.random() * 4,
-        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
-      })),
-    []
-  );
   const agents = [
     { num: "01", icon: Target, name: "ANNA", role: "Lead Generation Agent", color: "hsl(40,100%,55%)", desc: "Anna is your autonomous business development force. She sources, qualifies, and nurtures thousands of leads simultaneously — across LinkedIn, email, and social media — populating your CRM in real time, 24/7.", caps: ["Multi-channel lead sourcing & qualification", "Personalised outreach email sequences", "Real-time CRM population & enrichment", "Pipeline forecasting & opportunity scoring", "Competitor analysis & market mapping"] },
     { num: "02", icon: MessageSquare, name: "JACK", role: "WhatsApp Automation & Sales Agent", color: "hsl(200,100%,60%)", desc: "Jack transforms WhatsApp from a messaging app into a full-stack sales engine. He manages conversations, recommends products, books appointments, processes payments, and handles support — all autonomously.", caps: ["WhatsApp Business API automation", "Intelligent sales funnel management", "Product recommendations & upselling", "Appointment booking & order processing", "Broadcast campaigns with segmentation"] },
