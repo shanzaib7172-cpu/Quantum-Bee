@@ -218,23 +218,42 @@ const About = () => {
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-4">Bee AI — Four Agents,<br />Infinite Possibilities</h2>
         <p className="text-foreground/65 max-w-2xl mb-12">Our flagship platform deploys four specialised autonomous AI agents that own and execute entire business functions end-to-end — 24/7, no human bottleneck.</p>
         <div className="grid md:grid-cols-2 gap-5">
-          {agents.map((a) => (
-            <div data-reveal="scale" key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
-              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity" style={{ background: a.color }} />
-              <div className="absolute top-4 right-6 font-heading font-black text-5xl text-white/[0.04]">{a.num}</div>
-              <a.icon className="w-8 h-8 mb-3" style={{ color: a.color }} />
-              <h3 className="font-heading font-bold text-xl text-white">{a.name}</h3>
-              <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 mb-4">{a.role}</div>
-              <p className="text-sm text-foreground/65 leading-relaxed mb-5">{a.desc}</p>
-              <ul className="space-y-1.5">
-                {a.caps.map((c) => (
-                  <li key={c} className="font-mono text-[11px] text-foreground/60 flex items-start gap-2">
-                    <span className="text-[hsl(40,100%,60%)] mt-0.5">◆</span>{c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {agents.map((a) => {
+            const avatarMap: Record<string, string> = {
+              ANNA: annaCharacter,
+              JACK: jackCharacter,
+              DAVID: davidCharacter,
+              SOPHIA: sophiaCharacter,
+            };
+            const avatar = avatarMap[a.name];
+            return (
+              <div data-reveal="scale" key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
+                <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity" style={{ background: a.color }} />
+                <div className="absolute top-4 right-6 font-heading font-black text-5xl text-white/[0.04]">{a.num}</div>
+                <div className="flex items-start gap-4 mb-4 relative z-10">
+                  <div
+                    className="w-20 h-20 rounded-2xl overflow-hidden border-2 shrink-0 transition-transform group-hover:scale-105"
+                    style={{ borderColor: a.color, boxShadow: `0 0 24px -4px ${a.color}` }}
+                  >
+                    <img src={avatar} alt={`${a.name} avatar`} loading="lazy" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <a.icon className="w-7 h-7 mb-1" style={{ color: a.color }} />
+                    <h3 className="font-heading font-bold text-xl text-white">{a.name}</h3>
+                    <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1">{a.role}</div>
+                  </div>
+                </div>
+                <p className="text-sm text-foreground/65 leading-relaxed mb-5">{a.desc}</p>
+                <ul className="space-y-1.5">
+                  {a.caps.map((c) => (
+                    <li key={c} className="font-mono text-[11px] text-foreground/60 flex items-start gap-2">
+                      <span className="text-[hsl(40,100%,60%)] mt-0.5">◆</span>{c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </section>
 
