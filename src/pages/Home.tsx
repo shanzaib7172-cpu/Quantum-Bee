@@ -120,6 +120,17 @@ const Home = () => {
               About
             </Link>
           </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1.5 text-foreground/70 hover:text-foreground border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(200,100%,60%)]/40 hover:bg-[hsl(200,100%,55%)]/10"
+            asChild
+          >
+            <Link to="/blogs">
+              <BookOpen className="w-3.5 h-3.5" />
+              Blogs
+            </Link>
+          </Button>
           <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
             <Link to="/login">
               <LogIn className="w-3.5 h-3.5" />
