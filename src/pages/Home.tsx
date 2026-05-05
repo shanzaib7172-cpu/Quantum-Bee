@@ -1,45 +1,26 @@
-import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, BookOpen, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
+import founderImg from "@/assets/founder-shanzaib.png";
+import annaCharacter from "@/assets/anna-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import SpaceBackground from "@/components/SpaceBackground";
+import SocialLinks from "@/components/SocialLinks";
 
 const Home = () => {
   useReveal();
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 80 }).map(() => ({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        delay: Math.random() * 4,
-        dur: 2 + Math.random() * 4,
-        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
-      })),
-    []
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
+      {/* 3D Space background with parallax stars + asteroids */}
+      <SpaceBackground density={1.2} rocks={18} />
+
       {/* Animated blue wave background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Twinkling stars */}
-        {stars.map((s, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              background: s.color,
-              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
-              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 pointer-events-none z-[1]">
         <div
           className="absolute inset-0"
           style={{
@@ -137,6 +118,17 @@ const Home = () => {
             <Link to="/about">
               <Info className="w-3.5 h-3.5" />
               About
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-xs gap-1.5 text-foreground/70 hover:text-foreground border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(200,100%,60%)]/40 hover:bg-[hsl(200,100%,55%)]/10"
+            asChild
+          >
+            <Link to="/blogs">
+              <BookOpen className="w-3.5 h-3.5" />
+              Blogs
             </Link>
           </Button>
           <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
@@ -263,14 +255,22 @@ const Home = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: Target, name: "ANNA", role: "Lead Generation", color: "hsl(40,100%,55%)" },
-            { icon: MessageSquare, name: "JACK", role: "WhatsApp Sales", color: "hsl(200,100%,60%)" },
-            { icon: Code2, name: "DAVID", role: "Web Developer", color: "hsl(170,100%,55%)" },
-            { icon: Palette, name: "SOPHIA", role: "Creative & UGC", color: "hsl(280,80%,70%)" },
+            { icon: Target, name: "ANNA", role: "Lead Generation", color: "hsl(40,100%,55%)", avatar: annaCharacter },
+            { icon: MessageSquare, name: "JACK", role: "WhatsApp Sales", color: "hsl(200,100%,60%)", avatar: jackCharacter },
+            { icon: Code2, name: "DAVID", role: "Web Developer", color: "hsl(170,100%,55%)", avatar: davidCharacter },
+            { icon: Palette, name: "SOPHIA", role: "Creative & UGC", color: "hsl(280,80%,70%)", avatar: sophiaCharacter },
           ].map((a) => (
             <div data-reveal="scale" key={a.name} className="relative group rounded-2xl p-6 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden">
               <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-40 group-hover:opacity-80 transition-opacity" style={{ background: a.color }} />
-              <a.icon className="w-7 h-7 mb-4 relative z-10" style={{ color: a.color }} />
+              <div className="relative z-10 flex items-start gap-3 mb-4">
+                <div
+                  className="w-16 h-16 rounded-2xl overflow-hidden border-2 shrink-0 transition-transform group-hover:scale-105"
+                  style={{ borderColor: a.color, boxShadow: `0 0 20px -3px ${a.color}` }}
+                >
+                  <img src={a.avatar} alt={`${a.name} avatar`} loading="lazy" className="w-full h-full object-cover" />
+                </div>
+                <a.icon className="w-6 h-6 mt-1" style={{ color: a.color }} />
+              </div>
               <h3 className="font-heading font-bold text-lg text-white relative z-10">{a.name}</h3>
               <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 relative z-10">{a.role}</div>
             </div>
@@ -353,6 +353,45 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Founder spotlight */}
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+        <div className="text-center mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Visionary Leadership</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Meet the Founder</h2>
+        </div>
+        <div className="grid md:grid-cols-[auto_1fr] gap-10 items-center">
+          <div className="relative mx-auto">
+            <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/40 via-[hsl(195,100%,60%)]/30 to-[hsl(280,80%,65%)]/40 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
+            <div
+              className="relative w-60 h-60 md:w-72 md:h-72 rounded-full p-[3px]"
+              style={{
+                background:
+                  "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(280,80%,65%), hsl(40,100%,55%))",
+                animation: "orb-rotate 10s linear infinite",
+              }}
+            >
+              <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
+                <img src={founderImg} alt="Shanzaib Asghar — Founder of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 className="font-heading font-black text-3xl md:text-4xl text-white">Shanzaib <span className="text-[hsl(40,100%,60%)]">Asghar</span></h3>
+            <div className="font-mono text-xs tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mt-2 mb-5">Founder & Chief Executive Officer</div>
+            <Quote className="w-6 h-6 text-[hsl(40,100%,60%)]/60 mb-2" />
+            <p className="italic text-foreground/80 leading-relaxed border-l-2 border-[hsl(40,100%,55%)]/60 pl-4">
+              "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it."
+            </p>
+            <p className="mt-5 text-foreground/65 leading-relaxed">
+              Shanzaib founded Quantum Bee in 2025 with one conviction: the next great leap won't come from incremental improvement, but from autonomous AI agents powered by quantum-speed computation.
+            </p>
+            <Button asChild variant="ghost" size="sm" className="mt-5 border border-[hsl(40,100%,55%)]/40 hover:bg-[hsl(40,100%,55%)]/10 text-[hsl(45,100%,75%)]">
+              <Link to="/about">Read the full story <ArrowRight className="w-3.5 h-3.5 ml-1.5" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section data-reveal className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
         <h2 className="font-heading font-black text-3xl md:text-5xl leading-tight">
@@ -370,9 +409,20 @@ const Home = () => {
         </div>
       </section>
 
-      <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
-        © {new Date().getFullYear()} Quantum Bee — Beyond the Quantum Singularity.
+      <footer className="relative z-10 px-6 py-12 border-t border-[hsl(200,100%,60%)]/10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase">— Connect with the Swarm</p>
+          <SocialLinks />
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-foreground/60">
+            <Link to="/about" className="hover:text-[hsl(40,100%,70%)] transition-colors">About</Link>
+            <Link to="/blogs" className="hover:text-[hsl(40,100%,70%)] transition-colors">Blogs</Link>
+            <Link to="/bee-ai" className="hover:text-[hsl(40,100%,70%)] transition-colors">Bee AI</Link>
+            <Link to="/login" className="hover:text-[hsl(40,100%,70%)] transition-colors">Login</Link>
+          </div>
+          <div className="text-xs text-foreground/50">© {new Date().getFullYear()} Quantum Bee — Beyond the Quantum Singularity.</div>
+        </div>
       </footer>
+
     </div>
   );
 };

@@ -1,24 +1,18 @@
-import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles } from "lucide-react";
+import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
+import founderImg from "@/assets/founder-shanzaib.png";
+import annaCharacter from "@/assets/anna-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import SpaceBackground from "@/components/SpaceBackground";
+import SocialLinks from "@/components/SocialLinks";
 
 const About = () => {
   useReveal();
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 80 }).map(() => ({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        delay: Math.random() * 4,
-        dur: 2 + Math.random() * 4,
-        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
-      })),
-    []
-  );
   const agents = [
     { num: "01", icon: Target, name: "ANNA", role: "Lead Generation Agent", color: "hsl(40,100%,55%)", desc: "Anna is your autonomous business development force. She sources, qualifies, and nurtures thousands of leads simultaneously — across LinkedIn, email, and social media — populating your CRM in real time, 24/7.", caps: ["Multi-channel lead sourcing & qualification", "Personalised outreach email sequences", "Real-time CRM population & enrichment", "Pipeline forecasting & opportunity scoring", "Competitor analysis & market mapping"] },
     { num: "02", icon: MessageSquare, name: "JACK", role: "WhatsApp Automation & Sales Agent", color: "hsl(200,100%,60%)", desc: "Jack transforms WhatsApp from a messaging app into a full-stack sales engine. He manages conversations, recommends products, books appointments, processes payments, and handles support — all autonomously.", caps: ["WhatsApp Business API automation", "Intelligent sales funnel management", "Product recommendations & upselling", "Appointment booking & order processing", "Broadcast campaigns with segmentation"] },
@@ -61,8 +55,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-      {/* Animated background */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* 3D Space background */}
+      <SpaceBackground density={1.3} rocks={20} />
+
+      {/* Subtle gradients & grid overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[1]">
         <div
           className="absolute inset-0"
           style={{
@@ -82,22 +79,6 @@ const About = () => {
             maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
           }}
         />
-        {/* Twinkling stars */}
-        {stars.map((s, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              background: s.color,
-              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
-              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-            }}
-          />
-        ))}
       </div>
 
       {/* Header */}
@@ -116,11 +97,16 @@ const About = () => {
             Quantum Bee
           </span>
         </Link>
-        <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
-          <Link to="/">
-            <ArrowLeft className="w-3.5 h-3.5" /> Back to Home
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
+            <Link to="/blogs"><BookOpen className="w-3.5 h-3.5" /> Blogs</Link>
+          </Button>
+          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
+            <Link to="/">
+              <ArrowLeft className="w-3.5 h-3.5" /> Home
+            </Link>
+          </Button>
+        </div>
       </header>
 
       {/* Hero */}
@@ -181,9 +167,10 @@ const About = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col items-center">
             <div className="relative w-72 h-72">
+              <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/30 via-[hsl(195,100%,60%)]/20 to-[hsl(280,80%,65%)]/30 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
               <div className="absolute inset-0 rounded-full p-[3px]" style={{ background: "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(170,100%,55%), hsl(40,100%,55%))", animation: "orb-rotate 8s linear infinite" }}>
-                <div className="w-full h-full rounded-full bg-[hsl(220,40%,8%)] flex items-center justify-center">
-                  <span className="font-heading font-black text-7xl text-[hsl(40,100%,60%)] drop-shadow-[0_0_30px_hsl(40,100%,55%,0.6)]">SA</span>
+                <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
+                  <img src={founderImg} alt="Shanzaib Asghar — Founder & CEO of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
                 </div>
               </div>
             </div>
@@ -231,23 +218,42 @@ const About = () => {
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)] mb-4">Bee AI — Four Agents,<br />Infinite Possibilities</h2>
         <p className="text-foreground/65 max-w-2xl mb-12">Our flagship platform deploys four specialised autonomous AI agents that own and execute entire business functions end-to-end — 24/7, no human bottleneck.</p>
         <div className="grid md:grid-cols-2 gap-5">
-          {agents.map((a) => (
-            <div data-reveal="scale" key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
-              <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity" style={{ background: a.color }} />
-              <div className="absolute top-4 right-6 font-heading font-black text-5xl text-white/[0.04]">{a.num}</div>
-              <a.icon className="w-8 h-8 mb-3" style={{ color: a.color }} />
-              <h3 className="font-heading font-bold text-xl text-white">{a.name}</h3>
-              <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 mb-4">{a.role}</div>
-              <p className="text-sm text-foreground/65 leading-relaxed mb-5">{a.desc}</p>
-              <ul className="space-y-1.5">
-                {a.caps.map((c) => (
-                  <li key={c} className="font-mono text-[11px] text-foreground/60 flex items-start gap-2">
-                    <span className="text-[hsl(40,100%,60%)] mt-0.5">◆</span>{c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          {agents.map((a) => {
+            const avatarMap: Record<string, string> = {
+              ANNA: annaCharacter,
+              JACK: jackCharacter,
+              DAVID: davidCharacter,
+              SOPHIA: sophiaCharacter,
+            };
+            const avatar = avatarMap[a.name];
+            return (
+              <div data-reveal="scale" key={a.name} className="relative bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 p-8 transition-all overflow-hidden group">
+                <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-30 group-hover:opacity-60 transition-opacity" style={{ background: a.color }} />
+                <div className="absolute top-4 right-6 font-heading font-black text-5xl text-white/[0.04]">{a.num}</div>
+                <div className="flex items-start gap-4 mb-4 relative z-10">
+                  <div
+                    className="w-20 h-20 rounded-2xl overflow-hidden border-2 shrink-0 transition-transform group-hover:scale-105"
+                    style={{ borderColor: a.color, boxShadow: `0 0 24px -4px ${a.color}` }}
+                  >
+                    <img src={avatar} alt={`${a.name} avatar`} loading="lazy" className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <a.icon className="w-7 h-7 mb-1" style={{ color: a.color }} />
+                    <h3 className="font-heading font-bold text-xl text-white">{a.name}</h3>
+                    <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1">{a.role}</div>
+                  </div>
+                </div>
+                <p className="text-sm text-foreground/65 leading-relaxed mb-5">{a.desc}</p>
+                <ul className="space-y-1.5">
+                  {a.caps.map((c) => (
+                    <li key={c} className="font-mono text-[11px] text-foreground/60 flex items-start gap-2">
+                      <span className="text-[hsl(40,100%,60%)] mt-0.5">◆</span>{c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -312,8 +318,18 @@ const About = () => {
         </Button>
       </section>
 
-      <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
-        © {new Date().getFullYear()} Quantum Bee Technologies — Beyond the Quantum Singularity.
+      <footer className="relative z-10 px-6 py-12 border-t border-[hsl(200,100%,60%)]/10">
+        <div className="max-w-6xl mx-auto flex flex-col items-center gap-6">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase">— Connect with the Swarm</p>
+          <SocialLinks />
+          <div className="flex flex-wrap justify-center gap-6 text-xs text-foreground/60">
+            <Link to="/" className="hover:text-[hsl(40,100%,70%)] transition-colors">Home</Link>
+            <Link to="/blogs" className="hover:text-[hsl(40,100%,70%)] transition-colors">Blogs</Link>
+            <Link to="/bee-ai" className="hover:text-[hsl(40,100%,70%)] transition-colors">Bee AI</Link>
+            <Link to="/login" className="hover:text-[hsl(40,100%,70%)] transition-colors">Login</Link>
+          </div>
+          <div className="text-xs text-foreground/50">© {new Date().getFullYear()} Quantum Bee Technologies — Beyond the Quantum Singularity.</div>
+        </div>
       </footer>
     </div>
   );

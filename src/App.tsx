@@ -11,6 +11,7 @@ import Signup from "./pages/Signup.tsx";
 import ProductShoot from "./pages/ProductShoot.tsx";
 import LeadsGenerator from "./pages/LeadsGenerator.tsx";
 import Jack from "./pages/Jack.tsx";
+import Blogs from "./pages/Blogs.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import BeeCursor from "./components/BeeCursor.tsx";
 import IntroAnimation from "./components/IntroAnimation.tsx";
@@ -34,6 +35,7 @@ const App = () => (
           <Route path="/product-shoot" element={<ProductShoot />} />
           <Route path="/leads-generator" element={<LeadsGenerator />} />
           <Route path="/jack" element={<Jack />} />
+          <Route path="/blogs" element={<Blogs />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
