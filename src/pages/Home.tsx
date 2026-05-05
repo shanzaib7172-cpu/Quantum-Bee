@@ -13,39 +13,14 @@ import SocialLinks from "@/components/SocialLinks";
 
 const Home = () => {
   useReveal();
-  const stars = useMemo(
-    () =>
-      Array.from({ length: 80 }).map(() => ({
-        top: Math.random() * 100,
-        left: Math.random() * 100,
-        size: Math.random() * 2 + 0.5,
-        delay: Math.random() * 4,
-        dur: 2 + Math.random() * 4,
-        color: Math.random() > 0.6 ? "hsl(40,100%,70%)" : "hsl(200,100%,80%)",
-      })),
-    []
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
+      {/* 3D Space background with parallax stars + asteroids */}
+      <SpaceBackground density={1.2} rocks={18} />
+
       {/* Animated blue wave background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Twinkling stars */}
-        {stars.map((s, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              background: s.color,
-              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
-              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-            }}
-          />
-        ))}
+      <div className="absolute inset-0 pointer-events-none z-[1]">
         <div
           className="absolute inset-0"
           style={{
