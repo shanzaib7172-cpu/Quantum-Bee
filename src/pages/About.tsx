@@ -55,8 +55,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-      {/* Animated background */}
-      <div className="fixed inset-0 pointer-events-none">
+      {/* 3D Space background */}
+      <SpaceBackground density={1.3} rocks={20} />
+
+      {/* Subtle gradients & grid overlay */}
+      <div className="fixed inset-0 pointer-events-none z-[1]">
         <div
           className="absolute inset-0"
           style={{
@@ -76,22 +79,6 @@ const About = () => {
             maskImage: "radial-gradient(ellipse at center, black 30%, transparent 75%)",
           }}
         />
-        {/* Twinkling stars */}
-        {stars.map((s, i) => (
-          <span
-            key={i}
-            className="absolute rounded-full"
-            style={{
-              top: `${s.top}%`,
-              left: `${s.left}%`,
-              width: `${s.size}px`,
-              height: `${s.size}px`,
-              background: s.color,
-              boxShadow: `0 0 ${s.size * 3}px ${s.color}`,
-              animation: `twinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
-            }}
-          />
-        ))}
       </div>
 
       {/* Header */}
