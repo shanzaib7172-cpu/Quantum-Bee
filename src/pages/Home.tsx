@@ -255,14 +255,22 @@ const Home = () => {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: Target, name: "ANNA", role: "Lead Generation", color: "hsl(40,100%,55%)" },
-            { icon: MessageSquare, name: "JACK", role: "WhatsApp Sales", color: "hsl(200,100%,60%)" },
-            { icon: Code2, name: "DAVID", role: "Web Developer", color: "hsl(170,100%,55%)" },
-            { icon: Palette, name: "SOPHIA", role: "Creative & UGC", color: "hsl(280,80%,70%)" },
+            { icon: Target, name: "ANNA", role: "Lead Generation", color: "hsl(40,100%,55%)", avatar: annaCharacter },
+            { icon: MessageSquare, name: "JACK", role: "WhatsApp Sales", color: "hsl(200,100%,60%)", avatar: jackCharacter },
+            { icon: Code2, name: "DAVID", role: "Web Developer", color: "hsl(170,100%,55%)", avatar: davidCharacter },
+            { icon: Palette, name: "SOPHIA", role: "Creative & UGC", color: "hsl(280,80%,70%)", avatar: sophiaCharacter },
           ].map((a) => (
             <div data-reveal="scale" key={a.name} className="relative group rounded-2xl p-6 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden">
               <div className="absolute -top-10 -right-10 w-28 h-28 rounded-full blur-2xl opacity-40 group-hover:opacity-80 transition-opacity" style={{ background: a.color }} />
-              <a.icon className="w-7 h-7 mb-4 relative z-10" style={{ color: a.color }} />
+              <div className="relative z-10 flex items-start gap-3 mb-4">
+                <div
+                  className="w-16 h-16 rounded-2xl overflow-hidden border-2 shrink-0 transition-transform group-hover:scale-105"
+                  style={{ borderColor: a.color, boxShadow: `0 0 20px -3px ${a.color}` }}
+                >
+                  <img src={a.avatar} alt={`${a.name} avatar`} loading="lazy" className="w-full h-full object-cover" />
+                </div>
+                <a.icon className="w-6 h-6 mt-1" style={{ color: a.color }} />
+              </div>
               <h3 className="font-heading font-bold text-lg text-white relative z-10">{a.name}</h3>
               <div className="font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 relative z-10">{a.role}</div>
             </div>
