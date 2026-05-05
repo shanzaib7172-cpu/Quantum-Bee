@@ -1,9 +1,15 @@
-import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap } from "lucide-react";
+import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, BookOpen, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
+import founderImg from "@/assets/founder-shanzaib.png";
+import annaCharacter from "@/assets/anna-character.png";
+import jackCharacter from "@/assets/jack-character.png";
+import davidCharacter from "@/assets/david-character.png";
+import sophiaCharacter from "@/assets/sophia-character.png";
+import SpaceBackground from "@/components/SpaceBackground";
+import SocialLinks from "@/components/SocialLinks";
 
 const Home = () => {
   useReveal();
