@@ -23,6 +23,8 @@ import annaCharacter from "@/assets/anna-character.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import jackCharacter from "@/assets/jack-character.png";
 import davidCharacter from "@/assets/david-character.png";
+import markCharacter from "@/assets/mark-character.png";
+import peterCharacter from "@/assets/peter-character.png";
 
 type AgentCard = {
   name: string;
