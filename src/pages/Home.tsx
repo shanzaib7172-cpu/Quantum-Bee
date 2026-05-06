@@ -184,7 +184,7 @@ const Home = () => {
       </section>
 
       {/* Agents preview */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+      <section id="agents" className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
         <div data-reveal className="text-center mb-12">
           <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Bee AI Platform</p>
           <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Four Agents, One Swarm</h2>
