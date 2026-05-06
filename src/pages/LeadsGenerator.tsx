@@ -85,7 +85,7 @@ const LeadsGenerator = () => {
       count: parseInt(count) || 10,
       notes,
       timestamp: new Date().toISOString(),
-      source: "Beee AI - Anna Leads Generator",
+      source: "Bee AI - Anna Leads Generator",
     };
 
     try {
