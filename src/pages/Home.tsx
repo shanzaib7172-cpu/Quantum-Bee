@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { ArrowRight, Atom, Sparkles, Cpu, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, HeartPulse, Orbit, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
@@ -12,6 +13,13 @@ import TopBar from "@/components/TopBar";
 
 const Home = () => {
   useReveal();
+  const location = useLocation();
+  useEffect(() => {
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) setTimeout(() => el.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
@@ -184,7 +192,7 @@ const Home = () => {
       </section>
 
       {/* Agents preview */}
-      <section className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
+      <section id="agents" className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
         <div data-reveal className="text-center mb-12">
           <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Bee AI Platform</p>
           <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Four Agents, One Swarm</h2>

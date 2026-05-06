@@ -13,7 +13,7 @@ const SpaceBee = () => {
       <SpaceBackground density={1.4} rocks={6} blackhole={false} planets />
       <TopBar />
       <div className="relative z-30 px-5 pt-3">
-        <Link to="/" aria-label="Back to home" className="glass-icon glass-icon-sm w-9 h-9 inline-flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
+        <Link to="/#agents" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 inline-flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
           <ArrowLeft className="w-4 h-4" />
         </Link>
       </div>

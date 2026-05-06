@@ -71,7 +71,7 @@ const Jack = () => {
       <SpaceBackground density={0.9} rocks={0} blackhole={false} planets />
       <TopBar />
       <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-[hsl(220,60%,3%)]/60">
-        <Link to="/" aria-label="Back to home" className="glass-icon glass-icon-sm w-9 h-9 flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
+        <Link to="/#agents" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
           <ArrowLeft className="w-4 h-4" />
         </Link>
         <img src={beeLogo} alt="Beee AI" className="w-6 h-6 object-contain" />
