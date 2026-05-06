@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 
-const STORAGE_KEY = "beee_intro_played_v8";
+const STORAGE_KEY = "beee_intro_played_v9";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
@@ -187,22 +187,25 @@ const IntroAnimation = () => {
           <div className="intro-city-ground">
             <div className="intro-city-grid" />
           </div>
-          {/* skyline far layer */}
+          {/* skyline far layer — hyper glass towers */}
           <div className="intro-city-skyline intro-city-skyline-far">
             {buildings
               .filter((b) => b.depth > 0.55)
               .map((b) => (
                 <div
                   key={`bf-${b.id}`}
-                  className="intro-bldg"
+                  className="intro-bldg intro-bldg-glass"
                   style={{
                     left: `${b.left}%`,
                     width: `${b.width}vw`,
                     height: `${b.height}vh`,
-                    background: `linear-gradient(180deg, hsl(${b.tone},40%,18%) 0%, hsl(${b.tone},50%,8%) 100%)`,
-                    boxShadow: `0 0 22px ${b.accent}55, inset 0 0 20px hsl(${b.tone},80%,4%)`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},90%,70%/0.18) 0%, hsl(${b.tone},80%,55%/0.10) 40%, hsl(${b.tone},70%,30%/0.18) 100%)`,
+                    boxShadow: `0 0 30px ${b.accent}66, inset 0 0 24px hsl(${b.tone},100%,80%/0.18), inset 0 0 1px hsl(${b.tone},100%,90%/0.6)`,
                     transform: `translateZ(${b.z}px)`,
                     animationDelay: `${b.delay}s`,
+                    backdropFilter: "blur(2px)",
+                    WebkitBackdropFilter: "blur(2px)",
+                    border: `1px solid hsl(${b.tone},100%,85%/0.25)`,
                   }}
                 >
                   <div
@@ -211,26 +214,30 @@ const IntroAnimation = () => {
                       backgroundImage: `repeating-linear-gradient(0deg, transparent 0 6px, ${b.accent}aa 6px 8px), repeating-linear-gradient(90deg, transparent 0 6px, ${b.accent}55 6px 7px)`,
                     }}
                   />
+                  <div className="intro-bldg-shine" />
                   <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 10px ${b.accent}` }} />
                 </div>
               ))}
           </div>
-          {/* skyline near layer */}
+          {/* skyline near layer — hyper glass towers */}
           <div className="intro-city-skyline intro-city-skyline-near">
             {buildings
               .filter((b) => b.depth <= 0.55)
               .map((b) => (
                 <div
                   key={`bn-${b.id}`}
-                  className="intro-bldg"
+                  className="intro-bldg intro-bldg-glass"
                   style={{
                     left: `${b.left}%`,
                     width: `${b.width * 1.15}vw`,
                     height: `${b.height * 1.25}vh`,
-                    background: `linear-gradient(180deg, hsl(${b.tone},45%,22%) 0%, hsl(${b.tone},55%,6%) 100%)`,
-                    boxShadow: `0 0 28px ${b.accent}77, inset 0 0 24px hsl(${b.tone},80%,3%)`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},95%,75%/0.22) 0%, hsl(${b.tone},85%,55%/0.12) 45%, hsl(${b.tone},70%,25%/0.22) 100%)`,
+                    boxShadow: `0 0 38px ${b.accent}99, inset 0 0 28px hsl(${b.tone},100%,80%/0.22), inset 0 0 1px hsl(${b.tone},100%,95%/0.7)`,
                     transform: `translateZ(${b.z * 0.4}px)`,
                     animationDelay: `${b.delay}s`,
+                    backdropFilter: "blur(3px)",
+                    WebkitBackdropFilter: "blur(3px)",
+                    border: `1px solid hsl(${b.tone},100%,90%/0.32)`,
                   }}
                 >
                   <div
@@ -239,6 +246,18 @@ const IntroAnimation = () => {
                       backgroundImage: `repeating-linear-gradient(0deg, transparent 0 8px, ${b.accent}cc 8px 10px), repeating-linear-gradient(90deg, transparent 0 8px, ${b.accent}77 8px 9px)`,
                     }}
                   />
+                  <div className="intro-bldg-shine" />
+                  {/* corporate logo plate */}
+                  <div
+                    className="intro-bldg-logo"
+                    style={{
+                      color: b.accent,
+                      borderColor: `${b.accent}aa`,
+                      textShadow: `0 0 8px ${b.accent}`,
+                    }}
+                  >
+                    {["QB", "NEXA", "AXION", "OMNI", "VEX", "HELIOS", "KOR"][b.id % 7]}
+                  </div>
                   <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 14px ${b.accent}, 0 0 28px ${b.accent}` }} />
                   {/* antenna */}
                   {b.windowSeed > 0.6 && (
@@ -319,6 +338,34 @@ const IntroAnimation = () => {
           <div className="intro-robot-body" />
           <div className="intro-robot-scan" />
         </div>
+
+        {/* Side patrol robots — multiple smaller mech silhouettes */}
+        {[
+          { left: "8%",  bottom: "14%", scale: 0.42, hue: 200, delay: 9.2 },
+          { left: "18%", bottom: "12%", scale: 0.34, hue: 330, delay: 9.5 },
+          { left: "78%", bottom: "13%", scale: 0.4,  hue: 200, delay: 9.4 },
+          { left: "88%", bottom: "15%", scale: 0.32, hue: 45,  delay: 9.7 },
+        ].map((r, i) => (
+          <div
+            key={`mech-${i}`}
+            className="intro-mech"
+            style={{
+              left: r.left,
+              bottom: r.bottom,
+              transform: `scale(${r.scale})`,
+              ["--hue" as any]: r.hue,
+              animationDelay: `${r.delay}s, ${r.delay + 1.2}s`,
+            } as React.CSSProperties}
+          >
+            <div className="intro-mech-head" />
+            <div className="intro-mech-eye" />
+            <div className="intro-mech-body" />
+            <div className="intro-mech-arm intro-mech-arm-l" />
+            <div className="intro-mech-arm intro-mech-arm-r" />
+            <div className="intro-mech-leg intro-mech-leg-l" />
+            <div className="intro-mech-leg intro-mech-leg-r" />
+          </div>
+        ))}
 
         {/* Floating data/code stream hologram */}
         <div className="intro-datastream">
@@ -1180,6 +1227,126 @@ const IntroAnimation = () => {
           15%  { opacity: 0.85; }
           85%  { opacity: 0.85; }
           100% { transform: translateY(120vh); opacity: 0; }
+        }
+
+        /* ============== HYPER-GLASS BUILDING SHINE / LOGO ============== */
+        .intro-bldg-glass { overflow: hidden; border-radius: 4px 4px 0 0; }
+        .intro-bldg-shine {
+          position: absolute; inset: 0;
+          background: linear-gradient(115deg,
+            transparent 35%,
+            hsl(200,100%,95%/0.55) 48%,
+            hsl(330,100%,90%/0.4) 52%,
+            transparent 65%);
+          mix-blend-mode: screen;
+          transform: translateX(-120%);
+          animation: bldg-shine 6s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes bldg-shine {
+          0%, 60%  { transform: translateX(-120%); }
+          80%      { transform: translateX(120%); }
+          100%     { transform: translateX(120%); }
+        }
+        .intro-bldg-logo {
+          position: absolute; left: 50%; bottom: 18%;
+          transform: translateX(-50%);
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 9px;
+          letter-spacing: 0.18em;
+          padding: 2px 6px;
+          border: 1px solid;
+          border-radius: 2px;
+          background: hsl(220,40%,5%/0.5);
+          backdrop-filter: blur(2px);
+          opacity: 0.9;
+          white-space: nowrap;
+        }
+
+        /* ============== PATROL MECH ROBOTS ============== */
+        .intro-mech {
+          position: absolute;
+          width: 120px; height: 220px;
+          transform-origin: 50% 100%;
+          opacity: 0;
+          z-index: 4;
+          mix-blend-mode: screen;
+          pointer-events: none;
+          animation: mech-in 0.8s ease-out forwards;
+        }
+        @keyframes mech-in {
+          from { opacity: 0; }
+          to   { opacity: 0.92; }
+        }
+        .intro-mech-head {
+          position: absolute; left: 50%; top: 0;
+          width: 46px; height: 38px;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg,
+            hsl(var(--hue),100%,75%/0.55), hsl(var(--hue),80%,40%/0.3));
+          border: 1.5px solid hsl(var(--hue),100%,75%/0.8);
+          border-radius: 30% 30% 18% 18%;
+          box-shadow: 0 0 18px hsl(var(--hue),100%,60%/0.7),
+                      inset 0 0 12px hsl(var(--hue),100%,80%/0.4);
+        }
+        .intro-mech-eye {
+          position: absolute; left: 50%; top: 18px;
+          width: 18px; height: 5px;
+          transform: translateX(-50%);
+          background: linear-gradient(90deg, transparent, hsl(45,100%,70%), transparent);
+          box-shadow: 0 0 10px hsl(45,100%,60%), 0 0 18px hsl(330,100%,55%);
+          animation: mech-eye 2.6s ease-in-out infinite;
+        }
+        @keyframes mech-eye {
+          0%,90%,100% { opacity: 1; }
+          93%,97%     { opacity: 0.2; }
+        }
+        .intro-mech-body {
+          position: absolute; left: 50%; top: 40px;
+          width: 70px; height: 90px;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,55%/0.4), hsl(280,80%,40%/0.25));
+          border: 1.5px solid hsl(var(--hue),100%,75%/0.7);
+          border-radius: 14px 14px 18px 18px;
+          box-shadow: 0 0 22px hsl(var(--hue),100%,60%/0.6),
+                      inset 0 0 18px hsl(var(--hue),100%,75%/0.4);
+          background-image:
+            repeating-linear-gradient(0deg, transparent 0 9px, hsl(var(--hue),100%,75%/0.18) 9px 10px);
+        }
+        .intro-mech-arm {
+          position: absolute; top: 46px;
+          width: 12px; height: 70px;
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,60%/0.5), hsl(var(--hue),80%,30%/0.3));
+          border: 1px solid hsl(var(--hue),100%,75%/0.6);
+          border-radius: 6px;
+          box-shadow: 0 0 10px hsl(var(--hue),100%,55%/0.6);
+          transform-origin: 50% 0;
+          animation: mech-arm 1.6s ease-in-out infinite;
+        }
+        .intro-mech-arm-l { left: 12px; }
+        .intro-mech-arm-r { right: 12px; animation-direction: reverse; }
+        @keyframes mech-arm {
+          0%,100% { transform: rotate(-8deg); }
+          50%     { transform: rotate(10deg); }
+        }
+        .intro-mech-leg {
+          position: absolute; top: 132px;
+          width: 16px; height: 78px;
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,55%/0.5), hsl(var(--hue),80%,25%/0.35));
+          border: 1px solid hsl(var(--hue),100%,75%/0.6);
+          border-radius: 6px;
+          box-shadow: 0 0 10px hsl(var(--hue),100%,55%/0.6);
+          transform-origin: 50% 0;
+          animation: mech-leg 1.6s ease-in-out infinite;
+        }
+        .intro-mech-leg-l { left: 32px; }
+        .intro-mech-leg-r { right: 32px; animation-direction: reverse; }
+        @keyframes mech-leg {
+          0%,100% { transform: rotate(6deg); }
+          50%     { transform: rotate(-6deg); }
         }
       `}</style>
     </div>

@@ -104,6 +104,15 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
           0%   { transform: translate(-50%,-50%) scale(1); }
           100% { transform: translate(-50%,-50%) scale(1.06); }
         }
+        @keyframes qb-bh-spin { to { transform: rotate(360deg); } }
+        @keyframes qb-bh-lens {
+          0%,100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+          50%     { transform: scale(1.08) rotate(8deg); opacity: 1; }
+        }
+        @keyframes qb-bh-jet {
+          0%,100% { transform: translate(-50%,-50%) scaleY(1); opacity: 0.6; }
+          50%     { transform: translate(-50%,-50%) scaleY(1.12); opacity: 0.9; }
+        }
       `}</style>
 
       {/* Slow rotating galactic core */}
@@ -117,6 +126,83 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
           opacity: 0.7,
         }}
       />
+
+      {/* ============ CENTRAL BLACKHOLE ============ */}
+      <div
+        className="absolute top-1/2 left-1/2"
+        style={{
+          width: "min(46vmin, 520px)",
+          height: "min(46vmin, 520px)",
+          transform: "translate(-50%,-50%)",
+          zIndex: 1,
+        }}
+      >
+        {/* Gravitational lens halo */}
+        <div
+          className="absolute inset-[-40%] rounded-full"
+          style={{
+            background:
+              "radial-gradient(circle, transparent 36%, hsl(220 80% 8% / 0.55) 44%, transparent 60%)",
+            filter: "blur(8px)",
+            animation: "qb-bh-lens 9s ease-in-out infinite",
+          }}
+        />
+        {/* Outer accretion disk */}
+        <div
+          className="absolute inset-0 rounded-full"
+          style={{
+            background:
+              "conic-gradient(from 0deg, hsl(330 100% 70%), hsl(280 90% 65%), hsl(200 100% 72%), hsl(45 100% 70%), hsl(330 100% 70%))",
+            WebkitMask:
+              "radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%)",
+            mask: "radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%)",
+            filter: "blur(3px)",
+            animation: "qb-bh-spin 14s linear infinite",
+          }}
+        />
+        {/* Inner tilted disk */}
+        <div
+          className="absolute inset-[8%] rounded-full"
+          style={{
+            background:
+              "conic-gradient(from 90deg, hsl(45 100% 75%), hsl(330 100% 65%), hsl(200 100% 70%), hsl(45 100% 75%))",
+            WebkitMask:
+              "radial-gradient(circle, transparent 40%, #000 48%, #000 68%, transparent 78%)",
+            mask: "radial-gradient(circle, transparent 40%, #000 48%, #000 68%, transparent 78%)",
+            filter: "blur(2px)",
+            opacity: 0.75,
+            transform: "rotateX(72deg)",
+            animation: "qb-bh-spin 9s linear reverse infinite",
+          }}
+        />
+        {/* Event horizon (pure black core) */}
+        <div
+          className="absolute rounded-full"
+          style={{
+            inset: "30%",
+            background:
+              "radial-gradient(circle, #000 55%, hsl(260 80% 10%) 82%, transparent)",
+            boxShadow:
+              "inset 0 0 28px #000, 0 0 50px hsl(330 90% 50% / 0.55), 0 0 110px hsl(200 90% 55% / 0.55)",
+          }}
+        />
+        {/* Polar relativistic jets */}
+        <div
+          className="absolute left-1/2 top-1/2"
+          style={{
+            width: 4,
+            height: "min(60vmin, 520px)",
+            transform: "translate(-50%,-50%)",
+            background:
+              "linear-gradient(to bottom, transparent, hsl(200 100% 85%) 30%, hsl(280 100% 70% / 0.6) 60%, transparent)",
+            filter: "blur(2px)",
+            boxShadow:
+              "0 0 18px hsl(200 100% 70%), 0 0 40px hsl(280 100% 60%)",
+            opacity: 0.7,
+            animation: "qb-bh-jet 1.6s ease-in-out infinite",
+          }}
+        />
+      </div>
 
       {nebula && (
         <>
