@@ -127,7 +127,7 @@ const AuthScene = ({ title, subtitle, children, footer }: Props) => {
                 filter: "blur(8px)",
               }}
             />
-            <img src={beeLogo} alt="Beee AI" className="relative w-full h-full object-contain drop-shadow-[0_0_20px_hsl(45_100%_60%/0.7)]" />
+            <img src={beeLogo} alt="Bee AI" className="relative w-full h-full object-contain drop-shadow-[0_0_20px_hsl(45_100%_60%/0.7)]" />
           </div>
           <h1 className="text-3xl font-heading font-semibold text-white text-center tracking-tight">
             {title}
