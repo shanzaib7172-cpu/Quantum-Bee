@@ -57,7 +57,7 @@ const TopBar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 backdrop-blur-xl bg-[hsl(220,60%,3%)]/70 border-b border-[hsl(200,100%,60%)]/15">
+    <header className="sticky top-0 z-40 liquid-bar">
       <div className="flex items-center justify-between px-4 sm:px-6 py-3">
         <Link to="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
           <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center">
