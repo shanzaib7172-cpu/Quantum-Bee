@@ -81,26 +81,29 @@ const CategoryBar = ({ label, value }: { label: string; value: number }) => {
 export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose: () => void }) => {
   const { analysis, meta, url } = data;
 
+  const agentRecs = analysis.agent_recommendations ?? [];
+  const roadmap = analysis.roadmap ?? [];
+
   return (
-    <div className="glass rounded-xl p-4 space-y-4 mt-3 animate-in fade-in slide-in-from-top-2 duration-300">
+    <div className="glass rounded-xl p-3 sm:p-4 space-y-4 mt-3 animate-in fade-in slide-in-from-top-2 duration-300 w-full max-w-full overflow-hidden">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Analyzed</p>
           <p className="text-xs font-medium text-foreground truncate">{url}</p>
         </div>
         <button
           onClick={onClose}
-          className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground"
+          className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground shrink-0"
         >
           <X className="w-3.5 h-3.5" />
         </button>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4">
         <ScoreMeter score={analysis.score} />
-        <div className="flex-1 min-w-0">
-          <p className="text-xs text-foreground/80 leading-relaxed line-clamp-4">{analysis.summary}</p>
-          <div className="flex gap-2 mt-2 text-[10px] text-muted-foreground">
+        <div className="flex-1 min-w-0 w-full">
+          <p className="text-xs text-foreground/80 leading-relaxed">{analysis.summary}</p>
+          <div className="flex flex-wrap gap-x-2 gap-y-1 mt-2 text-[10px] text-muted-foreground">
             <span>{meta.loadMs}ms</span>
             <span>•</span>
             <span>{meta.sizeKb}KB</span>
@@ -110,7 +113,7 @@ export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose:
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
         {Object.entries(analysis.categories).map(([k, v]) => (
           <CategoryBar key={k} label={k} value={v} />
         ))}
@@ -177,6 +180,56 @@ export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose:
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {agentRecs.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5">
+            <Bot className="w-3.5 h-3.5 text-bee-blue" />
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Best-Fit Agents</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {agentRecs.slice(0, 6).map((a, i) => (
+              <div key={i} className="rounded-lg bg-bee-blue/5 border border-bee-blue/20 p-2.5 space-y-1">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-bee-blue">{a.agent}</span>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-bee-blue/15 text-bee-blue border border-bee-blue/30">
+                    {Math.round(a.fit)}%
+                  </span>
+                </div>
+                <p className="text-[11px] text-foreground/75 leading-snug">{a.reason}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {roadmap.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center gap-1.5">
+            <Route className="w-3.5 h-3.5 text-bee" />
+            <span className="text-[11px] uppercase tracking-wider text-muted-foreground">Growth Roadmap</span>
+          </div>
+          <ol className="space-y-2">
+            {roadmap.map((r) => (
+              <li
+                key={r.step}
+                className="relative pl-7 rounded-lg bg-secondary/30 p-2.5"
+              >
+                <span className="absolute left-2 top-2.5 w-4 h-4 rounded-full bg-bee/20 border border-bee/40 flex items-center justify-center text-[9px] font-bold text-bee">
+                  {r.step}
+                </span>
+                <div className="flex flex-wrap items-center gap-1.5 mb-0.5">
+                  <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-bee-blue/15 text-bee-blue border border-bee-blue/30">
+                    {r.agent}
+                  </span>
+                  <p className="text-xs font-medium text-foreground leading-tight">{r.action}</p>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-snug">→ {r.outcome}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       )}
     </div>
