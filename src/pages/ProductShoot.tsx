@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import TopBar from "@/components/TopBar";
+import SpaceBackground from "@/components/SpaceBackground";
 
 const PRODUCT_SHOOT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/product-shoot`;
 
