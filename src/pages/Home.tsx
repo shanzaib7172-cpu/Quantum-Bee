@@ -382,7 +382,7 @@ const Home = () => {
                   In R&D
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
