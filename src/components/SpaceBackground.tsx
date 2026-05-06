@@ -104,6 +104,15 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
           0%   { transform: translate(-50%,-50%) scale(1); }
           100% { transform: translate(-50%,-50%) scale(1.06); }
         }
+        @keyframes qb-bh-spin { to { transform: rotate(360deg); } }
+        @keyframes qb-bh-lens {
+          0%,100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+          50%     { transform: scale(1.08) rotate(8deg); opacity: 1; }
+        }
+        @keyframes qb-bh-jet {
+          0%,100% { transform: translate(-50%,-50%) scaleY(1); opacity: 0.6; }
+          50%     { transform: translate(-50%,-50%) scaleY(1.12); opacity: 0.9; }
+        }
       `}</style>
 
       {/* Slow rotating galactic core */}
