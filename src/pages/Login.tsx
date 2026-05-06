@@ -41,6 +41,11 @@ const Login = () => {
         </>
       }
     >
+      <div className="space-y-4">
+        <GoogleSignInButton />
+        <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-white/40">
+          <span className="flex-1 h-px bg-white/10" /> or <span className="flex-1 h-px bg-white/10" />
+        </div>
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email</Label>
