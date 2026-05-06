@@ -14,8 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      channels: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name: string
+          position?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          position?: number
+        }
+        Relationships: []
+      }
       community_messages: {
         Row: {
+          channel_id: string
           content: string
           created_at: string
           id: string
@@ -23,6 +51,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          channel_id: string
           content: string
           created_at?: string
           id?: string
@@ -30,13 +59,22 @@ export type Database = {
           user_id: string
         }
         Update: {
+          channel_id?: string
           content?: string
           created_at?: string
           id?: string
           is_announcement?: boolean
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "community_messages_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "channels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
