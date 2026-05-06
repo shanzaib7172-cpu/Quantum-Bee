@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import beeLogo from "@/assets/bee-logo.png";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
-import city from "@/assets/intro-city.jpg";
 
-
-
-const STORAGE_KEY = "beee_intro_played_v6";
+const STORAGE_KEY = "beee_intro_played_v7";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
