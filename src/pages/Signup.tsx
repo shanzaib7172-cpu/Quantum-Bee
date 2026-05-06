@@ -122,6 +122,7 @@ const Signup = () => {
           Create account
         </Button>
       </form>
+      </div>
     </AuthScene>
   );
 };
