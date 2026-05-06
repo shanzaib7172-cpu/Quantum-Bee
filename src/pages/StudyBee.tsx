@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Hash, Megaphone, Sparkles, BookOpen, Coffee, Send, Shield, Loader2, LogIn,
+  Hash, Megaphone, Sparkles, BookOpen, Coffee, Send, Loader2, LogIn,
   Plus, Settings, Users, Smile, Paperclip, Search, ChevronDown, GraduationCap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -87,11 +87,12 @@ const StudyBee = () => {
     [channels, activeId],
   );
 
-  // Load channels + profile + members
+  // Load channels + profile + members (open to guests)
   useEffect(() => {
-    if (!user) return;
-    supabase.from("profiles").select("user_id, display_name, bio, avatar_url").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => { if (data) { setProfileName(data.display_name ?? ""); setBio((data as any).bio ?? ""); } });
+    if (user) {
+      supabase.from("profiles").select("user_id, display_name, bio, avatar_url").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => { if (data) { setProfileName(data.display_name ?? ""); setBio((data as any).bio ?? ""); } });
+    }
 
     supabase.from("channels").select("*").order("position", { ascending: true })
       .then(({ data }) => {
@@ -121,7 +122,7 @@ const StudyBee = () => {
 
   // Load messages for active channel + realtime
   useEffect(() => {
-    if (!user || !activeId) return;
+    if (!activeId) return;
     let cancelled = false;
     (async () => {
       const { data: msgs } = await supabase
@@ -220,25 +221,6 @@ const StudyBee = () => {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-        <SpaceBackground density={0.7} rocks={0} blackhole={false} />
-        <TopBar />
-        <div className="relative z-10 flex-1 flex items-center justify-center px-6">
-          <div className="rounded-2xl p-8 max-w-md text-center bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(50,100%,65%)]/20">
-            <Shield className="w-7 h-7 mx-auto mb-3 text-[hsl(50,100%,65%)]" />
-            <h2 className="font-heading font-bold text-xl text-white">Sign in to join the hive</h2>
-            <p className="text-sm text-foreground/65 mt-2 mb-5">Chat with the Study Bee community in real time.</p>
-            <Button asChild className="h-11 px-6 text-[hsl(220,60%,3%)] border-0"
-              style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 60%))` }}>
-              <Link to="/login"><LogIn className="w-4 h-4 mr-2" />Sign in</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // ----- Discord-style layout -----
   return (
@@ -316,42 +298,51 @@ const StudyBee = () => {
 
           {/* User panel */}
           <div className="border-t border-white/5 p-2 flex items-center gap-2 bg-[hsl(228,25%,6%)]/70">
-            <Avatar className="w-8 h-8 border border-white/10">
-              <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
-                {initials(profileName || user.email || "B")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">{profileName || user.email?.split("@")[0]}</div>
-              <div className="text-[10px] text-white/40 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
-                {isAdmin && <span className="ml-1 px-1 rounded bg-[hsl(50,100%,65%)]/20 text-[hsl(50,100%,75%)]">admin</span>}
-              </div>
-            </div>
-            <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-              <DialogTrigger asChild>
-                <button className="p-2 rounded hover:bg-white/10 text-white/60"><Settings className="w-4 h-4" /></button>
-              </DialogTrigger>
-              <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white">
-                <DialogHeader><DialogTitle>Edit profile</DialogTitle></DialogHeader>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-white/60">Display name</label>
-                    <Input value={profileName} onChange={(e) => setProfileName(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-                  </div>
-                  <div>
-                    <label className="text-xs text-white/60">Bio</label>
-                    <Textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className="mt-1 bg-white/5 border-white/10" />
+            {user ? (
+              <>
+                <Avatar className="w-8 h-8 border border-white/10">
+                  <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
+                    {initials(profileName || user.email || "B")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium truncate">{profileName || user.email?.split("@")[0]}</div>
+                  <div className="text-[10px] text-white/40 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
+                    {isAdmin && <span className="ml-1 px-1 rounded bg-[hsl(50,100%,65%)]/20 text-[hsl(50,100%,75%)]">admin</span>}
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
-                    style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
-                    {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+                  <DialogTrigger asChild>
+                    <button className="p-2 rounded hover:bg-white/10 text-white/60"><Settings className="w-4 h-4" /></button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white">
+                    <DialogHeader><DialogTitle>Edit profile</DialogTitle></DialogHeader>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs text-white/60">Display name</label>
+                        <Input value={profileName} onChange={(e) => setProfileName(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+                      </div>
+                      <div>
+                        <label className="text-xs text-white/60">Bio</label>
+                        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className="mt-1 bg-white/5 border-white/10" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
+                        style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                        {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </>
+            ) : (
+              <Button asChild size="sm" className="w-full text-[hsl(220,60%,3%)] border-0"
+                style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-2" />Sign in to chat</Link>
+              </Button>
+            )}
           </div>
         </aside>
 
@@ -451,31 +442,43 @@ const StudyBee = () => {
           </div>
 
           {/* Composer */}
-          <form onSubmit={send} className="px-3 sm:px-4 pb-3">
-            {isAdmin && (
-              <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[hsl(50,100%,75%)] mb-1.5 ml-1">
-                <input type="checkbox" checked={announce} onChange={(e) => setAnnounce(e.target.checked)} className="accent-[hsl(50,100%,65%)]" />
-                Post as announcement
-              </label>
-            )}
-            <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
-              <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
-              <Textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder={activeChannel ? `Message #${activeChannel.name}` : "Message"}
-                rows={1}
-                className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
-              />
-              <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
-              <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
-                style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
-                {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-              </Button>
+          {user ? (
+            <form onSubmit={send} className="px-3 sm:px-4 pb-3">
+              {isAdmin && (
+                <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[hsl(50,100%,75%)] mb-1.5 ml-1">
+                  <input type="checkbox" checked={announce} onChange={(e) => setAnnounce(e.target.checked)} className="accent-[hsl(50,100%,65%)]" />
+                  Post as announcement
+                </label>
+              )}
+              <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
+                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
+                <Textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  placeholder={activeChannel ? `Message #${activeChannel.name}` : "Message"}
+                  rows={1}
+                  className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
+                />
+                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
+                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                  style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                  {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="px-3 sm:px-4 pb-3">
+              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3">
+                <span className="text-sm text-white/60">Sign in to join the conversation.</span>
+                <Button asChild size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                  style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                  <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-1.5" />Sign in</Link>
+                </Button>
+              </div>
             </div>
-          </form>
+          )}
         </section>
 
         {/* Members panel */}

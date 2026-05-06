@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LogIn, UserPlus, Info, BookOpen, Home as HomeIcon, Cpu,
-  HeartPulse, Orbit, GraduationCap, Menu, X,
+  Users, Menu, X,
 } from "lucide-react";
 import beeLogo from "@/assets/bee-logo.png";
 
@@ -11,17 +11,16 @@ const NAV = [
   { to: "/about", label: "About", icon: Info, color: "hsl(40,100%,65%)" },
   { to: "/blogs", label: "Blogs", icon: BookOpen, color: "hsl(280,80%,75%)" },
   { to: "/bee-ai", label: "Bee AI", icon: Cpu, color: "hsl(170,100%,60%)" },
-  { to: "/health-bee", label: "Health Bee", icon: HeartPulse, color: "hsl(345,90%,70%)" },
-  { to: "/space-bee", label: "Space Bee", icon: Orbit, color: "hsl(220,100%,75%)" },
-  { to: "/study-bee", label: "Study Bee", icon: GraduationCap, color: "hsl(50,100%,65%)" },
+  { to: "/study-bee", label: "Community", icon: Users, color: "hsl(50,100%,65%)" },
 ];
 
 const Icon3D = ({
   Icon, label, color, active,
 }: { Icon: any; label: string; color: string; active: boolean }) => (
   <span
-    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all
-      border overflow-hidden isolate
+    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-150
+      border overflow-hidden isolate select-none
+      hover:-translate-y-[1px] active:translate-y-[2px] active:scale-95
       ${active ? "text-white" : "text-white/75 hover:text-white"}`}
     style={{
       background: active
@@ -59,13 +58,7 @@ const TopBar = () => {
   return (
     <header
       className="sticky top-0 z-40"
-      style={{
-        background: "linear-gradient(180deg, hsl(0 0% 100% / 0.04), hsl(0 0% 100% / 0.01))",
-        backdropFilter: "blur(28px) saturate(180%)",
-        WebkitBackdropFilter: "blur(28px) saturate(180%)",
-        borderBottom: "1px solid hsl(0 0% 100% / 0.08)",
-        boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.12)",
-      }}
+      style={{ background: "transparent" }}
     >
       <div className="flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5">
         <Link to="/" className="flex items-center gap-2 shrink-0" onClick={() => setOpen(false)}>
