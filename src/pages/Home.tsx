@@ -87,68 +87,7 @@ const Home = () => {
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-[hsl(220,100%,55%)]/15 blur-3xl animate-[orb-float_10s_ease-in-out_infinite]" />
       </div>
 
-      {/* Header */}
-      <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-[hsl(200,100%,60%)]/10">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-[orb-pulse_3s_ease-in-out_infinite]" />
-            <img
-              src={beeLogo}
-              alt="Quantum Bee"
-              className="relative w-10 h-10 object-contain z-10"
-              style={{
-                animation: "bee-fly 6s ease-in-out infinite",
-                filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.6))",
-              }}
-            />
-          </div>
-          <span className="text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(195,100%,70%)] via-[hsl(210,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
-            Quantum Bee
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1.5 text-[hsl(45,100%,75%)] hover:text-[hsl(45,100%,85%)] border border-[hsl(40,100%,55%)]/30 hover:border-[hsl(40,100%,55%)]/60 hover:bg-[hsl(40,100%,55%)]/10"
-            asChild
-          >
-            <Link to="/about">
-              <Info className="w-3.5 h-3.5" />
-              About
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1.5 text-foreground/70 hover:text-foreground border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(200,100%,60%)]/40 hover:bg-[hsl(200,100%,55%)]/10"
-            asChild
-          >
-            <Link to="/blogs">
-              <BookOpen className="w-3.5 h-3.5" />
-              Blogs
-            </Link>
-          </Button>
-          <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
-            <Link to="/login">
-              <LogIn className="w-3.5 h-3.5" />
-              Login
-            </Link>
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-xs gap-1.5 bg-[hsl(200,100%,55%)]/15 text-[hsl(195,100%,75%)] border border-[hsl(200,100%,60%)]/30 hover:bg-[hsl(200,100%,55%)]/25 hover:border-[hsl(200,100%,60%)]/60"
-            asChild
-          >
-            <Link to="/signup">
-              <UserPlus className="w-3.5 h-3.5" />
-              Sign up
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <TopBar />
 
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
