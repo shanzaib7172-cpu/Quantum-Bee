@@ -12,11 +12,7 @@ const HealthBee = () => {
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       <SpaceBackground density={0.8} rocks={0} blackhole={false} />
       <TopBar />
-      <div className="relative z-30 px-5 pt-3">
-        <Link to="/#agents" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 inline-flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
-          <ArrowLeft className="w-4 h-4" />
-        </Link>
-      </div>
+      {/* back button removed */}
 
       {/* Hero */}
       <main className="relative z-10 px-6 py-20 text-center max-w-5xl mx-auto">

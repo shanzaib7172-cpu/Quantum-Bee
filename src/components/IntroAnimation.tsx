@@ -18,6 +18,10 @@ const IntroAnimation = () => {
     const endTimer = setTimeout(() => {
       sessionStorage.setItem(STORAGE_KEY, "1");
       setShow(false);
+      if (window.location.pathname !== "/") {
+        window.history.replaceState({}, "", "/");
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      }
     }, TOTAL_MS);
     return () => {
       clearTimeout(fadeTimer);

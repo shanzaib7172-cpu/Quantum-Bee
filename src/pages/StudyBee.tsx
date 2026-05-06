@@ -227,11 +227,7 @@ const StudyBee = () => {
     <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
       <SpaceBackground density={0.4} rocks={0} blackhole={false} />
       <TopBar />
-      <div className="relative z-30 px-5 pt-3">
-        <Link to="/#agents" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 inline-flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
-          <ArrowLeft className="w-4 h-4" />
-        </Link>
-      </div>
+      {/* back button removed */}
 
       <div className="relative z-10 flex flex-1 max-w-[1500px] w-full mx-auto px-2 sm:px-4 py-4 gap-2 sm:gap-3 min-h-[calc(100vh-72px)]">
         {/* Server rail (icons) */}
