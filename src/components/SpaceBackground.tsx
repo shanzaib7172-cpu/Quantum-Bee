@@ -106,12 +106,25 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
         }
         @keyframes qb-bh-spin { to { transform: rotate(360deg); } }
         @keyframes qb-bh-lens {
-          0%,100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
-          50%     { transform: scale(1.08) rotate(8deg); opacity: 1; }
+          0%,100% { transform: scale(1) rotate(0deg); opacity: 0.9; }
+          50%     { transform: scale(1.12) rotate(6deg); opacity: 1; }
         }
-        @keyframes qb-bh-jet {
-          0%,100% { transform: translate(-50%,-50%) scaleY(1); opacity: 0.6; }
-          50%     { transform: translate(-50%,-50%) scaleY(1.12); opacity: 0.9; }
+        @keyframes qb-bh-pulse {
+          0%,100% { box-shadow: 0 0 60px hsl(200 100% 60% / 0.9), 0 0 140px hsl(220 100% 55% / 0.7), inset 0 0 40px hsl(200 100% 70% / 0.6); }
+          50%     { box-shadow: 0 0 100px hsl(195 100% 70% / 1), 0 0 220px hsl(220 100% 60% / 0.85), inset 0 0 60px hsl(200 100% 80% / 0.85); }
+        }
+        @keyframes qb-bolt {
+          0%   { opacity: 0; transform: rotate(var(--ang)) scaleX(0.2); filter: blur(2px); }
+          10%  { opacity: 1; filter: blur(0); }
+          22%  { opacity: 0.2; }
+          30%  { opacity: 1; transform: rotate(calc(var(--ang) + 4deg)) scaleX(1.05); }
+          55%  { opacity: 0; transform: rotate(var(--ang)) scaleX(1); }
+          100% { opacity: 0; }
+        }
+        @keyframes qb-attract {
+          0%   { transform: rotate(var(--ang)) translateX(60vmax) scaleX(1); opacity: 0; }
+          15%  { opacity: 1; }
+          100% { transform: rotate(var(--ang)) translateX(0) scaleX(0.05); opacity: 0; }
         }
       `}</style>
 
@@ -127,7 +140,7 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
         }}
       />
 
-      {/* ============ CENTRAL BLACKHOLE ============ */}
+      {/* ============ CENTRAL LIGHTNING SINGULARITY (blue) ============ */}
       <div
         className="absolute top-1/2 left-1/2"
         style={{
@@ -137,71 +150,85 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
           zIndex: 1,
         }}
       >
-        {/* Gravitational lens halo */}
+        {/* Outer electric halo */}
         <div
-          className="absolute inset-[-40%] rounded-full"
+          className="absolute inset-[-50%] rounded-full"
           style={{
             background:
-              "radial-gradient(circle, transparent 36%, hsl(220 80% 8% / 0.55) 44%, transparent 60%)",
-            filter: "blur(8px)",
-            animation: "qb-bh-lens 9s ease-in-out infinite",
+              "radial-gradient(circle, transparent 30%, hsl(200 100% 55% / 0.35) 42%, hsl(220 100% 50% / 0.18) 55%, transparent 70%)",
+            filter: "blur(14px)",
+            animation: "qb-bh-lens 6s ease-in-out infinite",
           }}
         />
-        {/* Outer accretion disk */}
+        {/* Spinning electric ring */}
         <div
           className="absolute inset-0 rounded-full"
           style={{
             background:
-              "conic-gradient(from 0deg, hsl(330 100% 70%), hsl(280 90% 65%), hsl(200 100% 72%), hsl(45 100% 70%), hsl(330 100% 70%))",
+              "conic-gradient(from 0deg, hsl(200 100% 70%), hsl(220 100% 60%), hsl(190 100% 75%), hsl(210 100% 65%), hsl(200 100% 70%))",
             WebkitMask:
-              "radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%)",
-            mask: "radial-gradient(circle, transparent 38%, #000 46%, #000 70%, transparent 78%)",
-            filter: "blur(3px)",
-            animation: "qb-bh-spin 14s linear infinite",
+              "radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 72%)",
+            mask:
+              "radial-gradient(circle, transparent 40%, #000 47%, #000 62%, transparent 72%)",
+            filter: "blur(2px) brightness(1.3)",
+            animation: "qb-bh-spin 8s linear infinite",
           }}
         />
-        {/* Inner tilted disk */}
-        <div
-          className="absolute inset-[8%] rounded-full"
-          style={{
-            background:
-              "conic-gradient(from 90deg, hsl(45 100% 75%), hsl(330 100% 65%), hsl(200 100% 70%), hsl(45 100% 75%))",
-            WebkitMask:
-              "radial-gradient(circle, transparent 40%, #000 48%, #000 68%, transparent 78%)",
-            mask: "radial-gradient(circle, transparent 40%, #000 48%, #000 68%, transparent 78%)",
-            filter: "blur(2px)",
-            opacity: 0.75,
-            transform: "rotateX(72deg)",
-            animation: "qb-bh-spin 9s linear reverse infinite",
-          }}
-        />
-        {/* Event horizon (pure black core) */}
+        {/* Lightning bolts radiating outward */}
+        {Array.from({ length: 14 }).map((_, i) => (
+          <span
+            key={`bolt-${i}`}
+            className="absolute top-1/2 left-1/2 origin-left rounded-full"
+            style={{
+              width: "min(34vmin, 380px)",
+              height: 1.5,
+              background:
+                "linear-gradient(90deg, hsl(190 100% 90%), hsl(210 100% 70%) 40%, hsl(220 100% 55% / 0.6) 70%, transparent)",
+              boxShadow:
+                "0 0 8px hsl(200 100% 80%), 0 0 18px hsl(210 100% 60%), 0 0 32px hsl(220 100% 50%)",
+              // @ts-expect-error custom prop
+              "--ang": `${(i / 14) * 360}deg`,
+              animation: `qb-bolt ${1.4 + (i % 5) * 0.35}s ease-out ${(i % 7) * 0.2}s infinite`,
+            }}
+          />
+        ))}
+        {/* Glowing blue core */}
         <div
           className="absolute rounded-full"
           style={{
-            inset: "30%",
+            inset: "32%",
             background:
-              "radial-gradient(circle, #000 55%, hsl(260 80% 10%) 82%, transparent)",
-            boxShadow:
-              "inset 0 0 28px #000, 0 0 50px hsl(330 90% 50% / 0.55), 0 0 110px hsl(200 90% 55% / 0.55)",
+              "radial-gradient(circle, hsl(190 100% 92%) 0%, hsl(200 100% 70%) 30%, hsl(220 100% 45%) 65%, hsl(230 80% 12%) 95%)",
+            animation: "qb-bh-pulse 2.4s ease-in-out infinite",
           }}
         />
-        {/* Polar relativistic jets */}
+        {/* Inner white-hot heart */}
         <div
-          className="absolute left-1/2 top-1/2"
+          className="absolute rounded-full"
           style={{
-            width: 4,
-            height: "min(60vmin, 520px)",
-            transform: "translate(-50%,-50%)",
+            inset: "42%",
             background:
-              "linear-gradient(to bottom, transparent, hsl(200 100% 85%) 30%, hsl(280 100% 70% / 0.6) 60%, transparent)",
-            filter: "blur(2px)",
-            boxShadow:
-              "0 0 18px hsl(200 100% 70%), 0 0 40px hsl(280 100% 60%)",
-            opacity: 0.7,
-            animation: "qb-bh-jet 1.6s ease-in-out infinite",
+              "radial-gradient(circle, #fff 0%, hsl(195 100% 85%) 40%, hsl(210 100% 60%) 80%, transparent)",
+            filter: "blur(1px)",
           }}
         />
+        {/* Inward energy streaks (attraction effect) */}
+        {Array.from({ length: 10 }).map((_, i) => (
+          <span
+            key={`atr-${i}`}
+            className="absolute top-1/2 left-1/2 origin-left rounded-full"
+            style={{
+              width: 90,
+              height: 1,
+              background:
+                "linear-gradient(90deg, hsl(200 100% 80% / 0.9), transparent)",
+              boxShadow: "0 0 6px hsl(200 100% 70%)",
+              // @ts-expect-error custom prop
+              "--ang": `${(i / 10) * 360 + 18}deg`,
+              animation: `qb-attract ${2.6 + (i % 4) * 0.4}s linear ${i * 0.18}s infinite`,
+            }}
+          />
+        ))}
       </div>
 
       {nebula && (
