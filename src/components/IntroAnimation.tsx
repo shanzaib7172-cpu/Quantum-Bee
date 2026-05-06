@@ -173,7 +173,86 @@ const IntroAnimation = () => {
 
       {/* ============ ACT 4: Quantum City — cinematic cyberpunk (7.5 - 12.5s) ============ */}
       <div className="intro-act intro-act-city">
-        <img src={city} alt="" className="intro-city-img" />
+        {/* 3D Quantum City — pure CSS, no image */}
+        <div className="intro-city-3d-stage">
+          {/* gradient sky / horizon */}
+          <div className="intro-city-sky" />
+          {/* sun / moon glow */}
+          <div className="intro-city-sun" />
+          {/* horizon perspective grid (the "ground") */}
+          <div className="intro-city-ground">
+            <div className="intro-city-grid" />
+          </div>
+          {/* skyline far layer */}
+          <div className="intro-city-skyline intro-city-skyline-far">
+            {buildings
+              .filter((b) => b.depth > 0.55)
+              .map((b) => (
+                <div
+                  key={`bf-${b.id}`}
+                  className="intro-bldg"
+                  style={{
+                    left: `${b.left}%`,
+                    width: `${b.width}vw`,
+                    height: `${b.height}vh`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},40%,18%) 0%, hsl(${b.tone},50%,8%) 100%)`,
+                    boxShadow: `0 0 22px ${b.accent}55, inset 0 0 20px hsl(${b.tone},80%,4%)`,
+                    transform: `translateZ(${b.z}px)`,
+                    animationDelay: `${b.delay}s`,
+                  }}
+                >
+                  <div
+                    className="intro-bldg-windows"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(0deg, transparent 0 6px, ${b.accent}aa 6px 8px), repeating-linear-gradient(90deg, transparent 0 6px, ${b.accent}55 6px 7px)`,
+                    }}
+                  />
+                  <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 10px ${b.accent}` }} />
+                </div>
+              ))}
+          </div>
+          {/* skyline near layer */}
+          <div className="intro-city-skyline intro-city-skyline-near">
+            {buildings
+              .filter((b) => b.depth <= 0.55)
+              .map((b) => (
+                <div
+                  key={`bn-${b.id}`}
+                  className="intro-bldg"
+                  style={{
+                    left: `${b.left}%`,
+                    width: `${b.width * 1.15}vw`,
+                    height: `${b.height * 1.25}vh`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},45%,22%) 0%, hsl(${b.tone},55%,6%) 100%)`,
+                    boxShadow: `0 0 28px ${b.accent}77, inset 0 0 24px hsl(${b.tone},80%,3%)`,
+                    transform: `translateZ(${b.z * 0.4}px)`,
+                    animationDelay: `${b.delay}s`,
+                  }}
+                >
+                  <div
+                    className="intro-bldg-windows"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(0deg, transparent 0 8px, ${b.accent}cc 8px 10px), repeating-linear-gradient(90deg, transparent 0 8px, ${b.accent}77 8px 9px)`,
+                    }}
+                  />
+                  <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 14px ${b.accent}, 0 0 28px ${b.accent}` }} />
+                  {/* antenna */}
+                  {b.windowSeed > 0.6 && (
+                    <div className="intro-bldg-antenna" style={{ background: b.accent, boxShadow: `0 0 8px ${b.accent}` }} />
+                  )}
+                </div>
+              ))}
+          </div>
+          {/* central hero tower (Quantum Bee HQ) */}
+          <div className="intro-city-hero">
+            <div className="intro-hero-tower">
+              <div className="intro-hero-windows" />
+              <div className="intro-hero-spire" />
+              <div className="intro-hero-ring" />
+              <div className="intro-hero-ring intro-hero-ring-2" />
+            </div>
+          </div>
+        </div>
 
         {/* Atmospheric fog layers (parallax) */}
         <div className="intro-city-fog intro-city-fog-1" />
