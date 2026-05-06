@@ -103,9 +103,29 @@ const IntroAnimation = () => {
       <div className="intro-act intro-act-earth">
         <img src={earth} alt="" className="intro-earth-img" />
         <div className="intro-earth-glow" />
+        {/* Galaxy halo around earth */}
+        <div className="intro-galaxy">
+          {Array.from({ length: 90 }).map((_, i) => {
+            const ang = (i / 90) * Math.PI * 2;
+            const r = 38 + Math.random() * 30;
+            return (
+              <span
+                key={i}
+                className="intro-gstar"
+                style={{
+                  left: `calc(50% + ${Math.cos(ang) * r}vmin)`,
+                  top: `calc(50% + ${Math.sin(ang) * r}vmin)`,
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
+                  animationDelay: `${Math.random() * 3}s`,
+                }}
+              />
+            );
+          })}
+        </div>
         <div className="intro-tagline intro-tagline-2">
           <span className="intro-tagline-kicker">A signal reaches earth</span>
-          <span className="intro-tagline-line">welcome to Beee AI.</span>
+          <span className="intro-tagline-line">Welcome to Quantum Bee Planet.</span>
         </div>
         <div className="intro-light-flash" />
       </div>
