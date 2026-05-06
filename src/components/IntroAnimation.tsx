@@ -293,13 +293,42 @@ const IntroAnimation = () => {
         <div className="intro-city-vignette" />
         <div className="intro-city-chroma" />
 
-        {/* HQ holographic logo lock */}
-        <div className="intro-hq-wrap">
-          <div className="intro-hq-beam" />
-          <div className="intro-hq-logo">
-            <div className="intro-logo-pulse" />
-            <img src={beeLogo} alt="" className="w-full h-full object-contain relative z-10" />
-          </div>
+        {/* Holographic drones / orbs hovering above the city */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <span
+            key={`drone-${i}`}
+            className="intro-drone"
+            style={{
+              left: `${15 + i * 16}%`,
+              top: `${42 + (i % 2) * 6}%`,
+              animationDelay: `${8.4 + i * 0.3}s, ${9 + i * 0.2}s`,
+              ["--hue" as any]: i % 2 === 0 ? "200" : "330",
+            } as React.CSSProperties}
+          />
+        ))}
+
+        {/* Giant holographic robot silhouette behind the hero tower */}
+        <div className="intro-robot">
+          <div className="intro-robot-head" />
+          <div className="intro-robot-eye intro-robot-eye-l" />
+          <div className="intro-robot-eye intro-robot-eye-r" />
+          <div className="intro-robot-body" />
+          <div className="intro-robot-scan" />
+        </div>
+
+        {/* Floating data/code stream hologram */}
+        <div className="intro-datastream">
+          {Array.from({ length: 14 }).map((_, i) => (
+            <span
+              key={`ds-${i}`}
+              className="intro-data-line"
+              style={{
+                left: `${(i * 7) % 100}%`,
+                animationDelay: `${8.6 + (i % 6) * 0.25}s`,
+                animationDuration: `${3 + (i % 4) * 0.6}s`,
+              }}
+            />
+          ))}
         </div>
 
         {/* City label */}
