@@ -57,10 +57,19 @@ const TopBar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 liquid-bar">
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0" onClick={() => setOpen(false)}>
-          <div className="relative w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center">
+    <header
+      className="sticky top-0 z-40"
+      style={{
+        background: "linear-gradient(180deg, hsl(0 0% 100% / 0.04), hsl(0 0% 100% / 0.01))",
+        backdropFilter: "blur(28px) saturate(180%)",
+        WebkitBackdropFilter: "blur(28px) saturate(180%)",
+        borderBottom: "1px solid hsl(0 0% 100% / 0.08)",
+        boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.12)",
+      }}
+    >
+      <div className="flex items-center justify-between gap-2 px-3 sm:px-5 py-2.5">
+        <Link to="/" className="flex items-center gap-2 shrink-0" onClick={() => setOpen(false)}>
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center">
             <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-pulse" />
             <img
               src={beeLogo}
@@ -69,19 +78,19 @@ const TopBar = () => {
               style={{ filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.7))" }}
             />
           </div>
-          <span className="text-base sm:text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="hidden sm:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Bee
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden lg:flex items-center gap-1.5">
+        {/* Desktop nav (visible md+) */}
+        <nav className="hidden md:flex items-center gap-1 flex-wrap justify-end">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to}>
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
             </Link>
           ))}
-          <Link to="/login" className="ml-2">
+          <Link to="/login" className="ml-1">
             <Icon3D Icon={LogIn} label="Login" color="hsl(200,100%,70%)" active={pathname === "/login"} />
           </Link>
           <Link to="/signup">
@@ -89,11 +98,24 @@ const TopBar = () => {
           </Link>
         </nav>
 
-        {/* Mobile toggle */}
+        {/* Mobile toggle (only below md) */}
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((s) => !s)}
-          className="lg:hidden relative w-10 h-10 grid place-items-center rounded-full text-white overflow-hidden"
+          className="md:hidden relative w-10 h-10 grid place-items-center rounded-full text-white overflow-hidden"
+          style={{
+            background: "linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04))",
+            border: "1px solid hsl(0 0% 100% / 0.18)",
+            backdropFilter: "blur(22px) saturate(180%)",
+            WebkitBackdropFilter: "blur(22px) saturate(180%)",
+            boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(0 0% 0% / 0.25), 0 6px 18px -6px hsl(0 0% 0% / 0.5)",
+          }}
+        >
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full"
+            style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }} />
+          {open ? <X className="w-5 h-5 relative z-10" /> : <Menu className="w-5 h-5 relative z-10" />}
+        </button>
+      </div>
           style={{
             background: "linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04))",
             border: "1px solid hsl(0 0% 100% / 0.18)",
