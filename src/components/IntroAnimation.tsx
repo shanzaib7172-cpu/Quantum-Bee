@@ -187,22 +187,25 @@ const IntroAnimation = () => {
           <div className="intro-city-ground">
             <div className="intro-city-grid" />
           </div>
-          {/* skyline far layer */}
+          {/* skyline far layer — hyper glass towers */}
           <div className="intro-city-skyline intro-city-skyline-far">
             {buildings
               .filter((b) => b.depth > 0.55)
               .map((b) => (
                 <div
                   key={`bf-${b.id}`}
-                  className="intro-bldg"
+                  className="intro-bldg intro-bldg-glass"
                   style={{
                     left: `${b.left}%`,
                     width: `${b.width}vw`,
                     height: `${b.height}vh`,
-                    background: `linear-gradient(180deg, hsl(${b.tone},40%,18%) 0%, hsl(${b.tone},50%,8%) 100%)`,
-                    boxShadow: `0 0 22px ${b.accent}55, inset 0 0 20px hsl(${b.tone},80%,4%)`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},90%,70%/0.18) 0%, hsl(${b.tone},80%,55%/0.10) 40%, hsl(${b.tone},70%,30%/0.18) 100%)`,
+                    boxShadow: `0 0 30px ${b.accent}66, inset 0 0 24px hsl(${b.tone},100%,80%/0.18), inset 0 0 1px hsl(${b.tone},100%,90%/0.6)`,
                     transform: `translateZ(${b.z}px)`,
                     animationDelay: `${b.delay}s`,
+                    backdropFilter: "blur(2px)",
+                    WebkitBackdropFilter: "blur(2px)",
+                    border: `1px solid hsl(${b.tone},100%,85%/0.25)`,
                   }}
                 >
                   <div
@@ -211,26 +214,30 @@ const IntroAnimation = () => {
                       backgroundImage: `repeating-linear-gradient(0deg, transparent 0 6px, ${b.accent}aa 6px 8px), repeating-linear-gradient(90deg, transparent 0 6px, ${b.accent}55 6px 7px)`,
                     }}
                   />
+                  <div className="intro-bldg-shine" />
                   <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 10px ${b.accent}` }} />
                 </div>
               ))}
           </div>
-          {/* skyline near layer */}
+          {/* skyline near layer — hyper glass towers */}
           <div className="intro-city-skyline intro-city-skyline-near">
             {buildings
               .filter((b) => b.depth <= 0.55)
               .map((b) => (
                 <div
                   key={`bn-${b.id}`}
-                  className="intro-bldg"
+                  className="intro-bldg intro-bldg-glass"
                   style={{
                     left: `${b.left}%`,
                     width: `${b.width * 1.15}vw`,
                     height: `${b.height * 1.25}vh`,
-                    background: `linear-gradient(180deg, hsl(${b.tone},45%,22%) 0%, hsl(${b.tone},55%,6%) 100%)`,
-                    boxShadow: `0 0 28px ${b.accent}77, inset 0 0 24px hsl(${b.tone},80%,3%)`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},95%,75%/0.22) 0%, hsl(${b.tone},85%,55%/0.12) 45%, hsl(${b.tone},70%,25%/0.22) 100%)`,
+                    boxShadow: `0 0 38px ${b.accent}99, inset 0 0 28px hsl(${b.tone},100%,80%/0.22), inset 0 0 1px hsl(${b.tone},100%,95%/0.7)`,
                     transform: `translateZ(${b.z * 0.4}px)`,
                     animationDelay: `${b.delay}s`,
+                    backdropFilter: "blur(3px)",
+                    WebkitBackdropFilter: "blur(3px)",
+                    border: `1px solid hsl(${b.tone},100%,90%/0.32)`,
                   }}
                 >
                   <div
@@ -239,6 +246,18 @@ const IntroAnimation = () => {
                       backgroundImage: `repeating-linear-gradient(0deg, transparent 0 8px, ${b.accent}cc 8px 10px), repeating-linear-gradient(90deg, transparent 0 8px, ${b.accent}77 8px 9px)`,
                     }}
                   />
+                  <div className="intro-bldg-shine" />
+                  {/* corporate logo plate */}
+                  <div
+                    className="intro-bldg-logo"
+                    style={{
+                      color: b.accent,
+                      borderColor: `${b.accent}aa`,
+                      textShadow: `0 0 8px ${b.accent}`,
+                    }}
+                  >
+                    {["QB", "NEXA", "AXION", "OMNI", "VEX", "HELIOS", "KOR"][b.id % 7]}
+                  </div>
                   <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 14px ${b.accent}, 0 0 28px ${b.accent}` }} />
                   {/* antenna */}
                   {b.windowSeed > 0.6 && (
