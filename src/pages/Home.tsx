@@ -16,7 +16,7 @@ const Home = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       {/* 3D Space background with parallax stars + asteroids */}
-      <SpaceBackground density={1.2} rocks={18} />
+      <SpaceBackground density={1.2} rocks={18} blackhole={false} planets />
 
       {/* Animated blue wave background */}
       <div className="absolute inset-0 pointer-events-none z-[1]">
