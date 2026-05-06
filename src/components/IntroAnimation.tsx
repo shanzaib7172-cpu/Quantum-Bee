@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import beeLogo from "@/assets/bee-logo.png";
+
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 
