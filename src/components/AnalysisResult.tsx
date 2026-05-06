@@ -1,4 +1,4 @@
-import { CheckCircle2, AlertTriangle, TrendingUp, Sparkles, X } from "lucide-react";
+import { CheckCircle2, AlertTriangle, TrendingUp, Sparkles, X, Bot, Route } from "lucide-react";
 
 export interface AnalysisData {
   url: string;
@@ -22,6 +22,8 @@ export interface AnalysisData {
     strengths: string[];
     improvements: { title: string; priority: "high" | "medium" | "low"; detail: string }[];
     scale_recommendations: string[];
+    agent_recommendations?: { agent: string; fit: number; reason: string }[];
+    roadmap?: { step: number; agent: string; action: string; outcome: string }[];
   };
 }
 
