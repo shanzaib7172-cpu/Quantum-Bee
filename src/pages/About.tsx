@@ -144,7 +144,13 @@ const About = () => {
           <div className="flex flex-col items-center">
             <div className="relative w-72 h-72">
               <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/30 via-[hsl(195,100%,60%)]/20 to-[hsl(280,80%,65%)]/30 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
-              <div className="absolute inset-0 rounded-full p-[3px]" style={{ background: "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(170,100%,55%), hsl(40,100%,55%))", animation: "orb-rotate 8s linear infinite" }}>
+              <div
+                className="absolute inset-0 rounded-full p-[3px]"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(170,100%,55%), hsl(40,100%,55%))",
+                }}
+              >
                 <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
                   <img src={founderImg} alt="Shanzaib Asghar — Founder & CEO of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
                 </div>
