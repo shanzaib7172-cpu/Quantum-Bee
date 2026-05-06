@@ -92,7 +92,6 @@ const Home = () => {
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[hsl(40,100%,55%)]/30 bg-[hsl(40,100%,55%)]/10 backdrop-blur-md mb-8 animate-fade-in" data-reveal>
-          <Sparkles className="w-3 h-3 text-[hsl(45,100%,70%)]" />
           <span className="text-xs font-mono uppercase tracking-widest text-[hsl(45,100%,80%)]">
             Quantum × AI
           </span>
