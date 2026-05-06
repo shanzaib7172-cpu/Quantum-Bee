@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import jackCharacter from "@/assets/jack-character.png";
 import TopBar from "@/components/TopBar";
+import SpaceBackground from "@/components/SpaceBackground";
 
 const STORAGE_KEY = "beee_jack_webhook_url";
 
