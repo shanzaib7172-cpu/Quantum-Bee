@@ -298,42 +298,51 @@ const StudyBee = () => {
 
           {/* User panel */}
           <div className="border-t border-white/5 p-2 flex items-center gap-2 bg-[hsl(228,25%,6%)]/70">
-            <Avatar className="w-8 h-8 border border-white/10">
-              <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
-                {initials(profileName || user.email || "B")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium truncate">{profileName || user.email?.split("@")[0]}</div>
-              <div className="text-[10px] text-white/40 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
-                {isAdmin && <span className="ml-1 px-1 rounded bg-[hsl(50,100%,65%)]/20 text-[hsl(50,100%,75%)]">admin</span>}
-              </div>
-            </div>
-            <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-              <DialogTrigger asChild>
-                <button className="p-2 rounded hover:bg-white/10 text-white/60"><Settings className="w-4 h-4" /></button>
-              </DialogTrigger>
-              <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white">
-                <DialogHeader><DialogTitle>Edit profile</DialogTitle></DialogHeader>
-                <div className="space-y-3">
-                  <div>
-                    <label className="text-xs text-white/60">Display name</label>
-                    <Input value={profileName} onChange={(e) => setProfileName(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
-                  </div>
-                  <div>
-                    <label className="text-xs text-white/60">Bio</label>
-                    <Textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className="mt-1 bg-white/5 border-white/10" />
+            {user ? (
+              <>
+                <Avatar className="w-8 h-8 border border-white/10">
+                  <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
+                    {initials(profileName || user.email || "B")}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-medium truncate">{profileName || user.email?.split("@")[0]}</div>
+                  <div className="text-[10px] text-white/40 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" /> Online
+                    {isAdmin && <span className="ml-1 px-1 rounded bg-[hsl(50,100%,65%)]/20 text-[hsl(50,100%,75%)]">admin</span>}
                   </div>
                 </div>
-                <DialogFooter>
-                  <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
-                    style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
-                    {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
+                  <DialogTrigger asChild>
+                    <button className="p-2 rounded hover:bg-white/10 text-white/60"><Settings className="w-4 h-4" /></button>
+                  </DialogTrigger>
+                  <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white">
+                    <DialogHeader><DialogTitle>Edit profile</DialogTitle></DialogHeader>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs text-white/60">Display name</label>
+                        <Input value={profileName} onChange={(e) => setProfileName(e.target.value)} className="mt-1 bg-white/5 border-white/10" />
+                      </div>
+                      <div>
+                        <label className="text-xs text-white/60">Bio</label>
+                        <Textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className="mt-1 bg-white/5 border-white/10" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
+                        style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                        {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </>
+            ) : (
+              <Button asChild size="sm" className="w-full text-[hsl(220,60%,3%)] border-0"
+                style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-2" />Sign in to chat</Link>
+              </Button>
+            )}
           </div>
         </aside>
 
