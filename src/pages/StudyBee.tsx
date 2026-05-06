@@ -442,31 +442,43 @@ const StudyBee = () => {
           </div>
 
           {/* Composer */}
-          <form onSubmit={send} className="px-3 sm:px-4 pb-3">
-            {isAdmin && (
-              <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[hsl(50,100%,75%)] mb-1.5 ml-1">
-                <input type="checkbox" checked={announce} onChange={(e) => setAnnounce(e.target.checked)} className="accent-[hsl(50,100%,65%)]" />
-                Post as announcement
-              </label>
-            )}
-            <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
-              <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
-              <Textarea
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder={activeChannel ? `Message #${activeChannel.name}` : "Message"}
-                rows={1}
-                className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
-              />
-              <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
-              <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
-                style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
-                {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
-              </Button>
+          {user ? (
+            <form onSubmit={send} className="px-3 sm:px-4 pb-3">
+              {isAdmin && (
+                <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[hsl(50,100%,75%)] mb-1.5 ml-1">
+                  <input type="checkbox" checked={announce} onChange={(e) => setAnnounce(e.target.checked)} className="accent-[hsl(50,100%,65%)]" />
+                  Post as announcement
+                </label>
+              )}
+              <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
+                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
+                <Textarea
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  placeholder={activeChannel ? `Message #${activeChannel.name}` : "Message"}
+                  rows={1}
+                  className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
+                />
+                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
+                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                  style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                  {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="px-3 sm:px-4 pb-3">
+              <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3">
+                <span className="text-sm text-white/60">Sign in to join the conversation.</span>
+                <Button asChild size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                  style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
+                  <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-1.5" />Sign in</Link>
+                </Button>
+              </div>
             </div>
-          </form>
+          )}
         </section>
 
         {/* Members panel */}
