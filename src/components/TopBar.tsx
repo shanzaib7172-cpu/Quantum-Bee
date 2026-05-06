@@ -20,26 +20,35 @@ const Icon3D = ({
   Icon, label, color, active,
 }: { Icon: any; label: string; color: string; active: boolean }) => (
   <span
-    className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all
-      border backdrop-blur-md overflow-hidden
-      ${active ? "text-white" : "text-foreground/80 hover:text-white"}`}
+    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all
+      border overflow-hidden isolate
+      ${active ? "text-white" : "text-white/75 hover:text-white"}`}
     style={{
       background: active
-        ? `linear-gradient(145deg, ${color}40, ${color}10)`
-        : "linear-gradient(145deg, hsl(220 40% 10% / 0.6), hsl(220 40% 6% / 0.6))",
-      borderColor: active ? `${color}80` : "hsl(200 100% 60% / 0.2)",
+        ? `linear-gradient(180deg, ${color}28, ${color}08 55%, hsl(0 0% 100% / 0.04))`
+        : "linear-gradient(180deg, hsl(0 0% 100% / 0.10), hsl(0 0% 100% / 0.02) 55%, hsl(0 0% 100% / 0.04))",
+      borderColor: active ? `${color}60` : "hsl(0 0% 100% / 0.14)",
+      backdropFilter: "blur(22px) saturate(180%)",
+      WebkitBackdropFilter: "blur(22px) saturate(180%)",
       boxShadow: active
-        ? `0 6px 20px -8px ${color}, inset 0 1px 0 ${color}55, inset 0 -2px 6px ${color}20`
-        : "inset 0 1px 0 hsl(200 100% 80% / 0.06), 0 2px 8px hsl(220 100% 10% / 0.4)",
+        ? `inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(0 0% 0% / 0.25), 0 6px 18px -8px ${color}`
+        : "inset 0 1px 0 hsl(0 0% 100% / 0.22), inset 0 -1px 0 hsl(0 0% 0% / 0.25), 0 4px 14px -6px hsl(0 0% 0% / 0.45)",
     }}
   >
-    <Icon className="w-3.5 h-3.5 relative z-10" style={{ color, filter: `drop-shadow(0 0 6px ${color})` }} />
-    <span className="relative z-10 whitespace-nowrap">{label}</span>
+    {/* Specular highlight */}
     <span
       aria-hidden
-      className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity pointer-events-none"
-      style={{ background: `radial-gradient(120% 60% at 50% 0%, ${color}30, transparent 70%)` }}
+      className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
+      style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }}
     />
+    {/* Soft inner refraction tint */}
+    <span
+      aria-hidden
+      className="pointer-events-none absolute inset-0 rounded-full opacity-60"
+      style={{ background: `radial-gradient(120% 80% at 50% 120%, ${color}22, transparent 60%)` }}
+    />
+    <Icon className="w-3.5 h-3.5 relative z-10" style={{ color, filter: `drop-shadow(0 0 4px ${color}88)` }} />
+    <span className="relative z-10 whitespace-nowrap">{label}</span>
   </span>
 );
 
