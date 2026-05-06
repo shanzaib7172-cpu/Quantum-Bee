@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Hash, Megaphone, Sparkles, BookOpen, Coffee, Send, Loader2, LogIn,
-  Plus, Settings, Users, Smile, Paperclip, Search, ChevronDown, GraduationCap,
+  Plus, Settings, Users, Smile, Paperclip, Search, ChevronDown, GraduationCap, ArrowLeft,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Orbit, Satellite, Rocket, Radio, Globe2, ArrowRight, CheckCircle2, Cpu, Telescope } from "lucide-react";
+import { Orbit, Satellite, Rocket, Radio, Globe2, ArrowRight, ArrowLeft, CheckCircle2, Cpu, Telescope } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TopBar from "@/components/TopBar";
 import SocialLinks from "@/components/SocialLinks";
@@ -12,6 +12,11 @@ const SpaceBee = () => {
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       <SpaceBackground density={1.4} rocks={6} blackhole={false} planets />
       <TopBar />
+      <div className="relative z-30 px-5 pt-3">
+        <Link to="/" aria-label="Back to home" className="glass-icon glass-icon-sm w-9 h-9 inline-flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
+          <ArrowLeft className="w-4 h-4" />
+        </Link>
+      </div>
 
       <main className="relative z-10 px-6 py-20 text-center max-w-5xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border mb-6"
