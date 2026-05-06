@@ -8,6 +8,7 @@ import davidCharacter from "@/assets/david-character.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
+import TopBar from "@/components/TopBar";
 
 const Home = () => {
   useReveal();
