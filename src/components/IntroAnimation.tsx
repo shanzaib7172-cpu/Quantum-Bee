@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-import beeLogo from "@/assets/bee-logo.png";
+
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 
-const STORAGE_KEY = "beee_intro_played_v7";
+const STORAGE_KEY = "beee_intro_played_v8";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
@@ -146,7 +146,11 @@ const IntroAnimation = () => {
             );
           })}
           <div className="intro-singularity">
+            <div className="intro-sing-lens" />
             <div className="intro-sing-disk" />
+            <div className="intro-sing-disk intro-sing-disk-2" />
+            <div className="intro-sing-jet intro-sing-jet-top" />
+            <div className="intro-sing-jet intro-sing-jet-bot" />
             <div className="intro-sing-core" />
           </div>
         </div>
@@ -293,13 +297,42 @@ const IntroAnimation = () => {
         <div className="intro-city-vignette" />
         <div className="intro-city-chroma" />
 
-        {/* HQ holographic logo lock */}
-        <div className="intro-hq-wrap">
-          <div className="intro-hq-beam" />
-          <div className="intro-hq-logo">
-            <div className="intro-logo-pulse" />
-            <img src={beeLogo} alt="" className="w-full h-full object-contain relative z-10" />
-          </div>
+        {/* Holographic drones / orbs hovering above the city */}
+        {Array.from({ length: 5 }).map((_, i) => (
+          <span
+            key={`drone-${i}`}
+            className="intro-drone"
+            style={{
+              left: `${15 + i * 16}%`,
+              top: `${42 + (i % 2) * 6}%`,
+              animationDelay: `${8.4 + i * 0.3}s, ${9 + i * 0.2}s`,
+              ["--hue" as any]: i % 2 === 0 ? "200" : "330",
+            } as React.CSSProperties}
+          />
+        ))}
+
+        {/* Giant holographic robot silhouette behind the hero tower */}
+        <div className="intro-robot">
+          <div className="intro-robot-head" />
+          <div className="intro-robot-eye intro-robot-eye-l" />
+          <div className="intro-robot-eye intro-robot-eye-r" />
+          <div className="intro-robot-body" />
+          <div className="intro-robot-scan" />
+        </div>
+
+        {/* Floating data/code stream hologram */}
+        <div className="intro-datastream">
+          {Array.from({ length: 14 }).map((_, i) => (
+            <span
+              key={`ds-${i}`}
+              className="intro-data-line"
+              style={{
+                left: `${(i * 7) % 100}%`,
+                animationDelay: `${8.6 + (i % 6) * 0.25}s`,
+                animationDuration: `${3 + (i % 4) * 0.6}s`,
+              }}
+            />
+          ))}
         </div>
 
         {/* City label */}
@@ -976,6 +1009,177 @@ const IntroAnimation = () => {
           0%   { opacity: 0; transform: scale(0.15); }
           50%  { opacity: 1; transform: scale(1.5); }
           100% { opacity: 1; transform: scale(3.4); }
+        }
+
+        /* ============== BLACK HOLE 3D UPGRADES ============== */
+        .intro-sing-lens {
+          position: absolute; inset: -60%;
+          border-radius: 50%;
+          background: radial-gradient(circle, transparent 38%, hsl(220,80%,8%/0.6) 46%, transparent 60%);
+          filter: blur(6px);
+          animation: lens-warp 6s ease-in-out infinite;
+        }
+        @keyframes lens-warp {
+          0%,100% { transform: scale(1) rotate(0deg); opacity: 0.85; }
+          50%     { transform: scale(1.08) rotate(8deg); opacity: 1; }
+        }
+        .intro-sing-disk-2 {
+          inset: -8%;
+          filter: blur(4px);
+          opacity: 0.7;
+          transform: rotateX(75deg);
+          animation: sing-spin 5s linear reverse infinite;
+        }
+        .intro-sing-jet {
+          position: absolute; left: 50%; width: 6px; height: 240px;
+          transform-origin: 50% 0;
+          background: linear-gradient(to bottom,
+            white, hsl(200,100%,75%) 25%,
+            hsl(280,100%,65%/0.6) 65%, transparent);
+          filter: blur(2px);
+          box-shadow: 0 0 18px hsl(200,100%,70%), 0 0 40px hsl(280,100%,60%);
+          opacity: 0.9;
+          animation: jet-pulse 1.4s ease-in-out infinite;
+        }
+        .intro-sing-jet-top { top: -240px; transform: translateX(-50%) rotate(180deg); }
+        .intro-sing-jet-bot { top: 100%;   transform: translateX(-50%); }
+        @keyframes jet-pulse {
+          0%,100% { transform: translateX(-50%) scaleY(1) rotate(var(--r,0deg)); opacity: 0.85; }
+          50%     { transform: translateX(-50%) scaleY(1.15) rotate(var(--r,0deg)); opacity: 1; }
+        }
+        .intro-sing-jet-top { --r: 180deg; }
+
+        /* ============== HOLOGRAPHIC DRONES ============== */
+        .intro-drone {
+          position: absolute;
+          width: 14px; height: 14px;
+          border-radius: 50%;
+          background: radial-gradient(circle,
+            white 0%,
+            hsl(var(--hue),100%,70%) 35%,
+            hsl(var(--hue),100%,45%/0.5) 65%,
+            transparent 80%);
+          box-shadow:
+            0 0 14px hsl(var(--hue),100%,65%),
+            0 0 32px hsl(var(--hue),100%,55%);
+          opacity: 0;
+          z-index: 5;
+          animation:
+            drone-in 0.6s ease-out forwards,
+            drone-hover 4.6s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes drone-in { to { opacity: 1; } }
+        @keyframes drone-hover {
+          0%,100% { transform: translate(0,0); }
+          25%     { transform: translate(18px,-12px); }
+          50%     { transform: translate(-10px,-22px); }
+          75%     { transform: translate(-22px,-6px); }
+        }
+
+        /* ============== HOLOGRAPHIC ROBOT GUARDIAN ============== */
+        .intro-robot {
+          position: absolute;
+          left: 50%; bottom: 18%;
+          width: min(34vw, 320px);
+          height: 56vh;
+          transform: translateX(-50%);
+          opacity: 0;
+          z-index: 4;
+          animation: robot-in 1.4s cubic-bezier(0.22,1,0.36,1) 9s forwards,
+                     robot-float 6s ease-in-out 10.4s infinite;
+          mix-blend-mode: screen;
+          pointer-events: none;
+        }
+        @keyframes robot-in {
+          0%   { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.94); filter: blur(10px); }
+          100% { opacity: 0.85; transform: translateX(-50%) translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes robot-float {
+          0%,100% { transform: translateX(-50%) translateY(0); }
+          50%     { transform: translateX(-50%) translateY(-10px); }
+        }
+        .intro-robot-head {
+          position: absolute; left: 50%; top: 8%;
+          width: 38%; height: 22%;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg,
+            hsl(200,100%,70%/0.55), hsl(220,80%,40%/0.25));
+          border: 1.5px solid hsl(200,100%,70%/0.7);
+          border-radius: 22% 22% 16% 16% / 30% 30% 18% 18%;
+          box-shadow:
+            0 0 22px hsl(200,100%,60%/0.7),
+            inset 0 0 18px hsl(200,100%,75%/0.5);
+        }
+        .intro-robot-eye {
+          position: absolute; top: 16%;
+          width: 14px; height: 14px;
+          border-radius: 50%;
+          background: radial-gradient(circle, white, hsl(45,100%,60%) 60%, transparent);
+          box-shadow: 0 0 12px hsl(45,100%,60%), 0 0 24px hsl(330,100%,55%);
+          animation: robot-eye 2.4s ease-in-out infinite;
+        }
+        .intro-robot-eye-l { left: 38%; }
+        .intro-robot-eye-r { right: 38%; }
+        @keyframes robot-eye {
+          0%,90%,100% { opacity: 1; transform: scale(1); }
+          93%,97%     { opacity: 0.2; transform: scale(0.7); }
+        }
+        .intro-robot-body {
+          position: absolute; left: 50%; top: 28%;
+          width: 60%; height: 60%;
+          transform: translateX(-50%);
+          background:
+            linear-gradient(180deg, hsl(200,90%,55%/0.35), hsl(280,80%,40%/0.2));
+          border: 1.5px solid hsl(200,100%,70%/0.6);
+          border-radius: 18% 18% 26% 26% / 14% 14% 18% 18%;
+          box-shadow:
+            0 0 28px hsl(200,100%,60%/0.6),
+            inset 0 0 26px hsl(280,100%,60%/0.4);
+          /* circuitry */
+          background-image:
+            repeating-linear-gradient(0deg, transparent 0 12px, hsl(200,100%,70%/0.18) 12px 13px),
+            repeating-linear-gradient(90deg, transparent 0 14px, hsl(330,100%,70%/0.15) 14px 15px);
+        }
+        .intro-robot-scan {
+          position: absolute; left: 50%; top: 28%;
+          width: 60%; height: 4px;
+          transform: translateX(-50%);
+          background: linear-gradient(90deg, transparent, hsl(200,100%,80%), transparent);
+          box-shadow: 0 0 10px hsl(200,100%,70%);
+          animation: robot-scan 3.4s ease-in-out infinite;
+        }
+        @keyframes robot-scan {
+          0%   { top: 28%; opacity: 0.2; }
+          50%  { opacity: 1; }
+          100% { top: 86%; opacity: 0.2; }
+        }
+
+        /* ============== HOLOGRAPHIC DATA STREAM ============== */
+        .intro-datastream {
+          position: absolute; inset: 0;
+          z-index: 5;
+          pointer-events: none;
+          opacity: 0;
+          animation: hud-in 0.6s ease-out 8.6s forwards;
+        }
+        .intro-data-line {
+          position: absolute; top: -10%;
+          width: 1px; height: 30vh;
+          background: linear-gradient(to bottom,
+            transparent,
+            hsl(140,100%,70%/0.85) 50%,
+            transparent);
+          box-shadow: 0 0 6px hsl(140,100%,60%);
+          animation: data-fall linear infinite;
+          opacity: 0.7;
+          mix-blend-mode: screen;
+        }
+        @keyframes data-fall {
+          0%   { transform: translateY(-30vh); opacity: 0; }
+          15%  { opacity: 0.85; }
+          85%  { opacity: 0.85; }
+          100% { transform: translateY(120vh); opacity: 0; }
         }
       `}</style>
     </div>
