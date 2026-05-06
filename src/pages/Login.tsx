@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LogIn, ArrowLeft, Loader2 } from "lucide-react";
+import { LogIn, Loader2, Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import beeLogo from "@/assets/bee-logo.png";
+import AuthScene from "@/components/AuthScene";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -19,9 +19,7 @@ const Login = () => {
     e.preventDefault();
     if (!email || !password) return;
     setLoading(true);
-
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-
     if (error) {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
     } else {
@@ -32,72 +30,65 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background relative overflow-hidden px-4">
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background: `
-            radial-gradient(ellipse at 20% 50%, hsl(45, 100%, 50%, 0.03) 0%, transparent 50%),
-            radial-gradient(ellipse at 80% 20%, hsl(var(--accent) / 0.03) 0%, transparent 50%)
-          `,
-        }}
-      />
-
-      <div className="relative z-10 w-full max-w-sm">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
-          <ArrowLeft className="w-4 h-4" />
-          Back
-        </Link>
-
-        <div className="flex items-center gap-3 mb-8">
-          <img src={beeLogo} alt="Beee AI" className="w-10 h-10 object-contain" />
-          <h1 className="text-2xl font-heading font-semibold text-gradient">Welcome back</h1>
-        </div>
-
-        <form onSubmit={handleLogin} className="glass glass-highlight rounded-2xl p-6 space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm text-foreground/80">Email</Label>
+    <AuthScene
+      title="Welcome back"
+      subtitle="Sign in to your Beee AI command center"
+      footer={
+        <>
+          Don't have an account?{" "}
+          <Link to="/signup" className="text-bee-blue hover:underline">Sign up</Link>
+        </>
+      }
+    >
+      <form onSubmit={handleLogin} className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email</Label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <Input
               id="email"
               type="email"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-secondary/50 border-border/50"
+              className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-bee-blue/40 focus-visible:border-bee-blue/40"
               required
             />
           </div>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm text-foreground/80">Password</Label>
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-xs uppercase tracking-wider text-white/60">Password</Label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <Input
               id="password"
               type="password"
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="bg-secondary/50 border-border/50"
+              className="pl-10 h-11 bg-white/5 border-white/10 text-white placeholder:text-white/30 focus-visible:ring-bee-blue/40 focus-visible:border-bee-blue/40"
               required
             />
           </div>
+        </div>
 
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-bee/15 text-bee border border-bee/20 hover:bg-bee/25 hover:border-bee/40"
-            variant="ghost"
-          >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LogIn className="w-4 h-4 mr-2" />}
-            Sign in
-          </Button>
-        </form>
-
-        <p className="text-sm text-muted-foreground text-center mt-6">
-          Don't have an account?{" "}
-          <Link to="/signup" className="text-bee hover:underline">Sign up</Link>
-        </p>
-      </div>
-    </div>
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full h-11 mt-2 text-sm font-semibold border-0 text-white relative overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(135deg, hsl(200 100% 55%), hsl(220 100% 50%) 60%, hsl(260 90% 55%))",
+            boxShadow:
+              "0 10px 30px hsl(220 100% 40% / 0.5), inset 0 1px 0 hsl(200 100% 90% / 0.4)",
+          }}
+        >
+          {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LogIn className="w-4 h-4 mr-2" />}
+          Sign in
+        </Button>
+      </form>
+    </AuthScene>
   );
 };
 

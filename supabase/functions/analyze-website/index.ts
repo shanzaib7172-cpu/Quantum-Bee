@@ -94,7 +94,7 @@ serve(async (req) => {
           {
             role: "system",
             content:
-              "You are a senior web growth & SEO consultant. Analyze the website and return a single function call with: an overall score (0-100), category scores, concise strengths, prioritized improvements, and growth/scale recommendations. Be specific and actionable.",
+              "You are a senior web growth & SEO consultant for Beee AI. Beee AI offers these agents: Anna (Leads Generator — finds & qualifies B2B leads), Sophia (Product Model Shoot AI — AI fashion/product photography), Jack (WhatsApp Automation — chat funnels & sales bots), David (Web Developer Agent — site rebuilds & landing pages), Mark (Business Management — ops, CRM, finance), Peter (Product image & UGC ads — short-form ad creatives). Analyze the website, return scores, strengths, prioritized improvements, scale recommendations, then RECOMMEND which Beee AI agents fit this brand best (with a fit score 0-100 and reason), and BUILD a step-by-step roadmap (4-6 steps) where each step assigns one of our agents to a concrete task. Be specific and actionable.",
           },
           {
             role: "user",
@@ -139,8 +139,35 @@ serve(async (req) => {
                     },
                   },
                   scale_recommendations: { type: "array", items: { type: "string" } },
+                  agent_recommendations: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        agent: { type: "string", enum: ["Anna", "Sophia", "Jack", "David", "Mark", "Peter"] },
+                        fit: { type: "number" },
+                        reason: { type: "string" },
+                      },
+                      required: ["agent", "fit", "reason"],
+                      additionalProperties: false,
+                    },
+                  },
+                  roadmap: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        step: { type: "number" },
+                        agent: { type: "string", enum: ["Anna", "Sophia", "Jack", "David", "Mark", "Peter"] },
+                        action: { type: "string" },
+                        outcome: { type: "string" },
+                      },
+                      required: ["step", "agent", "action", "outcome"],
+                      additionalProperties: false,
+                    },
+                  },
                 },
-                required: ["score", "summary", "categories", "strengths", "improvements", "scale_recommendations"],
+                required: ["score", "summary", "categories", "strengths", "improvements", "scale_recommendations", "agent_recommendations", "roadmap"],
                 additionalProperties: false,
               },
             },
