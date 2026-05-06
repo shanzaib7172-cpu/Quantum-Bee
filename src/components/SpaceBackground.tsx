@@ -9,17 +9,19 @@ interface Props {
   shootingStars?: number;
   /** Enable warp/hyperspace streaks for a 3D space-travel feel */
   warp?: boolean;
+  /** Show the central lightning singularity */
+  blackhole?: boolean;
+  /** Show small drifting solar-system planets */
+  planets?: boolean;
 }
 
-/**
- * Cinematic 3D galaxy-travel background.
- * - Deep layered nebulae (slow drift + breathing)
- * - 3 parallax star fields with twinkle + drift
- * - Volumetric light beams sweeping slowly
- * - Hyperspace warp streaks radiating from center (3D space travel feel)
- * - Subtle dust/grain and vignette for depth
- */
-const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => {
+const SpaceBackground = ({
+  density = 1,
+  nebula = true,
+  warp = true,
+  blackhole = true,
+  planets = false,
+}: Props) => {
   const layers = useMemo(() => {
     const make = (count: number, sizeMin: number, sizeMax: number) =>
       Array.from({ length: count }).map(() => ({
