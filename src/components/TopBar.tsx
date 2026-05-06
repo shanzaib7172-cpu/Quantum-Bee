@@ -93,10 +93,18 @@ const TopBar = () => {
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((s) => !s)}
-          className="lg:hidden relative w-10 h-10 grid place-items-center rounded-xl border border-[hsl(200,100%,60%)]/30 bg-[hsl(220,40%,8%)]/70 text-white"
-          style={{ boxShadow: "inset 0 1px 0 hsl(200 100% 80% / 0.15), 0 4px 14px hsl(200 100% 40% / 0.25)" }}
+          className="lg:hidden relative w-10 h-10 grid place-items-center rounded-full text-white overflow-hidden"
+          style={{
+            background: "linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04))",
+            border: "1px solid hsl(0 0% 100% / 0.18)",
+            backdropFilter: "blur(22px) saturate(180%)",
+            WebkitBackdropFilter: "blur(22px) saturate(180%)",
+            boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(0 0% 0% / 0.25), 0 6px 18px -6px hsl(0 0% 0% / 0.5)",
+          }}
         >
-          {open ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full"
+            style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }} />
+          {open ? <X className="w-5 h-5 relative z-10" /> : <Menu className="w-5 h-5 relative z-10" />}
         </button>
       </div>
 
@@ -104,11 +112,13 @@ const TopBar = () => {
       {open && (
         <div className="lg:hidden px-4 pb-4 animate-fade-in">
           <div
-            className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-2xl"
+            className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-3xl relative overflow-hidden"
             style={{
-              background: "linear-gradient(180deg, hsl(220 40% 9% / 0.85), hsl(220 60% 4% / 0.95))",
-              border: "1px solid hsl(200 100% 60% / 0.18)",
-              boxShadow: "0 16px 40px hsl(220 100% 20% / 0.5)",
+              background: "linear-gradient(180deg, hsl(0 0% 100% / 0.10), hsl(0 0% 100% / 0.02))",
+              border: "1px solid hsl(0 0% 100% / 0.16)",
+              backdropFilter: "blur(28px) saturate(180%)",
+              WebkitBackdropFilter: "blur(28px) saturate(180%)",
+              boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.25), 0 20px 50px -10px hsl(0 0% 0% / 0.6)",
             }}
           >
             {NAV.concat([
