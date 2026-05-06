@@ -87,11 +87,12 @@ const StudyBee = () => {
     [channels, activeId],
   );
 
-  // Load channels + profile + members
+  // Load channels + profile + members (open to guests)
   useEffect(() => {
-    if (!user) return;
-    supabase.from("profiles").select("user_id, display_name, bio, avatar_url").eq("user_id", user.id).maybeSingle()
-      .then(({ data }) => { if (data) { setProfileName(data.display_name ?? ""); setBio((data as any).bio ?? ""); } });
+    if (user) {
+      supabase.from("profiles").select("user_id, display_name, bio, avatar_url").eq("user_id", user.id).maybeSingle()
+        .then(({ data }) => { if (data) { setProfileName(data.display_name ?? ""); setBio((data as any).bio ?? ""); } });
+    }
 
     supabase.from("channels").select("*").order("position", { ascending: true })
       .then(({ data }) => {
@@ -121,7 +122,7 @@ const StudyBee = () => {
 
   // Load messages for active channel + realtime
   useEffect(() => {
-    if (!user || !activeId) return;
+    if (!activeId) return;
     let cancelled = false;
     (async () => {
       const { data: msgs } = await supabase
