@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
+import TopBar from "@/components/TopBar";
 
 const PRODUCT_SHOOT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/product-shoot`;
 
@@ -88,17 +89,14 @@ const ProductShoot = () => {
         `,
       }} />
 
-      {/* Header */}
-      <header className="relative z-30 flex items-center gap-3 px-5 py-3 border-b border-border/50">
-        <Link to="/" className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <img src={beeLogo} alt="Beee AI" className="w-7 h-7 object-contain" />
+      <TopBar />
+      <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-[hsl(220,60%,3%)]/60">
+        <img src={beeLogo} alt="Beee AI" className="w-6 h-6 object-contain" />
         <div>
-          <h1 className="text-base font-heading font-semibold text-gradient">Sophia — Product Shoot AI</h1>
+          <h1 className="text-sm font-heading font-semibold text-gradient">Sophia — Product Shoot AI</h1>
           <p className="text-[10px] text-muted-foreground">Transform product images into pro model shoots</p>
         </div>
-      </header>
+      </div>
 
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-3xl space-y-6">
