@@ -33,7 +33,7 @@ const Login = () => {
   return (
     <AuthScene
       title="Welcome back"
-      subtitle="Sign in to your Beee AI command center"
+      subtitle="Sign in to your Bee AI command center"
       footer={
         <>
           Don't have an account?{" "}

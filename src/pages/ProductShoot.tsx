@@ -77,7 +77,7 @@ const ProductShoot = () => {
     if (!generatedImage) return;
     const a = document.createElement("a");
     a.href = generatedImage;
-    a.download = `beee-product-shoot-${Date.now()}.png`;
+    a.download = `bee-product-shoot-${Date.now()}.png`;
     a.click();
   };
 
@@ -89,7 +89,7 @@ const ProductShoot = () => {
         <Link to="/#agents" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
           <ArrowLeft className="w-4 h-4" />
         </Link>
-        <img src={beeLogo} alt="Beee AI" className="w-6 h-6 object-contain" />
+        <img src={beeLogo} alt="Bee AI" className="w-6 h-6 object-contain" />
         <div>
           <h1 className="text-sm font-heading font-semibold text-gradient">Sophia — Product Shoot AI</h1>
           <p className="text-[10px] text-muted-foreground">Transform product images into pro model shoots</p>
