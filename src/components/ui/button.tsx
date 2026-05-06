@@ -5,22 +5,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "relative inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-[1px]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "liquid-glass text-white hover:brightness-110",
+        destructive:
+          "text-white border border-white/20 bg-gradient-to-b from-rose-500/40 to-rose-700/30 backdrop-blur-xl shadow-[inset_0_1px_0_hsl(0_0%_100%/0.3),0_8px_24px_-8px_hsl(350_90%_50%/0.5)] hover:brightness-110",
+        outline:
+          "liquid-glass text-white hover:brightness-110",
+        secondary:
+          "text-white border border-white/15 bg-white/5 backdrop-blur-xl shadow-[inset_0_1px_0_hsl(0_0%_100%/0.2)] hover:bg-white/10",
+        ghost:
+          "text-white/80 hover:text-white hover:bg-white/8 hover:backdrop-blur-xl rounded-xl",
         link: "text-primary underline-offset-4 hover:underline",
+        glass: "glass-icon text-white",
       },
       size: {
         default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        sm: "h-9 rounded-lg px-3",
+        lg: "h-11 rounded-2xl px-8",
+        icon: "h-10 w-10 glass-icon glass-icon-md",
       },
     },
     defaultVariants: {
