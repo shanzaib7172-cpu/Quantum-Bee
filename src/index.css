@@ -90,6 +90,73 @@
       0 0 40px -10px hsla(var(--glow-primary) / 0.15);
   }
 
+  /* === Apple Liquid-Glass system === */
+  .liquid-glass {
+    position: relative;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.10), hsl(0 0% 100% / 0.02) 55%, hsl(0 0% 100% / 0.04));
+    border: 1px solid hsl(0 0% 100% / 0.16);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.30),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.25),
+      0 8px 24px -8px hsl(0 0% 0% / 0.55);
+    isolation: isolate;
+    overflow: hidden;
+  }
+  .liquid-glass::before {
+    content: "";
+    position: absolute; inset: 0 0 50% 0;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.32), transparent);
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .liquid-bar {
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.06), hsl(0 0% 100% / 0.02)) !important;
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border-bottom: 1px solid hsl(0 0% 100% / 0.10) !important;
+    box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.18);
+  }
+
+  /* iOS-style glass icon tile */
+  .glass-icon {
+    position: relative;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 14px;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04));
+    border: 1px solid hsl(0 0% 100% / 0.18);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow:
+      inset 0 1px 0 hsl(0 0% 100% / 0.35),
+      inset 0 -1px 0 hsl(0 0% 0% / 0.22),
+      0 6px 16px -6px hsl(0 0% 0% / 0.5);
+    overflow: hidden;
+    isolation: isolate;
+    transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
+  }
+  .glass-icon::before {
+    content: "";
+    position: absolute; inset: 0 0 55% 0;
+    background: linear-gradient(180deg, hsl(0 0% 100% / 0.40), transparent);
+    pointer-events: none; z-index: 0;
+  }
+  .glass-icon::after {
+    content: "";
+    position: absolute; inset: -1px;
+    border-radius: inherit;
+    background: radial-gradient(120% 80% at 50% 120%, hsl(var(--tint, 200 100% 70%) / 0.30), transparent 60%);
+    pointer-events: none; z-index: 0; opacity: .85;
+  }
+  .glass-icon > * { position: relative; z-index: 1; }
+  .glass-icon:hover { transform: translateY(-1px); }
+  .glass-icon-sm { width: 32px; height: 32px; border-radius: 10px; }
+  .glass-icon-md { width: 40px; height: 40px; border-radius: 12px; }
+  .glass-icon-lg { width: 52px; height: 52px; border-radius: 16px; }
+
   .glow-primary {
     box-shadow: 0 0 30px -5px hsl(var(--primary) / 0.4),
                 0 0 60px -10px hsl(var(--primary) / 0.2);
