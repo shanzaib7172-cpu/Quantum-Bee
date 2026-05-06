@@ -190,7 +190,7 @@ const Jack = () => {
               <Textarea
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                placeholder="Hey! Thanks for reaching out — Jack here from Beee AI..."
+                placeholder="Hey! Thanks for reaching out — Jack here from Bee AI..."
                 className="bg-secondary/50 border-border/50 text-sm min-h-[100px]"
               />
             </div>
