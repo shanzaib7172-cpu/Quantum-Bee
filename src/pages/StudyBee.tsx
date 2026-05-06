@@ -221,25 +221,6 @@ const StudyBee = () => {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-        <SpaceBackground density={0.7} rocks={0} blackhole={false} />
-        <TopBar />
-        <div className="relative z-10 flex-1 flex items-center justify-center px-6">
-          <div className="rounded-2xl p-8 max-w-md text-center bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(50,100%,65%)]/20">
-            <Shield className="w-7 h-7 mx-auto mb-3 text-[hsl(50,100%,65%)]" />
-            <h2 className="font-heading font-bold text-xl text-white">Sign in to join the hive</h2>
-            <p className="text-sm text-foreground/65 mt-2 mb-5">Chat with the Study Bee community in real time.</p>
-            <Button asChild className="h-11 px-6 text-[hsl(220,60%,3%)] border-0"
-              style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 60%))` }}>
-              <Link to="/login"><LogIn className="w-4 h-4 mr-2" />Sign in</Link>
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   // ----- Discord-style layout -----
   return (
