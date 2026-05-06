@@ -339,6 +339,34 @@ const IntroAnimation = () => {
           <div className="intro-robot-scan" />
         </div>
 
+        {/* Side patrol robots — multiple smaller mech silhouettes */}
+        {[
+          { left: "8%",  bottom: "14%", scale: 0.42, hue: 200, delay: 9.2 },
+          { left: "18%", bottom: "12%", scale: 0.34, hue: 330, delay: 9.5 },
+          { left: "78%", bottom: "13%", scale: 0.4,  hue: 200, delay: 9.4 },
+          { left: "88%", bottom: "15%", scale: 0.32, hue: 45,  delay: 9.7 },
+        ].map((r, i) => (
+          <div
+            key={`mech-${i}`}
+            className="intro-mech"
+            style={{
+              left: r.left,
+              bottom: r.bottom,
+              transform: `scale(${r.scale})`,
+              ["--hue" as any]: r.hue,
+              animationDelay: `${r.delay}s, ${r.delay + 1.2}s`,
+            } as React.CSSProperties}
+          >
+            <div className="intro-mech-head" />
+            <div className="intro-mech-eye" />
+            <div className="intro-mech-body" />
+            <div className="intro-mech-arm intro-mech-arm-l" />
+            <div className="intro-mech-arm intro-mech-arm-r" />
+            <div className="intro-mech-leg intro-mech-leg-l" />
+            <div className="intro-mech-leg intro-mech-leg-r" />
+          </div>
+        ))}
+
         {/* Floating data/code stream hologram */}
         <div className="intro-datastream">
           {Array.from({ length: 14 }).map((_, i) => (
