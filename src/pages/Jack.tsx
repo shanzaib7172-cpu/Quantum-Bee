@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import jackCharacter from "@/assets/jack-character.png";
 import TopBar from "@/components/TopBar";
+import SpaceBackground from "@/components/SpaceBackground";
 
 const STORAGE_KEY = "beee_jack_webhook_url";
 
@@ -66,14 +67,8 @@ const Jack = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      <div className="fixed inset-0 pointer-events-none" style={{
-        background: `
-          radial-gradient(ellipse at 20% 50%, hsl(45, 100%, 50%, 0.03) 0%, transparent 50%),
-          radial-gradient(ellipse at 80% 20%, hsl(142, 70%, 45%, 0.04) 0%, transparent 50%)
-        `,
-      }} />
-
+    <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
+      <SpaceBackground density={0.9} rocks={0} blackhole={false} planets />
       <TopBar />
       <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-[hsl(220,60%,3%)]/60">
         <img src={beeLogo} alt="Beee AI" className="w-6 h-6 object-contain" />

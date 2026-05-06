@@ -23,12 +23,12 @@ const BeeCursor = () => {
 
     let raf = 0;
     const tick = () => {
-      // Bee follows fast
-      pos.current.x += (target.current.x - pos.current.x) * 0.25;
-      pos.current.y += (target.current.y - pos.current.y) * 0.25;
-      // Ring trails slower
-      ringPos.current.x += (target.current.x - ringPos.current.x) * 0.12;
-      ringPos.current.y += (target.current.y - ringPos.current.y) * 0.12;
+      // Bee follows fast (snappier)
+      pos.current.x += (target.current.x - pos.current.x) * 0.55;
+      pos.current.y += (target.current.y - pos.current.y) * 0.55;
+      // Ring trails slightly behind
+      ringPos.current.x += (target.current.x - ringPos.current.x) * 0.32;
+      ringPos.current.y += (target.current.y - ringPos.current.y) * 0.32;
 
       const dx = target.current.x - lastX.current;
       lastX.current = target.current.x;

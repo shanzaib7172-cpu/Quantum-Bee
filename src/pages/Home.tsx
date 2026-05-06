@@ -119,7 +119,7 @@ const Home = () => {
           <Button
             asChild
             size="lg"
-            className="group relative h-12 px-7 bg-gradient-to-r from-[hsl(200,100%,50%)] to-[hsl(220,100%,55%)] text-white border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(200,100%,55%,0.6)]"
+            className="group relative h-12 px-7 bg-gradient-to-r from-[hsl(48,100%,55%)] via-[hsl(45,100%,60%)] to-[hsl(38,100%,55%)] text-[hsl(220,60%,8%)] border-0 hover:brightness-110 shadow-[0_0_40px_-5px_hsl(45,100%,55%,0.7),inset_0_1px_0_hsl(0_0%_100%/0.5)] font-semibold"
           >
             <Link to="/bee-ai">
               <Cpu className="w-4 h-4 mr-2" />
