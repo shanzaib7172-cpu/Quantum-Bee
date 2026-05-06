@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import TopBar from "@/components/TopBar";
 import beeLogo from "@/assets/bee-logo.png";
 import annaCharacter from "@/assets/anna-character.png";
 
