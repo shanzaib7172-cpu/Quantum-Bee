@@ -146,7 +146,11 @@ const IntroAnimation = () => {
             );
           })}
           <div className="intro-singularity">
+            <div className="intro-sing-lens" />
             <div className="intro-sing-disk" />
+            <div className="intro-sing-disk intro-sing-disk-2" />
+            <div className="intro-sing-jet intro-sing-jet-top" />
+            <div className="intro-sing-jet intro-sing-jet-bot" />
             <div className="intro-sing-core" />
           </div>
         </div>
