@@ -116,19 +116,8 @@ const TopBar = () => {
           {open ? <X className="w-5 h-5 relative z-10" /> : <Menu className="w-5 h-5 relative z-10" />}
         </button>
       </div>
-          style={{
-            background: "linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04))",
-            border: "1px solid hsl(0 0% 100% / 0.18)",
-            backdropFilter: "blur(22px) saturate(180%)",
-            WebkitBackdropFilter: "blur(22px) saturate(180%)",
-            boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.35), inset 0 -1px 0 hsl(0 0% 0% / 0.25), 0 6px 18px -6px hsl(0 0% 0% / 0.5)",
-          }}
-        >
-          <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full"
-            style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }} />
-          {open ? <X className="w-5 h-5 relative z-10" /> : <Menu className="w-5 h-5 relative z-10" />}
-        </button>
-      </div>
+
+
 
       {/* Mobile menu */}
       {open && (
