@@ -94,6 +94,7 @@ const Login = () => {
           Sign in
         </Button>
       </form>
+      </div>
     </AuthScene>
   );
 };
