@@ -126,7 +126,7 @@ const Home = () => {
           <Button
             asChild
             size="lg"
-            className="group relative h-12 px-7 bg-gradient-to-r from-[hsl(48,100%,55%)] via-[hsl(45,100%,60%)] to-[hsl(210,100%,60%)] text-[hsl(220,60%,8%)] border-0 hover:brightness-110 active:translate-y-[2px] active:scale-95 transition-all shadow-[0_0_40px_-5px_hsl(45,100%,55%,0.7),inset_0_1px_0_hsl(0_0%_100%/0.5)] font-semibold"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 liquid-glass rounded-2xl group relative h-12 px-7 bg-gradient-to-r from-[hsl(48,100%,55%)] via-[hsl(45,100%,60%)] to-[hsl(210,100%,60%)] border-0 hover:brightness-110 active:translate-y-[2px] active:scale-95 transition-all shadow-[0_0_40px_-5px_hsl(45,100%,55%,0.7),inset_0_1px_0_hsl(0_0%_100%/0.5)] font-semibold text-slate-100"
           >
             <Link to="/bee-ai">
               <Cpu className="w-4 h-4 mr-2" />
@@ -402,7 +402,7 @@ const Home = () => {
         </h2>
         <p className="text-foreground/65 mt-5 mb-8">Launch Bee AI and put Anna, Jack, David and Sophia to work for your business — today.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
+          <Button asChild size="lg" className="relative inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-[1px] liquid-glass hover:brightness-110 rounded-2xl h-12 px-8 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)] text-slate-100">
             <Link to="/bee-ai">Launch Bee AI <ArrowRight className="w-4 h-4 ml-2" /></Link>
           </Button>
           <Button asChild size="lg" variant="ghost" className="h-12 px-8 border border-[hsl(200,100%,60%)]/30 hover:bg-[hsl(200,100%,55%)]/10">
