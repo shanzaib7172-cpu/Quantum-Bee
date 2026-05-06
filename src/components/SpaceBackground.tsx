@@ -9,17 +9,19 @@ interface Props {
   shootingStars?: number;
   /** Enable warp/hyperspace streaks for a 3D space-travel feel */
   warp?: boolean;
+  /** Show the central lightning singularity */
+  blackhole?: boolean;
+  /** Show small drifting solar-system planets */
+  planets?: boolean;
 }
 
-/**
- * Cinematic 3D galaxy-travel background.
- * - Deep layered nebulae (slow drift + breathing)
- * - 3 parallax star fields with twinkle + drift
- * - Volumetric light beams sweeping slowly
- * - Hyperspace warp streaks radiating from center (3D space travel feel)
- * - Subtle dust/grain and vignette for depth
- */
-const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => {
+const SpaceBackground = ({
+  density = 1,
+  nebula = true,
+  warp = true,
+  blackhole = true,
+  planets = false,
+}: Props) => {
   const layers = useMemo(() => {
     const make = (count: number, sizeMin: number, sizeMax: number) =>
       Array.from({ length: count }).map(() => ({
@@ -140,6 +142,8 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
         }}
       />
 
+      {blackhole && (
+      <>
       {/* ============ CENTRAL LIGHTNING SINGULARITY (blue) ============ */}
       <div
         className="absolute top-1/2 left-1/2"
@@ -230,6 +234,120 @@ const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => 
           />
         ))}
       </div>
+
+      </>
+      )}
+
+      {/* ============ SOLAR-SYSTEM PLANETS ============ */}
+      {planets && (
+        <div className="absolute inset-0 pointer-events-none">
+          <style>{`
+            @keyframes qb-planet-drift-a {
+              0%   { transform: translate3d(0,0,0) rotate(0deg); }
+              100% { transform: translate3d(40px,-30px,0) rotate(360deg); }
+            }
+            @keyframes qb-planet-drift-b {
+              0%   { transform: translate3d(0,0,0) rotate(0deg); }
+              100% { transform: translate3d(-50px,40px,0) rotate(-360deg); }
+            }
+            @keyframes qb-planet-spin { to { transform: rotate(360deg); } }
+            @keyframes qb-moon-orbit  { to { transform: rotate(360deg); } }
+          `}</style>
+
+          {[
+            // jupiter — banded gas giant
+            {
+              key: "jupiter", top: "12%", left: "8%", size: 70,
+              bg: "radial-gradient(circle at 35% 35%, hsl(35 75% 80%) 0%, hsl(28 60% 55%) 35%, hsl(20 55% 35%) 70%, hsl(15 50% 18%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 6px, hsl(25 50% 25% / 0.55) 6px 8px, transparent 8px 14px, hsl(35 70% 75% / 0.35) 14px 16px)",
+              glow: "hsl(30 80% 60% / 0.45)",
+              dur: 110, anim: "a",
+            },
+            // saturn — with ring
+            {
+              key: "saturn", top: "70%", left: "82%", size: 56,
+              bg: "radial-gradient(circle at 35% 35%, hsl(45 80% 80%) 0%, hsl(40 65% 60%) 40%, hsl(35 55% 35%) 80%, hsl(30 50% 20%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 4px, hsl(35 50% 30% / 0.5) 4px 6px)",
+              glow: "hsl(45 80% 60% / 0.45)",
+              ring: true,
+              dur: 130, anim: "b",
+            },
+            // mars — red
+            {
+              key: "mars", top: "78%", left: "12%", size: 28,
+              bg: "radial-gradient(circle at 32% 32%, hsl(15 80% 65%) 0%, hsl(8 70% 45%) 50%, hsl(0 60% 22%) 100%)",
+              bands: "radial-gradient(circle at 70% 60%, hsl(0 60% 25% / 0.6) 8%, transparent 12%), radial-gradient(circle at 25% 70%, hsl(0 50% 20% / 0.55) 6%, transparent 10%)",
+              glow: "hsl(10 80% 50% / 0.4)",
+              dur: 95, anim: "a",
+            },
+            // mercury — small grey
+            {
+              key: "mercury", top: "22%", left: "88%", size: 18,
+              bg: "radial-gradient(circle at 35% 30%, hsl(30 10% 70%) 0%, hsl(25 8% 45%) 60%, hsl(20 8% 22%) 100%)",
+              bands: "radial-gradient(circle at 60% 70%, hsl(0 0% 15% / 0.55) 8%, transparent 12%)",
+              glow: "hsl(30 10% 60% / 0.3)",
+              dur: 80, anim: "b",
+            },
+            // venus — pale gold
+            {
+              key: "venus", top: "55%", left: "4%", size: 36,
+              bg: "radial-gradient(circle at 35% 35%, hsl(45 90% 85%) 0%, hsl(38 70% 65%) 50%, hsl(30 55% 35%) 100%)",
+              bands: "repeating-linear-gradient(15deg, transparent 0 5px, hsl(40 60% 55% / 0.4) 5px 7px)",
+              glow: "hsl(45 90% 65% / 0.5)",
+              dur: 105, anim: "a",
+            },
+            // moon — small with crater texture, has its own orbit dot? keep simple
+            {
+              key: "moon", top: "30%", left: "62%", size: 22,
+              bg: "radial-gradient(circle at 35% 30%, hsl(0 0% 92%) 0%, hsl(0 0% 70%) 55%, hsl(220 10% 35%) 100%)",
+              bands: "radial-gradient(circle at 60% 65%, hsl(0 0% 30% / 0.55) 10%, transparent 14%), radial-gradient(circle at 30% 75%, hsl(0 0% 25% / 0.5) 7%, transparent 10%), radial-gradient(circle at 70% 30%, hsl(0 0% 30% / 0.45) 6%, transparent 9%)",
+              glow: "hsl(220 30% 80% / 0.45)",
+              dur: 90, anim: "b",
+            },
+          ].map((p) => (
+            <div
+              key={p.key}
+              className="absolute"
+              style={{
+                top: p.top,
+                left: p.left,
+                width: p.size,
+                height: p.size,
+                animation: `qb-planet-drift-${p.anim} ${p.dur}s linear infinite alternate`,
+              }}
+            >
+              {/* Saturn ring (behind) */}
+              {p.ring && (
+                <div
+                  className="absolute left-1/2 top-1/2 rounded-full"
+                  style={{
+                    width: p.size * 2.2,
+                    height: p.size * 0.55,
+                    transform: "translate(-50%,-50%) rotate(-22deg)",
+                    background:
+                      "radial-gradient(ellipse, transparent 35%, hsl(40 60% 70% / 0.85) 42%, hsl(35 55% 50% / 0.5) 55%, transparent 62%)",
+                    filter: "blur(0.4px)",
+                  }}
+                />
+              )}
+              {/* Planet body */}
+              <div
+                className="relative w-full h-full rounded-full overflow-hidden"
+                style={{
+                  background: p.bg,
+                  boxShadow: `0 0 ${p.size * 0.45}px ${p.glow}, inset -${p.size * 0.18}px -${p.size * 0.18}px ${p.size * 0.4}px rgba(0,0,0,0.7), inset ${p.size * 0.08}px ${p.size * 0.08}px ${p.size * 0.2}px rgba(255,255,255,0.18)`,
+                  animation: `qb-planet-spin ${p.dur * 0.6}s linear infinite`,
+                }}
+              >
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{ backgroundImage: p.bands, mixBlendMode: "overlay", opacity: 0.85 }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
       {nebula && (
         <>
