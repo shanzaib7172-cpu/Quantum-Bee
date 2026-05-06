@@ -57,7 +57,7 @@ const About = () => {
   return (
     <div className="min-h-screen bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
       {/* 3D Space background */}
-      <SpaceBackground density={1.3} rocks={20} />
+      <SpaceBackground density={1.2} rocks={18} blackhole={false} planets />
 
       {/* Subtle gradients & grid overlay */}
       <div className="fixed inset-0 pointer-events-none z-[1]">
@@ -295,7 +295,7 @@ const About = () => {
       <section data-reveal className="relative z-10 px-6 py-24 text-center max-w-3xl mx-auto">
         <h2 className="font-heading font-bold text-3xl md:text-4xl text-white mb-5">Ready to Experience Bee AI?</h2>
         <p className="text-foreground/65 mb-8">Launch our flagship multi-agent platform and put Anna, Jack, David, and Sophia to work for your business.</p>
-        <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
+        <Button asChild size="lg" className="h-12 px-8 bg-gradient-to-r from-[hsl(48,100%,55%)] via-[hsl(45,100%,60%)] to-[hsl(210,100%,60%)] text-[hsl(220,60%,8%)] font-semibold border-0 hover:brightness-110 active:translate-y-[2px] active:scale-95 transition-all shadow-[0_0_40px_-5px_hsl(45,100%,55%,0.6),inset_0_1px_0_hsl(0_0%_100%/0.5)]">
           <Link to="/bee-ai">Launch Bee AI →</Link>
         </Button>
       </section>
