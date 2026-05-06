@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import AuthScene from "@/components/AuthScene";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -40,6 +41,11 @@ const Login = () => {
         </>
       }
     >
+      <div className="space-y-4">
+        <GoogleSignInButton />
+        <div className="flex items-center gap-3 text-[10px] uppercase tracking-widest text-white/40">
+          <span className="flex-1 h-px bg-white/10" /> or <span className="flex-1 h-px bg-white/10" />
+        </div>
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email</Label>
@@ -88,6 +94,7 @@ const Login = () => {
           Sign in
         </Button>
       </form>
+      </div>
     </AuthScene>
   );
 };

@@ -305,6 +305,7 @@ const Home = () => {
             {
               icon: HeartPulse,
               name: "Health Bee",
+              href: "/health-bee",
               tag: "Quantum Healthcare AI",
               eta: "Q3 · 2026",
               color: "hsl(345,90%,65%)",
@@ -319,6 +320,7 @@ const Home = () => {
             {
               icon: Orbit,
               name: "Space Bee",
+              href: "/space-bee",
               tag: "Interplanetary AI Infrastructure",
               eta: "Q1 · 2027",
               color: "hsl(220,100%,70%)",
@@ -331,10 +333,11 @@ const Home = () => {
               ],
             },
           ].map((p) => (
-            <div
+            <Link
               data-reveal="scale"
               key={p.name}
-              className="relative rounded-2xl p-7 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden group"
+              to={p.href}
+              className="relative rounded-2xl p-7 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden group block"
             >
               <div
                 className="absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-opacity"
@@ -379,7 +382,7 @@ const Home = () => {
                   In R&D
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>

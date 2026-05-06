@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 
-const STORAGE_KEY = "beee_intro_played_v10";
+const STORAGE_KEY = "beee_intro_played_v11";
 const TOTAL_MS = 9500;
 
 const IntroAnimation = () => {
@@ -103,9 +103,29 @@ const IntroAnimation = () => {
       <div className="intro-act intro-act-earth">
         <img src={earth} alt="" className="intro-earth-img" />
         <div className="intro-earth-glow" />
+        {/* Galaxy halo around earth */}
+        <div className="intro-galaxy">
+          {Array.from({ length: 90 }).map((_, i) => {
+            const ang = (i / 90) * Math.PI * 2;
+            const r = 38 + Math.random() * 30;
+            return (
+              <span
+                key={i}
+                className="intro-gstar"
+                style={{
+                  left: `calc(50% + ${Math.cos(ang) * r}vmin)`,
+                  top: `calc(50% + ${Math.sin(ang) * r}vmin)`,
+                  width: `${Math.random() * 2 + 1}px`,
+                  height: `${Math.random() * 2 + 1}px`,
+                  animationDelay: `${Math.random() * 3}s`,
+                }}
+              />
+            );
+          })}
+        </div>
         <div className="intro-tagline intro-tagline-2">
           <span className="intro-tagline-kicker">A signal reaches earth</span>
-          <span className="intro-tagline-line">welcome to Beee AI.</span>
+          <span className="intro-tagline-line">Welcome to Quantum Bee Planet.</span>
         </div>
         <div className="intro-light-flash" />
       </div>
@@ -291,6 +311,16 @@ const IntroAnimation = () => {
           0%   { opacity: 0; transform: scale(0.6); }
           40%  { opacity: 1; transform: scale(1.4); }
           100% { opacity: 0; transform: scale(2.4); }
+        }
+        .intro-galaxy { position: absolute; inset: 0; pointer-events: none; }
+        .intro-gstar {
+          position: absolute; border-radius: 50%; background: white;
+          box-shadow: 0 0 6px white, 0 0 14px hsl(200,100%,80%);
+          animation: gstar-twinkle 2.6s ease-in-out infinite;
+        }
+        @keyframes gstar-twinkle {
+          0%,100% { opacity: 0.25; transform: scale(0.7); }
+          50%     { opacity: 1; transform: scale(1.3); }
         }
       `}</style>
     </div>
