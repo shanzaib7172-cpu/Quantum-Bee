@@ -49,7 +49,7 @@ const Jack = () => {
           phone,
           message,
           timestamp: new Date().toISOString(),
-          source: "Beee AI - Jack WhatsApp Automation",
+          source: "Bee AI - Jack WhatsApp Automation",
         }),
       });
       if (!resp.ok) {
