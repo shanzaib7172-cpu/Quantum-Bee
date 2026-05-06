@@ -5,6 +5,7 @@ import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
+import TopBar from "@/components/TopBar";
 
 const posts = [
   {
@@ -77,27 +78,7 @@ const Blogs = () => {
       <SpaceBackground density={1.1} rocks={16} />
 
       {/* Header */}
-      <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-[hsl(200,100%,60%)]/10 backdrop-blur-md bg-[hsl(220,60%,3%)]/60">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-[orb-pulse_3s_ease-in-out_infinite]" />
-            <img
-              src={beeLogo}
-              alt="Quantum Bee"
-              className="relative w-10 h-10 object-contain z-10"
-              style={{ animation: "bee-fly 6s ease-in-out infinite", filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.6))" }}
-            />
-          </div>
-          <span className="text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
-            Quantum Bee
-          </span>
-        </Link>
-        <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
-          <Link to="/">
-            <ArrowLeft className="w-3.5 h-3.5" /> Home
-          </Link>
-        </Button>
-      </header>
+      <TopBar />
 
       {/* Hero */}
       <section data-reveal className="relative z-10 px-6 pt-20 pb-12 text-center max-w-4xl mx-auto">

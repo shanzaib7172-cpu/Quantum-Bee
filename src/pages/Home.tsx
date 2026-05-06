@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
-import { LogIn, UserPlus, ArrowRight, Atom, Sparkles, Cpu, Info, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, BookOpen, Quote } from "lucide-react";
+import { ArrowRight, Atom, Sparkles, Cpu, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, HeartPulse, Orbit, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
-import beeLogo from "@/assets/bee-logo.png";
-import founderImg from "@/assets/founder-shanzaib.png";
 import annaCharacter from "@/assets/anna-character.png";
 import jackCharacter from "@/assets/jack-character.png";
 import davidCharacter from "@/assets/david-character.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
+import TopBar from "@/components/TopBar";
 
 const Home = () => {
   useReveal();
@@ -88,68 +87,7 @@ const Home = () => {
         <div className="absolute bottom-20 right-10 w-96 h-96 rounded-full bg-[hsl(220,100%,55%)]/15 blur-3xl animate-[orb-float_10s_ease-in-out_infinite]" />
       </div>
 
-      {/* Header */}
-      <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-[hsl(200,100%,60%)]/10">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-[orb-pulse_3s_ease-in-out_infinite]" />
-            <img
-              src={beeLogo}
-              alt="Quantum Bee"
-              className="relative w-10 h-10 object-contain z-10"
-              style={{
-                animation: "bee-fly 6s ease-in-out infinite",
-                filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.6))",
-              }}
-            />
-          </div>
-          <span className="text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(195,100%,70%)] via-[hsl(210,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
-            Quantum Bee
-          </span>
-        </Link>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1.5 text-[hsl(45,100%,75%)] hover:text-[hsl(45,100%,85%)] border border-[hsl(40,100%,55%)]/30 hover:border-[hsl(40,100%,55%)]/60 hover:bg-[hsl(40,100%,55%)]/10"
-            asChild
-          >
-            <Link to="/about">
-              <Info className="w-3.5 h-3.5" />
-              About
-            </Link>
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs gap-1.5 text-foreground/70 hover:text-foreground border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(200,100%,60%)]/40 hover:bg-[hsl(200,100%,55%)]/10"
-            asChild
-          >
-            <Link to="/blogs">
-              <BookOpen className="w-3.5 h-3.5" />
-              Blogs
-            </Link>
-          </Button>
-          <Button variant="ghost" size="sm" className="text-xs text-foreground/70 hover:text-foreground gap-1.5" asChild>
-            <Link to="/login">
-              <LogIn className="w-3.5 h-3.5" />
-              Login
-            </Link>
-          </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            className="text-xs gap-1.5 bg-[hsl(200,100%,55%)]/15 text-[hsl(195,100%,75%)] border border-[hsl(200,100%,60%)]/30 hover:bg-[hsl(200,100%,55%)]/25 hover:border-[hsl(200,100%,60%)]/60"
-            asChild
-          >
-            <Link to="/signup">
-              <UserPlus className="w-3.5 h-3.5" />
-              Sign up
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <TopBar />
 
       {/* Hero */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -353,42 +291,96 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Founder spotlight */}
+      {/* Upcoming projects: Health Bee & Space Bee */}
       <section data-reveal className="relative z-10 px-6 py-20 max-w-6xl mx-auto w-full">
-        <div className="text-center mb-10">
-          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Visionary Leadership</p>
-          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Meet the Founder</h2>
+        <div className="text-center mb-12">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— What's Next In The Hive</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl text-[hsl(40,100%,60%)]">Upcoming Quantum Bee Projects</h2>
+          <p className="text-foreground/65 max-w-2xl mx-auto mt-4">
+            Two new pillars are being engineered inside the swarm — extending Quantum Bee from business automation into healthcare and outer space.
+          </p>
         </div>
-        <div className="grid md:grid-cols-[auto_1fr] gap-10 items-center">
-          <div className="relative mx-auto">
-            <div className="absolute -inset-4 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/40 via-[hsl(195,100%,60%)]/30 to-[hsl(280,80%,65%)]/40 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
+        <div className="grid md:grid-cols-2 gap-5">
+          {[
+            {
+              icon: HeartPulse,
+              name: "Health Bee",
+              tag: "Quantum Healthcare AI",
+              eta: "Q3 · 2026",
+              color: "hsl(345,90%,65%)",
+              desc: "An autonomous medical intelligence layer — real-time diagnostics, drug-discovery acceleration, and personalised treatment plans powered by quantum-trained models built for hospitals and labs.",
+              points: [
+                "Quantum-assisted genomic analysis",
+                "Multimodal diagnostic agents",
+                "Privacy-first patient data layer",
+                "Hospital workflow automation",
+              ],
+            },
+            {
+              icon: Orbit,
+              name: "Space Bee",
+              tag: "Interplanetary AI Infrastructure",
+              eta: "Q1 · 2027",
+              color: "hsl(220,100%,70%)",
+              desc: "The off-world arm of the swarm — autonomous AI for satellites, lunar relays and Mars-bound missions. Built for high-latency, high-stakes environments where humans can't be in the loop.",
+              points: [
+                "Onboard autonomy for satellites",
+                "Quantum-secured deep-space comms",
+                "Mission planning copilots",
+                "Mars colony AI infrastructure",
+              ],
+            },
+          ].map((p) => (
             <div
-              className="relative w-60 h-60 md:w-72 md:h-72 rounded-full p-[3px]"
-              style={{
-                background:
-                  "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(280,80%,65%), hsl(40,100%,55%))",
-                animation: "orb-rotate 10s linear infinite",
-              }}
+              data-reveal="scale"
+              key={p.name}
+              className="relative rounded-2xl p-7 bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all overflow-hidden group"
             >
-              <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
-                <img src={founderImg} alt="Shanzaib Asghar — Founder of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
+              <div
+                className="absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-opacity"
+                style={{ background: p.color }}
+              />
+              <div className="relative z-10 flex items-start justify-between gap-3 mb-4">
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center border-2 shrink-0"
+                  style={{ borderColor: p.color, boxShadow: `0 0 20px -3px ${p.color}` }}
+                >
+                  <p.icon className="w-7 h-7" style={{ color: p.color }} />
+                </div>
+                <span
+                  className="font-mono text-[10px] tracking-widest uppercase px-2.5 py-1 rounded-full border flex items-center gap-1.5"
+                  style={{ color: p.color, borderColor: `${p.color}55`, background: `${p.color}1a` }}
+                >
+                  <Clock className="w-3 h-3" /> Coming · {p.eta}
+                </span>
+              </div>
+              <h3 className="relative z-10 font-heading font-bold text-2xl text-white">{p.name}</h3>
+              <div className="relative z-10 font-mono text-[10px] tracking-widest text-[hsl(195,100%,75%)] uppercase mt-1 mb-4">
+                {p.tag}
+              </div>
+              <p className="relative z-10 text-sm text-foreground/70 leading-relaxed mb-4">{p.desc}</p>
+              <ul className="relative z-10 space-y-1.5">
+                {p.points.map((pt) => (
+                  <li key={pt} className="font-mono text-[11px] text-foreground/60 flex items-start gap-2">
+                    <span style={{ color: p.color }} className="mt-0.5">◆</span>
+                    {pt}
+                  </li>
+                ))}
+              </ul>
+              <div className="relative z-10 mt-5 flex items-center gap-2">
+                <span className="text-[10px] font-mono tracking-widest uppercase text-foreground/45">Status</span>
+                <div className="flex-1 h-1 rounded-full bg-[hsl(220,40%,12%)] overflow-hidden">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: p.name === "Health Bee" ? "62%" : "38%", background: `linear-gradient(90deg, ${p.color}, hsl(40,100%,60%))` }}
+                  />
+                </div>
+                <span className="text-[10px] font-mono tracking-widest uppercase" style={{ color: p.color }}>
+                  In R&D
+                </span>
               </div>
             </div>
-          </div>
-          <div>
-            <h3 className="font-heading font-black text-3xl md:text-4xl text-white">Shanzaib <span className="text-[hsl(40,100%,60%)]">Asghar</span></h3>
-            <div className="font-mono text-xs tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mt-2 mb-5">Founder & Chief Executive Officer</div>
-            <Quote className="w-6 h-6 text-[hsl(40,100%,60%)]/60 mb-2" />
-            <p className="italic text-foreground/80 leading-relaxed border-l-2 border-[hsl(40,100%,55%)]/60 pl-4">
-              "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it."
-            </p>
-            <p className="mt-5 text-foreground/65 leading-relaxed">
-              Shanzaib founded Quantum Bee in 2025 with one conviction: the next great leap won't come from incremental improvement, but from autonomous AI agents powered by quantum-speed computation.
-            </p>
-            <Button asChild variant="ghost" size="sm" className="mt-5 border border-[hsl(40,100%,55%)]/40 hover:bg-[hsl(40,100%,55%)]/10 text-[hsl(45,100%,75%)]">
-              <Link to="/about">Read the full story <ArrowRight className="w-3.5 h-3.5 ml-1.5" /></Link>
-            </Button>
-          </div>
+          ))}
         </div>
       </section>
 

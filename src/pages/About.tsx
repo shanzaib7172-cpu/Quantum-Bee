@@ -10,6 +10,7 @@ import davidCharacter from "@/assets/david-character.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
+import TopBar from "@/components/TopBar";
 
 const About = () => {
   useReveal();
@@ -82,32 +83,7 @@ const About = () => {
       </div>
 
       {/* Header */}
-      <header className="relative z-30 flex items-center justify-between px-6 py-4 border-b border-[hsl(200,100%,60%)]/10 backdrop-blur-md bg-[hsl(220,60%,3%)]/60">
-        <Link to="/" className="flex items-center gap-2.5">
-          <div className="relative w-10 h-10 flex items-center justify-center">
-            <div className="absolute inset-0 rounded-full bg-[hsl(195,100%,60%)]/30 blur-xl animate-[orb-pulse_3s_ease-in-out_infinite]" />
-            <img
-              src={beeLogo}
-              alt="Quantum Bee"
-              className="relative w-10 h-10 object-contain z-10"
-              style={{ animation: "bee-fly 6s ease-in-out infinite", filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.6))" }}
-            />
-          </div>
-          <span className="text-lg font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
-            Quantum Bee
-          </span>
-        </Link>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
-            <Link to="/blogs"><BookOpen className="w-3.5 h-3.5" /> Blogs</Link>
-          </Button>
-          <Button asChild variant="ghost" size="sm" className="text-xs gap-1.5 border border-[hsl(200,100%,60%)]/20 hover:bg-[hsl(200,100%,55%)]/10">
-            <Link to="/">
-              <ArrowLeft className="w-3.5 h-3.5" /> Home
-            </Link>
-          </Button>
-        </div>
-      </header>
+      <TopBar />
 
       {/* Hero */}
       <section data-reveal className="relative z-10 px-6 pt-20 pb-24 text-center max-w-5xl mx-auto">
@@ -168,7 +144,13 @@ const About = () => {
           <div className="flex flex-col items-center">
             <div className="relative w-72 h-72">
               <div className="absolute -inset-6 rounded-full bg-gradient-to-tr from-[hsl(40,100%,55%)]/30 via-[hsl(195,100%,60%)]/20 to-[hsl(280,80%,65%)]/30 blur-2xl animate-[orb-pulse_5s_ease-in-out_infinite]" />
-              <div className="absolute inset-0 rounded-full p-[3px]" style={{ background: "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(170,100%,55%), hsl(40,100%,55%))", animation: "orb-rotate 8s linear infinite" }}>
+              <div
+                className="absolute inset-0 rounded-full p-[3px]"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, hsl(40,100%,55%), hsl(200,100%,60%), hsl(170,100%,55%), hsl(40,100%,55%))",
+                }}
+              >
                 <div className="w-full h-full rounded-full overflow-hidden bg-[hsl(220,40%,8%)]">
                   <img src={founderImg} alt="Shanzaib Asghar — Founder & CEO of Quantum Bee" className="w-full h-full object-cover" loading="lazy" />
                 </div>

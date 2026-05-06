@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import jackCharacter from "@/assets/jack-character.png";
+import TopBar from "@/components/TopBar";
 
 const STORAGE_KEY = "beee_jack_webhook_url";
 
@@ -73,16 +74,14 @@ const Jack = () => {
         `,
       }} />
 
-      <header className="relative z-30 flex items-center gap-3 px-5 py-3 border-b border-border/50">
-        <Link to="/" className="p-2 rounded-xl hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <img src={beeLogo} alt="Beee AI" className="w-7 h-7 object-contain" />
+      <TopBar />
+      <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-[hsl(220,60%,3%)]/60">
+        <img src={beeLogo} alt="Beee AI" className="w-6 h-6 object-contain" />
         <div>
-          <h1 className="text-base font-heading font-semibold text-gradient">Jack — WhatsApp Automation</h1>
+          <h1 className="text-sm font-heading font-semibold text-gradient">Jack — WhatsApp Automation</h1>
           <p className="text-[10px] text-muted-foreground">Auto-replies, broadcasts & smart follow-ups</p>
         </div>
-      </header>
+      </div>
 
       <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-8 overflow-y-auto">
         <div className="w-full max-w-2xl space-y-6">

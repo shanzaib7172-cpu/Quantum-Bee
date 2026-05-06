@@ -1,12 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import beeLogo from "@/assets/bee-logo.png";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
-import city from "@/assets/intro-city.jpg";
 
-
-
-const STORAGE_KEY = "beee_intro_played_v6";
+const STORAGE_KEY = "beee_intro_played_v7";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
@@ -54,6 +51,29 @@ const IntroAnimation = () => {
     dur: 14 + Math.random() * 10,
     rot: Math.random() * 360,
   }));
+
+  // 3D Quantum City buildings — pseudo-isometric skyline
+  const buildings = useMemo(
+    () =>
+      Array.from({ length: 26 }).map((_, i) => {
+        const depth = Math.random(); // 0 (near) -> 1 (far)
+        return {
+          id: i,
+          left: (i / 26) * 100 + (Math.random() * 3 - 1.5),
+          width: 3 + Math.random() * 5,
+          height: 18 + Math.random() * 42 * (1 - depth * 0.55),
+          depth,
+          tone: 200 + Math.round(Math.random() * 80) - 40,
+          accent: Math.random() > 0.5 ? "hsl(200,100%,60%)" : "hsl(330,100%,65%)",
+          windowSeed: Math.random(),
+          // z-translate to push back/forward in 3D
+          z: -depth * 400,
+          // sway delay
+          delay: Math.random() * 4,
+        };
+      }),
+    []
+  );
 
   return (
     <div
@@ -153,7 +173,86 @@ const IntroAnimation = () => {
 
       {/* ============ ACT 4: Quantum City — cinematic cyberpunk (7.5 - 12.5s) ============ */}
       <div className="intro-act intro-act-city">
-        <img src={city} alt="" className="intro-city-img" />
+        {/* 3D Quantum City — pure CSS, no image */}
+        <div className="intro-city-3d-stage">
+          {/* gradient sky / horizon */}
+          <div className="intro-city-sky" />
+          {/* sun / moon glow */}
+          <div className="intro-city-sun" />
+          {/* horizon perspective grid (the "ground") */}
+          <div className="intro-city-ground">
+            <div className="intro-city-grid" />
+          </div>
+          {/* skyline far layer */}
+          <div className="intro-city-skyline intro-city-skyline-far">
+            {buildings
+              .filter((b) => b.depth > 0.55)
+              .map((b) => (
+                <div
+                  key={`bf-${b.id}`}
+                  className="intro-bldg"
+                  style={{
+                    left: `${b.left}%`,
+                    width: `${b.width}vw`,
+                    height: `${b.height}vh`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},40%,18%) 0%, hsl(${b.tone},50%,8%) 100%)`,
+                    boxShadow: `0 0 22px ${b.accent}55, inset 0 0 20px hsl(${b.tone},80%,4%)`,
+                    transform: `translateZ(${b.z}px)`,
+                    animationDelay: `${b.delay}s`,
+                  }}
+                >
+                  <div
+                    className="intro-bldg-windows"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(0deg, transparent 0 6px, ${b.accent}aa 6px 8px), repeating-linear-gradient(90deg, transparent 0 6px, ${b.accent}55 6px 7px)`,
+                    }}
+                  />
+                  <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 10px ${b.accent}` }} />
+                </div>
+              ))}
+          </div>
+          {/* skyline near layer */}
+          <div className="intro-city-skyline intro-city-skyline-near">
+            {buildings
+              .filter((b) => b.depth <= 0.55)
+              .map((b) => (
+                <div
+                  key={`bn-${b.id}`}
+                  className="intro-bldg"
+                  style={{
+                    left: `${b.left}%`,
+                    width: `${b.width * 1.15}vw`,
+                    height: `${b.height * 1.25}vh`,
+                    background: `linear-gradient(180deg, hsl(${b.tone},45%,22%) 0%, hsl(${b.tone},55%,6%) 100%)`,
+                    boxShadow: `0 0 28px ${b.accent}77, inset 0 0 24px hsl(${b.tone},80%,3%)`,
+                    transform: `translateZ(${b.z * 0.4}px)`,
+                    animationDelay: `${b.delay}s`,
+                  }}
+                >
+                  <div
+                    className="intro-bldg-windows"
+                    style={{
+                      backgroundImage: `repeating-linear-gradient(0deg, transparent 0 8px, ${b.accent}cc 8px 10px), repeating-linear-gradient(90deg, transparent 0 8px, ${b.accent}77 8px 9px)`,
+                    }}
+                  />
+                  <div className="intro-bldg-tip" style={{ background: b.accent, boxShadow: `0 0 14px ${b.accent}, 0 0 28px ${b.accent}` }} />
+                  {/* antenna */}
+                  {b.windowSeed > 0.6 && (
+                    <div className="intro-bldg-antenna" style={{ background: b.accent, boxShadow: `0 0 8px ${b.accent}` }} />
+                  )}
+                </div>
+              ))}
+          </div>
+          {/* central hero tower (Quantum Bee HQ) */}
+          <div className="intro-city-hero">
+            <div className="intro-hero-tower">
+              <div className="intro-hero-windows" />
+              <div className="intro-hero-spire" />
+              <div className="intro-hero-ring" />
+              <div className="intro-hero-ring intro-hero-ring-2" />
+            </div>
+          </div>
+        </div>
 
         {/* Atmospheric fog layers (parallax) */}
         <div className="intro-city-fog intro-city-fog-1" />
@@ -424,17 +523,194 @@ const IntroAnimation = () => {
           18%  { opacity: 1; filter: blur(0); }
           100% { opacity: 1; transform: scale(1.04); filter: blur(0); }
         }
-        .intro-city-img {
+        /* === 3D City stage === */
+        .intro-city-3d-stage {
           position: absolute; inset: 0;
-          width: 100%; height: 100%;
-          object-fit: cover;
-          filter: brightness(0.72) contrast(1.25) saturate(0.95) hue-rotate(-6deg);
-          transform-origin: 52% 60%;
-          animation: city-pan 5.5s cubic-bezier(0.22,1,0.36,1) 7.5s forwards;
+          perspective: 1200px;
+          perspective-origin: 50% 65%;
+          transform-style: preserve-3d;
+          background:
+            linear-gradient(to bottom,
+              hsl(245,60%,4%) 0%,
+              hsl(260,55%,8%) 35%,
+              hsl(285,55%,12%) 60%,
+              hsl(330,50%,10%) 80%,
+              hsl(220,60%,3%) 100%);
+          overflow: hidden;
+          animation: city-cam 5.5s cubic-bezier(0.22,1,0.36,1) 7.5s forwards;
         }
-        @keyframes city-pan {
-          0%   { transform: scale(1.22) translate(2%, 3%); }
-          100% { transform: scale(1.06) translate(-1%, 0); }
+        @keyframes city-cam {
+          0%   { transform: scale(1.15) translateY(2%); }
+          100% { transform: scale(1) translateY(0); }
+        }
+        .intro-city-sky {
+          position: absolute; inset: 0;
+          background:
+            radial-gradient(ellipse 80% 40% at 50% 35%, hsl(280,90%,40%/0.55), transparent 70%),
+            radial-gradient(ellipse 60% 30% at 25% 45%, hsl(200,100%,50%/0.35), transparent 70%),
+            radial-gradient(ellipse 60% 30% at 75% 50%, hsl(330,100%,55%/0.35), transparent 70%);
+          mix-blend-mode: screen;
+          opacity: 0.9;
+        }
+        .intro-city-sun {
+          position: absolute;
+          left: 50%; top: 38%;
+          width: 220px; height: 220px;
+          transform: translate(-50%, -50%);
+          border-radius: 50%;
+          background: radial-gradient(circle,
+            hsl(45,100%,75%) 0%,
+            hsl(40,100%,60%/0.7) 22%,
+            hsl(330,100%,55%/0.35) 50%,
+            transparent 75%);
+          filter: blur(2px);
+          box-shadow: 0 0 80px hsl(45,100%,60%/0.7), 0 0 160px hsl(330,100%,55%/0.4);
+        }
+        .intro-city-ground {
+          position: absolute; left: 0; right: 0; bottom: 0;
+          height: 55%;
+          transform-style: preserve-3d;
+          transform: rotateX(72deg);
+          transform-origin: 50% 0;
+          background: linear-gradient(to bottom,
+            hsl(280,60%,12%) 0%,
+            hsl(220,60%,4%) 100%);
+        }
+        .intro-city-grid {
+          position: absolute; inset: 0;
+          background-image:
+            linear-gradient(to right, hsl(200,100%,65%/0.55) 1px, transparent 1px),
+            linear-gradient(to bottom, hsl(330,100%,65%/0.45) 1px, transparent 1px);
+          background-size: 80px 80px;
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%);
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 30%, #000 100%);
+          animation: grid-flow 6s linear infinite;
+        }
+        @keyframes grid-flow {
+          0%   { background-position: 0 0, 0 0; }
+          100% { background-position: 0 80px, 80px 0; }
+        }
+        .intro-city-skyline {
+          position: absolute; left: 0; right: 0;
+          bottom: 38%;
+          height: 50vh;
+          transform-style: preserve-3d;
+        }
+        .intro-city-skyline-far {
+          bottom: 42%;
+          opacity: 0.7;
+          filter: blur(0.5px) saturate(0.85);
+        }
+        .intro-city-skyline-near {
+          bottom: 36%;
+          z-index: 2;
+        }
+        .intro-bldg {
+          position: absolute;
+          bottom: 0;
+          border: 1px solid hsl(220,60%,3%);
+          border-radius: 2px 2px 0 0;
+          transform-origin: 50% 100%;
+          animation: bldg-flicker 6s ease-in-out infinite;
+          overflow: hidden;
+        }
+        @keyframes bldg-flicker {
+          0%, 100% { filter: brightness(1); }
+          47%      { filter: brightness(1.05); }
+          50%      { filter: brightness(0.85); }
+          53%      { filter: brightness(1.1); }
+        }
+        .intro-bldg-windows {
+          position: absolute; inset: 6% 8% 6% 8%;
+          background-size: 8px 10px, 7px 8px;
+          opacity: 0.85;
+          mix-blend-mode: screen;
+          animation: window-twinkle 3s steps(8) infinite;
+        }
+        @keyframes window-twinkle {
+          0%, 100% { opacity: 0.85; }
+          50%      { opacity: 0.55; }
+        }
+        .intro-bldg-tip {
+          position: absolute; left: 50%; top: -3px;
+          width: 4px; height: 4px;
+          transform: translateX(-50%);
+          border-radius: 50%;
+          animation: tip-blink 1.6s ease-in-out infinite;
+        }
+        @keyframes tip-blink {
+          0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.8); }
+          50%      { opacity: 1;   transform: translateX(-50%) scale(1.4); }
+        }
+        .intro-bldg-antenna {
+          position: absolute; left: 50%; top: -16px;
+          width: 1px; height: 16px;
+          transform: translateX(-50%);
+        }
+
+        /* Hero tower (Quantum Bee HQ) */
+        .intro-city-hero {
+          position: absolute;
+          left: 50%; bottom: 36%;
+          transform: translateX(-50%);
+          z-index: 3;
+        }
+        .intro-hero-tower {
+          position: relative;
+          width: 110px;
+          height: 64vh;
+          background: linear-gradient(180deg,
+            hsl(45,100%,55%) 0%,
+            hsl(40,100%,38%) 30%,
+            hsl(220,60%,8%) 100%);
+          border-radius: 6px 6px 0 0;
+          box-shadow:
+            0 0 60px hsl(45,100%,55%/0.7),
+            0 0 120px hsl(330,100%,55%/0.4),
+            inset 0 0 24px hsl(220,60%,3%);
+          transform-origin: 50% 100%;
+          animation: hero-tower-rise 1.6s cubic-bezier(0.22,1,0.36,1) 8s backwards;
+        }
+        @keyframes hero-tower-rise {
+          0%   { transform: scaleY(0); opacity: 0; }
+          100% { transform: scaleY(1); opacity: 1; }
+        }
+        .intro-hero-windows {
+          position: absolute; inset: 6% 12% 6% 12%;
+          background-image:
+            repeating-linear-gradient(0deg, transparent 0 8px, hsl(45,100%,75%/0.85) 8px 10px),
+            repeating-linear-gradient(90deg, transparent 0 10px, hsl(45,100%,70%/0.5) 10px 11px);
+          mix-blend-mode: screen;
+          animation: window-twinkle 2.4s steps(6) infinite;
+        }
+        .intro-hero-spire {
+          position: absolute; left: 50%; top: -42px;
+          width: 4px; height: 42px;
+          transform: translateX(-50%);
+          background: linear-gradient(to top, hsl(45,100%,55%), white);
+          box-shadow: 0 0 16px hsl(45,100%,60%);
+        }
+        .intro-hero-ring {
+          position: absolute; left: 50%; top: 18%;
+          width: 220px; height: 60px;
+          transform: translate(-50%, -50%) rotateX(72deg);
+          border: 2px solid hsl(200,100%,70%);
+          border-radius: 50%;
+          box-shadow: 0 0 18px hsl(200,100%,60%), inset 0 0 18px hsl(200,100%,60%);
+          opacity: 0.85;
+          animation: ring-spin 6s linear infinite;
+        }
+        .intro-hero-ring-2 {
+          top: 35%;
+          width: 280px; height: 80px;
+          border-color: hsl(330,100%,70%);
+          box-shadow: 0 0 18px hsl(330,100%,60%), inset 0 0 18px hsl(330,100%,60%);
+          animation-duration: 9s;
+          animation-direction: reverse;
+        }
+        @keyframes ring-spin {
+          0%   { transform: translate(-50%, -50%) rotateX(72deg) rotateZ(0deg); }
+          100% { transform: translate(-50%, -50%) rotateX(72deg) rotateZ(360deg); }
         }
         .intro-city-vignette {
           position: absolute; inset: 0;
