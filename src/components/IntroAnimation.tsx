@@ -1228,6 +1228,126 @@ const IntroAnimation = () => {
           85%  { opacity: 0.85; }
           100% { transform: translateY(120vh); opacity: 0; }
         }
+
+        /* ============== HYPER-GLASS BUILDING SHINE / LOGO ============== */
+        .intro-bldg-glass { overflow: hidden; border-radius: 4px 4px 0 0; }
+        .intro-bldg-shine {
+          position: absolute; inset: 0;
+          background: linear-gradient(115deg,
+            transparent 35%,
+            hsl(200,100%,95%/0.55) 48%,
+            hsl(330,100%,90%/0.4) 52%,
+            transparent 65%);
+          mix-blend-mode: screen;
+          transform: translateX(-120%);
+          animation: bldg-shine 6s ease-in-out infinite;
+          pointer-events: none;
+        }
+        @keyframes bldg-shine {
+          0%, 60%  { transform: translateX(-120%); }
+          80%      { transform: translateX(120%); }
+          100%     { transform: translateX(120%); }
+        }
+        .intro-bldg-logo {
+          position: absolute; left: 50%; bottom: 18%;
+          transform: translateX(-50%);
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 9px;
+          letter-spacing: 0.18em;
+          padding: 2px 6px;
+          border: 1px solid;
+          border-radius: 2px;
+          background: hsl(220,40%,5%/0.5);
+          backdrop-filter: blur(2px);
+          opacity: 0.9;
+          white-space: nowrap;
+        }
+
+        /* ============== PATROL MECH ROBOTS ============== */
+        .intro-mech {
+          position: absolute;
+          width: 120px; height: 220px;
+          transform-origin: 50% 100%;
+          opacity: 0;
+          z-index: 4;
+          mix-blend-mode: screen;
+          pointer-events: none;
+          animation: mech-in 0.8s ease-out forwards;
+        }
+        @keyframes mech-in {
+          from { opacity: 0; }
+          to   { opacity: 0.92; }
+        }
+        .intro-mech-head {
+          position: absolute; left: 50%; top: 0;
+          width: 46px; height: 38px;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg,
+            hsl(var(--hue),100%,75%/0.55), hsl(var(--hue),80%,40%/0.3));
+          border: 1.5px solid hsl(var(--hue),100%,75%/0.8);
+          border-radius: 30% 30% 18% 18%;
+          box-shadow: 0 0 18px hsl(var(--hue),100%,60%/0.7),
+                      inset 0 0 12px hsl(var(--hue),100%,80%/0.4);
+        }
+        .intro-mech-eye {
+          position: absolute; left: 50%; top: 18px;
+          width: 18px; height: 5px;
+          transform: translateX(-50%);
+          background: linear-gradient(90deg, transparent, hsl(45,100%,70%), transparent);
+          box-shadow: 0 0 10px hsl(45,100%,60%), 0 0 18px hsl(330,100%,55%);
+          animation: mech-eye 2.6s ease-in-out infinite;
+        }
+        @keyframes mech-eye {
+          0%,90%,100% { opacity: 1; }
+          93%,97%     { opacity: 0.2; }
+        }
+        .intro-mech-body {
+          position: absolute; left: 50%; top: 40px;
+          width: 70px; height: 90px;
+          transform: translateX(-50%);
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,55%/0.4), hsl(280,80%,40%/0.25));
+          border: 1.5px solid hsl(var(--hue),100%,75%/0.7);
+          border-radius: 14px 14px 18px 18px;
+          box-shadow: 0 0 22px hsl(var(--hue),100%,60%/0.6),
+                      inset 0 0 18px hsl(var(--hue),100%,75%/0.4);
+          background-image:
+            repeating-linear-gradient(0deg, transparent 0 9px, hsl(var(--hue),100%,75%/0.18) 9px 10px);
+        }
+        .intro-mech-arm {
+          position: absolute; top: 46px;
+          width: 12px; height: 70px;
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,60%/0.5), hsl(var(--hue),80%,30%/0.3));
+          border: 1px solid hsl(var(--hue),100%,75%/0.6);
+          border-radius: 6px;
+          box-shadow: 0 0 10px hsl(var(--hue),100%,55%/0.6);
+          transform-origin: 50% 0;
+          animation: mech-arm 1.6s ease-in-out infinite;
+        }
+        .intro-mech-arm-l { left: 12px; }
+        .intro-mech-arm-r { right: 12px; animation-direction: reverse; }
+        @keyframes mech-arm {
+          0%,100% { transform: rotate(-8deg); }
+          50%     { transform: rotate(10deg); }
+        }
+        .intro-mech-leg {
+          position: absolute; top: 132px;
+          width: 16px; height: 78px;
+          background: linear-gradient(180deg,
+            hsl(var(--hue),90%,55%/0.5), hsl(var(--hue),80%,25%/0.35));
+          border: 1px solid hsl(var(--hue),100%,75%/0.6);
+          border-radius: 6px;
+          box-shadow: 0 0 10px hsl(var(--hue),100%,55%/0.6);
+          transform-origin: 50% 0;
+          animation: mech-leg 1.6s ease-in-out infinite;
+        }
+        .intro-mech-leg-l { left: 32px; }
+        .intro-mech-leg-r { right: 32px; animation-direction: reverse; }
+        @keyframes mech-leg {
+          0%,100% { transform: rotate(6deg); }
+          50%     { transform: rotate(-6deg); }
+        }
       `}</style>
     </div>
   );
