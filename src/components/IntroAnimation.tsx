@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import cosmos from "@/assets/intro-cosmos.jpg";
 import earth from "@/assets/intro-earth.jpg";
 
-const STORAGE_KEY = "beee_intro_played_v7";
+const STORAGE_KEY = "beee_intro_played_v8";
 const TOTAL_MS = 14500;
 
 const IntroAnimation = () => {
