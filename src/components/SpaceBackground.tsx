@@ -7,17 +7,19 @@ interface Props {
   nebula?: boolean;
   /** kept for API compatibility — ignored */
   shootingStars?: number;
+  /** Enable warp/hyperspace streaks for a 3D space-travel feel */
+  warp?: boolean;
 }
 
 /**
- * Cinematic galaxy-travel background.
+ * Cinematic 3D galaxy-travel background.
  * - Deep layered nebulae (slow drift + breathing)
  * - 3 parallax star fields with twinkle + drift
  * - Volumetric light beams sweeping slowly
+ * - Hyperspace warp streaks radiating from center (3D space travel feel)
  * - Subtle dust/grain and vignette for depth
- * No rocks, no shooting stars — pure immersive spacelight.
  */
-const SpaceBackground = ({ density = 1, nebula = true }: Props) => {
+const SpaceBackground = ({ density = 1, nebula = true, warp = true }: Props) => {
   const layers = useMemo(() => {
     const make = (count: number, sizeMin: number, sizeMax: number) =>
       Array.from({ length: count }).map(() => ({
@@ -39,6 +41,26 @@ const SpaceBackground = ({ density = 1, nebula = true }: Props) => {
       near: make(Math.round(28 * density), 1.6, 2.8),
     };
   }, [density]);
+
+  // Warp streaks — radiate outward from center, varied length/speed for true 3D travel
+  const warpStreaks = useMemo(
+    () =>
+      Array.from({ length: 70 }).map((_, i) => ({
+        id: i,
+        angle: Math.random() * 360,
+        delay: Math.random() * 6,
+        dur: 2.2 + Math.random() * 4.5,
+        len: 60 + Math.random() * 240,
+        thick: 0.6 + Math.random() * 1.6,
+        hue:
+          Math.random() > 0.7
+            ? 40
+            : Math.random() > 0.5
+            ? 200
+            : 220,
+      })),
+    []
+  );
 
   return (
     <div
@@ -71,6 +93,16 @@ const SpaceBackground = ({ density = 1, nebula = true }: Props) => {
         @keyframes qb-galaxy-rotate {
           from { transform: translate(-50%,-50%) rotate(0deg); }
           to   { transform: translate(-50%,-50%) rotate(360deg); }
+        }
+        @keyframes qb-warp {
+          0%   { transform: rotate(var(--ang)) translateX(0) scaleX(0.2); opacity: 0; }
+          15%  { opacity: 1; }
+          85%  { opacity: 1; }
+          100% { transform: rotate(var(--ang)) translateX(60vmax) scaleX(1); opacity: 0; }
+        }
+        @keyframes qb-zoom {
+          0%   { transform: translate(-50%,-50%) scale(1); }
+          100% { transform: translate(-50%,-50%) scale(1.06); }
         }
       `}</style>
 
@@ -146,6 +178,35 @@ const SpaceBackground = ({ density = 1, nebula = true }: Props) => {
           animation: "qb-beam 40s ease-in-out infinite 6s",
         }}
       />
+
+      {/* Hyperspace / warp streaks — true 3D space-travel sensation */}
+      {warp && (
+        <div
+          className="absolute top-1/2 left-1/2"
+          style={{
+            width: 1,
+            height: 1,
+            animation: "qb-zoom 18s ease-in-out infinite alternate",
+          }}
+        >
+          {warpStreaks.map((s) => (
+            <span
+              key={`w${s.id}`}
+              className="absolute top-0 left-0 origin-left rounded-full"
+              style={{
+                width: s.len,
+                height: s.thick,
+                background: `linear-gradient(90deg, transparent, hsl(${s.hue} 100% 80% / 0.85), transparent)`,
+                boxShadow: `0 0 ${s.thick * 6}px hsl(${s.hue} 100% 70% / 0.8)`,
+                // @ts-expect-error custom prop
+                "--ang": `${s.angle}deg`,
+                animation: `qb-warp ${s.dur}s linear ${s.delay}s infinite`,
+                opacity: 0,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Far stars */}
       <div className="absolute inset-0" style={{ animation: "qb-drift-far 80s linear infinite alternate" }}>
