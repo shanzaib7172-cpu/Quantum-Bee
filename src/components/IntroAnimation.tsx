@@ -52,6 +52,29 @@ const IntroAnimation = () => {
     rot: Math.random() * 360,
   }));
 
+  // 3D Quantum City buildings — pseudo-isometric skyline
+  const buildings = useMemo(
+    () =>
+      Array.from({ length: 26 }).map((_, i) => {
+        const depth = Math.random(); // 0 (near) -> 1 (far)
+        return {
+          id: i,
+          left: (i / 26) * 100 + (Math.random() * 3 - 1.5),
+          width: 3 + Math.random() * 5,
+          height: 18 + Math.random() * 42 * (1 - depth * 0.55),
+          depth,
+          tone: 200 + Math.round(Math.random() * 80) - 40,
+          accent: Math.random() > 0.5 ? "hsl(200,100%,60%)" : "hsl(330,100%,65%)",
+          windowSeed: Math.random(),
+          // z-translate to push back/forward in 3D
+          z: -depth * 400,
+          // sway delay
+          delay: Math.random() * 4,
+        };
+      }),
+    []
+  );
+
   return (
     <div
       className={`fixed inset-0 z-[9999] overflow-hidden bg-black ${
