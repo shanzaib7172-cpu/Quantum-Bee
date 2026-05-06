@@ -40,9 +40,9 @@ const ICONS: Record<string, any> = {
   hash: Hash, megaphone: Megaphone, sparkles: Sparkles,
   "book-open": BookOpen, coffee: Coffee,
 };
-const ChIcon = ({ name, className }: { name: string; className?: string }) => {
+const ChIcon = ({ name, className, style }: { name: string; className?: string; style?: React.CSSProperties }) => {
   const Comp = ICONS[name] ?? Hash;
-  return <Comp className={className} />;
+  return <Comp className={className} style={style} />;
 };
 
 const initials = (s: string) => s.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase();
