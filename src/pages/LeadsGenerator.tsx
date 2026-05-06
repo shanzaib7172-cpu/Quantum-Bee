@@ -124,7 +124,7 @@ const LeadsGenerator = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `beee-leads-${Date.now()}.json`;
+    a.download = `bee-leads-${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
