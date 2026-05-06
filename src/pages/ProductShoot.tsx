@@ -77,7 +77,7 @@ const ProductShoot = () => {
     if (!generatedImage) return;
     const a = document.createElement("a");
     a.href = generatedImage;
-    a.download = `beee-product-shoot-${Date.now()}.png`;
+    a.download = `bee-product-shoot-${Date.now()}.png`;
     a.click();
   };
 
