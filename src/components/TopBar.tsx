@@ -18,8 +18,9 @@ const Icon3D = ({
   Icon, label, color, active,
 }: { Icon: any; label: string; color: string; active: boolean }) => (
   <span
-    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all
-      border overflow-hidden isolate
+    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-150
+      border overflow-hidden isolate select-none
+      hover:-translate-y-[1px] active:translate-y-[2px] active:scale-95
       ${active ? "text-white" : "text-white/75 hover:text-white"}`}
     style={{
       background: active
