@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
