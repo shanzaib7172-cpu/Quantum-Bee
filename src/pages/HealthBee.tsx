@@ -10,7 +10,7 @@ const ACCENT = "hsl(345,90%,65%)";
 const HealthBee = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-      <SpaceBackground density={0.8} rocks={0} blackhole={false} />
+      <SpaceBackground density={0.8} rocks={0} blackhole={false} planets />
       <TopBar />
       {/* back button removed */}
 

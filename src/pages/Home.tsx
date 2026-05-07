@@ -106,14 +106,17 @@ const Home = () => {
         </div>
 
         <h1 className="font-heading font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[1.05] tracking-tight max-w-5xl animate-fade-in" data-reveal>
-          <span className="bg-gradient-to-br from-white via-[hsl(200,100%,85%)] to-[hsl(220,100%,70%)] bg-clip-text text-transparent">
-            Beyond the
+          <span className="bg-gradient-to-br from-white via-[hsl(45,100%,80%)] to-[hsl(40,100%,60%)] bg-clip-text text-transparent">
+            Welcome to
           </span>
           <br />
-          <span className="bg-gradient-to-r from-[hsl(40,100%,60%)] via-[hsl(195,100%,70%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
-            Quantum Singularity
+          <span className="bg-gradient-to-r from-[hsl(45,100%,60%)] via-[hsl(40,100%,65%)] to-[hsl(30,100%,55%)] bg-clip-text text-transparent">
+            Planet Bee
           </span>
         </h1>
+        <p className="mt-4 font-heading font-semibold text-xl sm:text-2xl md:text-3xl text-foreground/85 animate-fade-in" data-reveal>
+          Beyond the Quantum Singularity
+        </p>
 
         <p className="mt-8 max-w-2xl text-base sm:text-lg text-foreground/70 leading-relaxed animate-fade-in" data-reveal>
           Quantum Bee fuses <span className="text-[hsl(195,100%,75%)] font-medium">Quantum Computing</span> with{" "}

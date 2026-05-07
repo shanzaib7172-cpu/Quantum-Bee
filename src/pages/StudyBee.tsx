@@ -225,7 +225,7 @@ const StudyBee = () => {
   // ----- Discord-style layout -----
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
-      <SpaceBackground density={0.4} rocks={0} blackhole={false} />
+      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
       <TopBar />
       {/* back button removed */}
 
