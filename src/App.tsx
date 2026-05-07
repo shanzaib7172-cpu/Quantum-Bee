@@ -17,6 +17,7 @@ import Profile from "./pages/Profile.tsx";
 import SpaceBee from "./pages/SpaceBee.tsx";
 import StudyBee from "./pages/StudyBee.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Recharge from "./pages/Recharge.tsx";
 import BeeCursor from "./components/BeeCursor.tsx";
 import IntroAnimation from "./components/IntroAnimation.tsx";
 
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/space-bee" element={<SpaceBee />} />
           <Route path="/study-bee" element={<StudyBee />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/recharge" element={<Recharge />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

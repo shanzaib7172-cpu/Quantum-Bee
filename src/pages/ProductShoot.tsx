@@ -7,6 +7,7 @@ import beeLogo from "@/assets/bee-logo.png";
 import sophiaCharacter from "@/assets/sophia-character.png";
 import TopBar from "@/components/TopBar";
 import SpaceBackground from "@/components/SpaceBackground";
+import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
 
 const PRODUCT_SHOOT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/product-shoot`;
 
@@ -25,6 +26,7 @@ const ProductShoot = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { deduct } = useBeeCoins();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -45,6 +47,8 @@ const ProductShoot = () => {
 
   const handleGenerate = async () => {
     if (!uploadedImage) return;
+    const ok = await deduct(COIN_COSTS.sophiaImage, "Sophia product shoot", "sophia");
+    if (!ok) return;
     setIsGenerating(true);
     setGeneratedImage(null);
 

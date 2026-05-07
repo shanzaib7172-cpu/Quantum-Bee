@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import beeLogo from "@/assets/bee-logo.png";
 import { useAuth } from "@/hooks/use-auth";
+import BeeCoinBadge from "./BeeCoinBadge";
 
 const NAV = [
   { to: "/", label: "Home", icon: HomeIcon, color: "hsl(195,100%,70%)" },
@@ -85,16 +86,23 @@ const TopBar = () => {
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
             </Link>
           ))}
-          <Link to="/login" className="ml-1">
-            <Icon3D Icon={LogIn} label="Login" color="hsl(200,100%,70%)" active={pathname === "/login"} />
-          </Link>
-          <Link to="/signup">
-            <Icon3D Icon={UserPlus} label="Sign up" color="hsl(45,100%,65%)" active={pathname === "/signup"} />
-          </Link>
+          {!user && (
+            <>
+              <Link to="/login" className="ml-1">
+                <Icon3D Icon={LogIn} label="Login" color="hsl(200,100%,70%)" active={pathname === "/login"} />
+              </Link>
+              <Link to="/signup">
+                <Icon3D Icon={UserPlus} label="Sign up" color="hsl(45,100%,65%)" active={pathname === "/signup"} />
+              </Link>
+            </>
+          )}
           {user && (
-            <Link to="/profile">
-              <Icon3D Icon={UserIcon} label="Profile" color="hsl(140,100%,65%)" active={pathname === "/profile"} />
-            </Link>
+            <>
+              <BeeCoinBadge />
+              <Link to="/profile">
+                <Icon3D Icon={UserIcon} label="Profile" color="hsl(140,100%,65%)" active={pathname === "/profile"} />
+              </Link>
+            </>
           )}
         </nav>
 
@@ -121,7 +129,8 @@ const TopBar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-4 pb-4 animate-fade-in">
+        <div className="md:hidden px-4 pb-4 animate-fade-in space-y-2">
+          {user && <div className="flex justify-end"><BeeCoinBadge /></div>}
           <div
             className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-3xl relative overflow-hidden"
             style={{
