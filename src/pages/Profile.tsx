@@ -47,7 +47,9 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <TopBar />
-      <div className="max-w-6xl mx-auto px-4 py-6 grid md:grid-cols-[220px_1fr] gap-6">
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        <ProfileHeader userId={user.id} email={user.email || ""} />
+        <div className="grid md:grid-cols-[220px_1fr] gap-6">
         <aside className="space-y-1">
           <div className="px-3 py-3 mb-2 rounded-xl glass">
             <p className="text-xs text-muted-foreground">Signed in</p>
