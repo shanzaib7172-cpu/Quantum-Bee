@@ -36,6 +36,7 @@ const ChatCanvas = () => {
   const recognitionRef = useRef<any>(null);
   const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const { toast } = useToast();
+  const { deduct } = useBeeCoins();
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
