@@ -205,19 +205,19 @@ const LeadsGenerator = () => {
               <p className="text-xs text-muted-foreground mt-1">Fill the form to generate authentic leads...</p>
             </div>
 
-            {/* Pricing tiers */}
+            {/* Bee Coin tiers */}
             <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
               {[
-                { leads: "5,000 leads", price: "$50" },
-                { leads: "20,000 leads", price: "$150" },
-                { leads: "50,000 leads", price: "$300" },
+                { leads: "1,000 leads", coins: "10 🐝" },
+                { leads: "5,000 leads", coins: "50 🐝" },
+                { leads: "20,000 leads", coins: "200 🐝" },
               ].map((tier) => (
                 <div
                   key={tier.leads}
                   className="glass glass-highlight rounded-xl p-3 text-center border border-bee/20"
                 >
                   <p className="text-xs text-muted-foreground">{tier.leads}</p>
-                  <p className="text-lg font-heading font-semibold text-bee mt-0.5">{tier.price}</p>
+                  <p className="text-lg font-heading font-semibold text-bee mt-0.5">{tier.coins}</p>
                 </div>
               ))}
             </div>
