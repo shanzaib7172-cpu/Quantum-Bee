@@ -452,3 +452,103 @@ function ApiKeys() {
     </div>
   );
 }
+
+/* ───────── Profile Header (avatar + name) ───────── */
+
+function ProfileHeader({ userId, email }: { userId: string; email: string }) {
+  const [profile, setProfile] = useState<{ display_name: string; avatar_url: string | null } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [editingName, setEditingName] = useState(false);
+  const [name, setName] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+
+  const load = async () => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("display_name, avatar_url")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (data) {
+      setProfile(data);
+      setName(data.display_name || "");
+    }
+  };
+  useEffect(() => { load(); /* eslint-disable-next-line */ }, [userId]);
+
+  const onPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too big", description: "Max 5MB." });
+      return;
+    }
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "png";
+    const path = `${userId}/avatar-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (upErr) {
+      setUploading(false);
+      toast({ variant: "destructive", title: "Upload failed", description: upErr.message });
+      return;
+    }
+    const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+    const url = `${pub.publicUrl}?v=${Date.now()}`;
+    await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", userId);
+    setUploading(false);
+    setProfile((p) => p ? { ...p, avatar_url: url } : { display_name: name, avatar_url: url });
+    toast({ title: "Profile picture updated 🐝" });
+  };
+
+  const saveName = async () => {
+    if (!name.trim()) return;
+    await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
+    setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null });
+    setEditingName(false);
+    toast({ title: "Name updated" });
+  };
+
+  const initial = (profile?.display_name || email || "B").trim().charAt(0).toUpperCase();
+
+  return (
+    <Card className="p-5 glass border-border/50 flex flex-col sm:flex-row items-center sm:items-center gap-5">
+      <div className="relative shrink-0">
+        <Avatar className="w-20 h-20 ring-2 ring-bee/40">
+          {profile?.avatar_url && <AvatarImage src={profile.avatar_url} alt="Profile" />}
+          <AvatarFallback className="bg-bee/15 text-bee text-2xl font-heading">{initial}</AvatarFallback>
+        </Avatar>
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          aria-label="Change picture"
+          className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-bee text-background grid place-items-center shadow-lg hover:scale-110 transition-transform disabled:opacity-60"
+        >
+          {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+        </button>
+        <input ref={fileRef} type="file" accept="image/*" hidden onChange={onPick} />
+      </div>
+
+      <div className="flex-1 text-center sm:text-left min-w-0">
+        {editingName ? (
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Input value={name} onChange={(e) => setName(e.target.value)} className="bg-secondary/30 border-border/50 max-w-xs" />
+            <div className="flex gap-2 justify-center sm:justify-start">
+              <Button size="sm" onClick={saveName} className="bg-bee/15 text-bee border border-bee/30" variant="ghost">Save</Button>
+              <Button size="sm" onClick={() => setEditingName(false)} variant="ghost">Cancel</Button>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2 justify-center sm:justify-start">
+              <h2 className="text-xl font-heading font-semibold text-gradient truncate">
+                {profile?.display_name || "Bee"}
+              </h2>
+              <button onClick={() => setEditingName(true)} className="text-xs text-muted-foreground hover:text-foreground">edit</button>
+            </div>
+            <p className="text-sm text-muted-foreground truncate">{email}</p>
+          </>
+        )}
+      </div>
+    </Card>
+  );
+}
