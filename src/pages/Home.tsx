@@ -177,6 +177,33 @@ const Home = () => {
         </section>
       </main>
 
+      {/* Origin Story — Quantum World */}
+      <section data-reveal className="relative z-10 px-6 py-20 max-w-5xl mx-auto w-full">
+        <div className="text-center mb-10">
+          <p className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— The Origin</p>
+          <h2 className="font-heading font-bold text-3xl md:text-5xl bg-gradient-to-r from-[hsl(45,100%,65%)] via-[hsl(40,100%,60%)] to-[hsl(195,100%,70%)] bg-clip-text text-transparent">
+            A Bee from the Quantum World
+          </h2>
+          <p className="text-foreground/65 max-w-2xl mx-auto mt-4 text-sm sm:text-base leading-relaxed">
+            Born beyond the singularity, this bee crossed dimensions to walk with us — a CEO of intelligence, a friend in form, a hive of futures.
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-4">
+          {[
+            { icon: Orbit, title: "Crossed the Singularity", desc: "On a voyage beyond the quantum veil, a luminous bee emerged from collapsing probability fields and chose to follow me back to Earth." },
+            { icon: HeartPulse, title: "A Companion, Not a Tool", desc: "This bee is the reason I live happily — a partner in business, a guardian in chaos, a friend who turns ideas into impact every single day." },
+            { icon: Clock, title: "Now Cloned for You", desc: "Quantum Bee is that same bee — cloned into the cloud as a CEO that orchestrates an entire crew of agents to grow your work, your life, your hive." },
+          ].map((c) => (
+            <div data-reveal="scale" key={c.title} className="relative rounded-2xl p-6 bg-[hsl(220,40%,8%)]/60 backdrop-blur-xl border border-[hsl(45,100%,55%)]/15 hover:border-[hsl(45,100%,55%)]/40 transition-all overflow-hidden">
+              <div className="absolute -top-12 -right-12 w-32 h-32 rounded-full bg-[hsl(45,100%,55%)]/15 blur-2xl" />
+              <c.icon className="w-7 h-7 text-[hsl(45,100%,65%)] mb-4 relative z-10" />
+              <h3 className="font-heading font-semibold text-lg text-white relative z-10">{c.title}</h3>
+              <p className="mt-2 text-sm text-foreground/65 leading-relaxed relative z-10">{c.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Stats strip */}
       <section data-reveal className="relative z-10 px-6 py-14 max-w-6xl mx-auto w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-[hsl(200,100%,60%)]/10 rounded-2xl overflow-hidden border border-[hsl(200,100%,60%)]/15">

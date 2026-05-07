@@ -238,130 +238,207 @@ const SpaceBackground = ({
       </>
       )}
 
-      {/* ============ SOLAR-SYSTEM PLANETS ============ */}
+      {/* ============ QUANTUM BEE WORLDS — diverse planets, slow orbital revolve ============ */}
       {planets && (
-        <div className="absolute inset-0 pointer-events-none">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ animation: "qb-world-revolve 360s linear infinite", transformOrigin: "50% 50%" }}
+        >
           <style>{`
+            @keyframes qb-world-revolve { to { transform: rotate(360deg); } }
             @keyframes qb-planet-drift-a {
-              0%   { transform: translate3d(0,0,0) rotate(0deg); }
-              100% { transform: translate3d(40px,-30px,0) rotate(360deg); }
+              0%   { transform: translate3d(0,0,0); }
+              100% { transform: translate3d(30px,-22px,0); }
             }
             @keyframes qb-planet-drift-b {
-              0%   { transform: translate3d(0,0,0) rotate(0deg); }
-              100% { transform: translate3d(-50px,40px,0) rotate(-360deg); }
+              0%   { transform: translate3d(0,0,0); }
+              100% { transform: translate3d(-35px,28px,0); }
             }
             @keyframes qb-planet-spin { to { transform: rotate(360deg); } }
-            @keyframes qb-moon-orbit  { to { transform: rotate(360deg); } }
+            @keyframes qb-ring-tilt   { 0%,100% { transform: translate(-50%,-50%) rotate(var(--rot)) scaleY(0.28); } 50% { transform: translate(-50%,-50%) rotate(calc(var(--rot) + 6deg)) scaleY(0.32); } }
+            @keyframes qb-wing-flutter { 0%,100% { transform: var(--base) scaleY(1); } 50% { transform: var(--base) scaleY(0.92); } }
           `}</style>
 
           {[
-            // queen bee planet — large golden body with bold black stripes
+            // 1 ── QUEEN BEE — gas-giant, bold black bands, atmospheric glow + 2 wings
             {
-              key: "queen-bee", top: "12%", left: "8%", size: 80,
-              bg: "radial-gradient(circle at 32% 30%, hsl(50 100% 88%) 0%, hsl(45 100% 60%) 35%, hsl(38 100% 45%) 70%, hsl(30 90% 25%) 100%)",
-              bands: "repeating-linear-gradient(0deg, transparent 0 9px, hsl(0 0% 5% / 0.85) 9px 16px, transparent 16px 22px)",
-              glow: "hsl(45 100% 60% / 0.65)",
-              ring: true, // bee wings
-              dur: 110, anim: "a",
+              key: "queen-bee", top: "10%", left: "6%", size: 110, kind: "queen",
+              bg: "radial-gradient(circle at 30% 28%, hsl(52 100% 92%) 0%, hsl(48 100% 70%) 25%, hsl(42 100% 55%) 55%, hsl(32 95% 38%) 85%, hsl(22 80% 18%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 11px, hsl(0 0% 4% / 0.88) 11px 19px, transparent 19px 26px)",
+              glow: "hsl(45 100% 60% / 0.7)", dur: 140, anim: "a",
             },
-            // worker bee planet — with translucent wings
+            // 2 ── HONEYCOMB WORLD — hex-pattern surface, orange/amber
             {
-              key: "worker-bee", top: "70%", left: "82%", size: 60,
-              bg: "radial-gradient(circle at 35% 35%, hsl(50 100% 85%) 0%, hsl(45 100% 58%) 40%, hsl(38 95% 42%) 80%, hsl(28 85% 22%) 100%)",
-              bands: "repeating-linear-gradient(0deg, transparent 0 7px, hsl(0 0% 5% / 0.85) 7px 12px, transparent 12px 17px)",
-              glow: "hsl(45 100% 60% / 0.55)",
-              ring: true,
-              dur: 130, anim: "b",
+              key: "honeycomb", top: "22%", left: "78%", size: 70, kind: "hex",
+              bg: "radial-gradient(circle at 35% 30%, hsl(40 100% 78%) 0%, hsl(32 100% 55%) 50%, hsl(20 90% 28%) 100%)",
+              bands: "", glow: "hsl(35 100% 55% / 0.6)", dur: 120, anim: "b",
+              ring: { rot: -22, hue: 35, w: 2.0, color: "hsl(45 100% 65% / 0.55)" },
             },
-            // amber bee planet — diagonal stripes
+            // 3 ── QUANTUM BLUE — icy water-world with cyan polar caps + ring
             {
-              key: "amber-bee", top: "78%", left: "12%", size: 32,
-              bg: "radial-gradient(circle at 32% 32%, hsl(48 100% 80%) 0%, hsl(40 100% 55%) 50%, hsl(30 90% 30%) 100%)",
-              bands: "repeating-linear-gradient(20deg, transparent 0 5px, hsl(0 0% 5% / 0.8) 5px 9px, transparent 9px 13px)",
-              glow: "hsl(40 100% 55% / 0.5)",
-              dur: 95, anim: "a",
+              key: "quantum-blue", top: "62%", left: "85%", size: 86, kind: "ringed",
+              bg: "radial-gradient(circle at 32% 28%, hsl(195 100% 92%) 0%, hsl(205 100% 60%) 35%, hsl(220 90% 35%) 75%, hsl(230 80% 12%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 14px, hsl(200 100% 80% / 0.18) 14px 18px, transparent 18px 26px)",
+              glow: "hsl(200 100% 60% / 0.65)", dur: 180, anim: "a",
+              ring: { rot: 18, hue: 200, w: 2.4, color: "hsl(200 100% 75% / 0.55)" },
             },
-            // honey droplet planet — small, glassy
+            // 4 ── SINGULARITY MOON — cratered grey-violet rocky world
             {
-              key: "honey-drop", top: "22%", left: "88%", size: 22,
-              bg: "radial-gradient(circle at 35% 30%, hsl(50 100% 90%) 0%, hsl(42 100% 62%) 60%, hsl(32 90% 32%) 100%)",
-              bands: "radial-gradient(circle at 60% 70%, hsl(30 90% 25% / 0.5) 8%, transparent 14%)",
-              glow: "hsl(45 100% 65% / 0.5)",
-              dur: 80, anim: "b",
+              key: "crater-moon", top: "76%", left: "18%", size: 54, kind: "cratered",
+              bg: "radial-gradient(circle at 30% 28%, hsl(260 25% 78%) 0%, hsl(255 18% 55%) 45%, hsl(248 20% 22%) 100%)",
+              bands: "", glow: "hsl(260 60% 55% / 0.45)", dur: 160, anim: "b",
             },
-            // pollen planet — pale gold
+            // 5 ── POLLEN STAR — soft luminous pale-gold dwarf, bee-wings
             {
-              key: "pollen", top: "55%", left: "4%", size: 40,
-              bg: "radial-gradient(circle at 35% 35%, hsl(52 100% 92%) 0%, hsl(48 95% 70%) 50%, hsl(40 80% 38%) 100%)",
-              bands: "repeating-linear-gradient(0deg, transparent 0 6px, hsl(0 0% 8% / 0.7) 6px 10px, transparent 10px 15px)",
-              glow: "hsl(48 100% 68% / 0.55)",
-              dur: 105, anim: "a",
+              key: "pollen-star", top: "48%", left: "3%", size: 64, kind: "winged",
+              bg: "radial-gradient(circle at 35% 32%, hsl(54 100% 96%) 0%, hsl(48 100% 75%) 45%, hsl(40 90% 45%) 100%)",
+              bands: "", glow: "hsl(48 100% 70% / 0.75)", dur: 130, anim: "a",
             },
-            // tiny scout bee planet
+            // 6 ── HONEY DROP — small glassy amber gem
             {
-              key: "scout-bee", top: "30%", left: "62%", size: 24,
+              key: "honey-drop", top: "30%", left: "44%", size: 26, kind: "glass",
+              bg: "radial-gradient(circle at 35% 28%, hsl(50 100% 92%) 0%, hsl(42 100% 60%) 55%, hsl(28 95% 30%) 100%)",
+              bands: "radial-gradient(circle at 60% 70%, hsl(30 90% 22% / 0.55) 8%, transparent 16%)",
+              glow: "hsl(45 100% 65% / 0.5)", dur: 110, anim: "b",
+            },
+            // 7 ── SCOUT BEE — tiny striped wanderer
+            {
+              key: "scout-bee", top: "8%", left: "55%", size: 30, kind: "striped",
               bg: "radial-gradient(circle at 35% 30%, hsl(50 100% 88%) 0%, hsl(45 100% 60%) 55%, hsl(32 85% 28%) 100%)",
               bands: "repeating-linear-gradient(0deg, transparent 0 4px, hsl(0 0% 5% / 0.85) 4px 7px, transparent 7px 10px)",
-              glow: "hsl(45 100% 60% / 0.5)",
-              dur: 90, anim: "b",
+              glow: "hsl(45 100% 60% / 0.55)", dur: 100, anim: "a",
             },
-          ].map((p) => (
-            <div
-              key={p.key}
-              className="absolute"
-              style={{
-                top: p.top,
-                left: p.left,
-                width: p.size,
-                height: p.size,
-                animation: `qb-planet-drift-${p.anim} ${p.dur}s linear infinite alternate`,
-              }}
-            >
-              {/* Bee wings (behind body) */}
-              {p.ring && (
-                <>
-                  <div
-                    className="absolute left-1/2 top-1/2 rounded-full"
-                    style={{
-                      width: p.size * 1.1,
-                      height: p.size * 0.7,
-                      transform: `translate(-95%,-95%) rotate(-30deg)`,
-                      background:
-                        "radial-gradient(ellipse at 30% 40%, hsl(0 0% 100% / 0.55), hsl(200 100% 90% / 0.18) 55%, transparent 75%)",
-                      border: "1px solid hsl(0 0% 100% / 0.35)",
-                      filter: "blur(0.3px)",
-                    }}
-                  />
-                  <div
-                    className="absolute left-1/2 top-1/2 rounded-full"
-                    style={{
-                      width: p.size * 1.1,
-                      height: p.size * 0.7,
-                      transform: `translate(-5%,-95%) rotate(30deg)`,
-                      background:
-                        "radial-gradient(ellipse at 70% 40%, hsl(0 0% 100% / 0.55), hsl(200 100% 90% / 0.18) 55%, transparent 75%)",
-                      border: "1px solid hsl(0 0% 100% / 0.35)",
-                      filter: "blur(0.3px)",
-                    }}
-                  />
-                </>
-              )}
-              {/* Planet body */}
+            // 8 ── NECTAR NEBULA — pinkish dwarf
+            {
+              key: "nectar-dwarf", top: "85%", left: "60%", size: 38, kind: "smooth",
+              bg: "radial-gradient(circle at 35% 30%, hsl(330 100% 88%) 0%, hsl(310 80% 60%) 50%, hsl(290 60% 25%) 100%)",
+              bands: "", glow: "hsl(320 80% 60% / 0.55)", dur: 145, anim: "b",
+            },
+          ].map((p: any) => {
+            const s = p.size;
+            return (
               <div
-                className="relative w-full h-full rounded-full overflow-hidden"
+                key={p.key}
+                className="absolute"
                 style={{
-                  background: p.bg,
-                  boxShadow: `0 0 ${p.size * 0.45}px ${p.glow}, inset -${p.size * 0.18}px -${p.size * 0.18}px ${p.size * 0.4}px rgba(0,0,0,0.7), inset ${p.size * 0.08}px ${p.size * 0.08}px ${p.size * 0.2}px rgba(255,255,255,0.18)`,
-                  animation: `qb-planet-spin ${p.dur * 0.6}s linear infinite`,
+                  top: p.top, left: p.left, width: s, height: s,
+                  animation: `qb-planet-drift-${p.anim} ${p.dur}s ease-in-out infinite alternate`,
                 }}
               >
+                {/* Atmospheric halo */}
                 <div
-                  className="absolute inset-0 rounded-full"
-                  style={{ backgroundImage: p.bands, mixBlendMode: "overlay", opacity: 0.85 }}
+                  className="absolute rounded-full pointer-events-none"
+                  style={{
+                    inset: -s * 0.25,
+                    background: `radial-gradient(circle, ${p.glow} 0%, transparent 65%)`,
+                    filter: "blur(6px)", opacity: 0.7,
+                  }}
                 />
+
+                {/* Bee wings (queen, pollen-star) */}
+                {(p.kind === "queen" || p.kind === "winged") && (
+                  <>
+                    {[-30, 30].map((rot, i) => (
+                      <div
+                        key={i}
+                        className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
+                        style={{
+                          width: s * 1.15, height: s * 0.72,
+                          // @ts-expect-error css var
+                          "--base": `translate(${i === 0 ? "-95%" : "-5%"},-95%) rotate(${rot}deg)`,
+                          transform: `translate(${i === 0 ? "-95%" : "-5%"},-95%) rotate(${rot}deg)`,
+                          background: `radial-gradient(ellipse at ${i === 0 ? "30%" : "70%"} 40%, hsl(0 0% 100% / 0.6), hsl(200 100% 90% / 0.18) 55%, transparent 75%)`,
+                          border: "1px solid hsl(0 0% 100% / 0.4)",
+                          animation: `qb-wing-flutter ${1.4 + i * 0.2}s ease-in-out infinite`,
+                        }}
+                      />
+                    ))}
+                  </>
+                )}
+
+                {/* Planet body */}
+                <div
+                  className="relative w-full h-full rounded-full overflow-hidden"
+                  style={{
+                    background: p.bg,
+                    boxShadow: `0 0 ${s * 0.5}px ${p.glow}, inset -${s * 0.2}px -${s * 0.22}px ${s * 0.45}px rgba(0,0,0,0.78), inset ${s * 0.09}px ${s * 0.09}px ${s * 0.22}px rgba(255,255,255,0.25)`,
+                    animation: `qb-planet-spin ${p.dur * 0.7}s linear infinite`,
+                  }}
+                >
+                  {/* Bands / stripes */}
+                  {p.bands && (
+                    <div className="absolute inset-0 rounded-full"
+                      style={{ backgroundImage: p.bands, mixBlendMode: "overlay", opacity: 0.9 }} />
+                  )}
+
+                  {/* Honeycomb hexagon overlay */}
+                  {p.kind === "hex" && (
+                    <div
+                      className="absolute inset-0 rounded-full"
+                      style={{
+                        backgroundImage:
+                          "radial-gradient(circle at 50% 50%, hsl(20 90% 18% / 0.55) 1.5px, transparent 2px), radial-gradient(circle at 0% 0%, hsl(20 90% 18% / 0.55) 1.5px, transparent 2px), radial-gradient(circle at 100% 100%, hsl(20 90% 18% / 0.55) 1.5px, transparent 2px)",
+                        backgroundSize: "14px 16px",
+                        mixBlendMode: "multiply", opacity: 0.85,
+                      }}
+                    />
+                  )}
+
+                  {/* Craters (rocky worlds) */}
+                  {p.kind === "cratered" && (
+                    <div className="absolute inset-0 rounded-full"
+                      style={{
+                        backgroundImage: [
+                          "radial-gradient(circle at 30% 35%, hsl(248 20% 14% / 0.85) 0 4px, transparent 5px)",
+                          "radial-gradient(circle at 65% 55%, hsl(248 20% 14% / 0.85) 0 6px, transparent 7px)",
+                          "radial-gradient(circle at 50% 75%, hsl(248 20% 14% / 0.85) 0 3px, transparent 4px)",
+                          "radial-gradient(circle at 75% 28%, hsl(248 20% 14% / 0.85) 0 2.5px, transparent 3.5px)",
+                          "radial-gradient(circle at 20% 60%, hsl(248 20% 14% / 0.85) 0 2px, transparent 3px)",
+                        ].join(","),
+                        mixBlendMode: "multiply",
+                      }}
+                    />
+                  )}
+
+                  {/* Glassy highlight */}
+                  {p.kind === "glass" && (
+                    <div className="absolute rounded-full"
+                      style={{ inset: "10% 50% 55% 15%", background: "radial-gradient(ellipse, hsl(0 0% 100% / 0.7), transparent 70%)", filter: "blur(1px)" }} />
+                  )}
+
+                  {/* Polar caps for the icy water-world */}
+                  {p.key === "quantum-blue" && (
+                    <>
+                      <div className="absolute left-1/2 -translate-x-1/2 rounded-full"
+                        style={{ top: "-6%", width: "60%", height: "22%", background: "radial-gradient(ellipse, hsl(0 0% 100% / 0.85), transparent 70%)", filter: "blur(1px)" }} />
+                      <div className="absolute left-1/2 -translate-x-1/2 rounded-full"
+                        style={{ bottom: "-6%", width: "55%", height: "20%", background: "radial-gradient(ellipse, hsl(190 100% 90% / 0.8), transparent 70%)", filter: "blur(1px)" }} />
+                    </>
+                  )}
+
+                  {/* Spec highlight */}
+                  <div className="absolute rounded-full pointer-events-none"
+                    style={{ inset: "8% 55% 60% 12%", background: "radial-gradient(ellipse, hsl(0 0% 100% / 0.55), transparent 75%)" }} />
+                </div>
+
+                {/* Saturn-style ring */}
+                {p.ring && (
+                  <div
+                    className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
+                    style={{
+                      width: s * p.ring.w, height: s * p.ring.w,
+                      // @ts-expect-error css var
+                      "--rot": `${p.ring.rot}deg`,
+                      transform: `translate(-50%,-50%) rotate(${p.ring.rot}deg) scaleY(0.28)`,
+                      border: `2px solid ${p.ring.color}`,
+                      boxShadow: `0 0 18px ${p.ring.color}, inset 0 0 12px ${p.ring.color}`,
+                      animation: "qb-ring-tilt 14s ease-in-out infinite",
+                    }}
+                  />
+                )}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
