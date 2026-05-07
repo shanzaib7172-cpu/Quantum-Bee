@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -66,6 +67,7 @@ const ChatCanvas = () => {
   const cleanTextForSpeech = (text: string): string => {
     return text
       .replace(/^PLAN:\s*.*$/m, "")
+      .replace(/\[AGENT:[a-z]+\]/gi, "")
       .replace(/```chart[\s\S]*?```/g, " ")
       .replace(/```[\s\S]*?```/g, " code block ")
       .replace(/`([^`]+)`/g, "$1")
@@ -265,6 +267,12 @@ const ChatCanvas = () => {
 
   const isEmpty = messages.length === 0;
 
+  const AGENT_ROUTES: Record<string, { name: string; path: string }> = {
+    anna: { name: "Anna", path: "/leads-generator" },
+    sophia: { name: "Sophia", path: "/product-shoot" },
+    jack: { name: "Jack", path: "/jack" },
+  };
+
   // Renders an assistant message: detects plan, extracts charts, color-codes markdown, splices charts in.
   const renderAssistant = (raw: string) => {
     let working = raw;
@@ -273,6 +281,14 @@ const ChatCanvas = () => {
     if (planMatch) {
       planTitle = planMatch[1].trim();
       working = working.slice(planMatch[0].length);
+    }
+
+    let agent: { name: string; path: string } | null = null;
+    const agentMatch = working.match(/\[AGENT:([a-z]+)\]/i);
+    if (agentMatch) {
+      const found = AGENT_ROUTES[agentMatch[1].toLowerCase()];
+      if (found) agent = found;
+      working = working.replace(/\[AGENT:[a-z]+\]/gi, "").trim();
     }
 
     const { cleaned, charts } = extractCharts(working);
@@ -326,6 +342,16 @@ const ChatCanvas = () => {
             <FileDown className="w-3.5 h-3.5" />
             Download plan PDF
           </button>
+        )}
+
+        {agent && (
+          <Link
+            to={agent.path}
+            className="mt-2 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-bee/15 text-bee border border-bee/30 hover:bg-bee/25 transition-all"
+          >
+            Launch {agent.name}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         )}
       </div>
     );

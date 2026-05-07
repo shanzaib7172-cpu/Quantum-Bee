@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LogIn, UserPlus, Info, BookOpen, Home as HomeIcon, Cpu,
-  Users, Menu, X,
+  Users, Menu, X, User as UserIcon,
 } from "lucide-react";
 import beeLogo from "@/assets/bee-logo.png";
+import { useAuth } from "@/hooks/use-auth";
 
 const NAV = [
   { to: "/", label: "Home", icon: HomeIcon, color: "hsl(195,100%,70%)" },
@@ -54,6 +55,7 @@ const Icon3D = ({
 const TopBar = () => {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <header
@@ -89,6 +91,11 @@ const TopBar = () => {
           <Link to="/signup">
             <Icon3D Icon={UserPlus} label="Sign up" color="hsl(45,100%,65%)" active={pathname === "/signup"} />
           </Link>
+          {user && (
+            <Link to="/profile">
+              <Icon3D Icon={UserIcon} label="Profile" color="hsl(140,100%,65%)" active={pathname === "/profile"} />
+            </Link>
+          )}
         </nav>
 
         {/* Mobile toggle (only below md) */}
@@ -125,10 +132,14 @@ const TopBar = () => {
               boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.25), 0 20px 50px -10px hsl(0 0% 0% / 0.6)",
             }}
           >
-            {NAV.concat([
-              { to: "/login", label: "Login", icon: LogIn, color: "hsl(200,100%,70%)" },
-              { to: "/signup", label: "Sign up", icon: UserPlus, color: "hsl(45,100%,65%)" },
-            ]).map((n) => (
+            {NAV.concat(
+              user
+                ? [{ to: "/profile", label: "Profile", icon: UserIcon, color: "hsl(140,100%,65%)" }]
+                : [
+                    { to: "/login", label: "Login", icon: LogIn, color: "hsl(200,100%,70%)" },
+                    { to: "/signup", label: "Sign up", icon: UserPlus, color: "hsl(45,100%,65%)" },
+                  ],
+            ).map((n) => (
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block">
                 <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
               </Link>
