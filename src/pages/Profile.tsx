@@ -92,6 +92,7 @@ export default function Profile() {
           {tab === "security" && <Security email={user.email || ""} />}
           {tab === "api" && <ApiKeys />}
         </main>
+        </div>
       </div>
     </div>
   );
