@@ -343,6 +343,16 @@ const ChatCanvas = () => {
             Download plan PDF
           </button>
         )}
+
+        {agent && (
+          <Link
+            to={agent.path}
+            className="mt-2 inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-bee/15 text-bee border border-bee/30 hover:bg-bee/25 transition-all"
+          >
+            Launch {agent.name}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        )}
       </div>
     );
   };
