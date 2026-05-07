@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FolderKanban, CreditCard, Shield, KeyRound, LogOut,
-  Loader2, Plus, Copy, Trash2, Check,
+  Loader2, Plus, Copy, Trash2, Check, Camera,
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TopBar from "@/components/TopBar";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 
 type Tab = "dashboard" | "projects" | "billing" | "security" | "api";
