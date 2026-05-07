@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Menu, LogIn, UserPlus, ArrowLeft } from "lucide-react";
+import { Menu, LogIn, UserPlus, ArrowLeft, User as UserIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import ChatCanvas from "@/components/ChatCanvas";
 import beeLogo from "@/assets/bee-logo.png";
+import { useAuth } from "@/hooks/use-auth";
 
 const Index = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
