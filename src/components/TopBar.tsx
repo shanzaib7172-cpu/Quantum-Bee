@@ -132,10 +132,14 @@ const TopBar = () => {
               boxShadow: "inset 0 1px 0 hsl(0 0% 100% / 0.25), 0 20px 50px -10px hsl(0 0% 0% / 0.6)",
             }}
           >
-            {NAV.concat([
-              { to: "/login", label: "Login", icon: LogIn, color: "hsl(200,100%,70%)" },
-              { to: "/signup", label: "Sign up", icon: UserPlus, color: "hsl(45,100%,65%)" },
-            ]).map((n) => (
+            {NAV.concat(
+              user
+                ? [{ to: "/profile", label: "Profile", icon: UserIcon, color: "hsl(140,100%,65%)" }]
+                : [
+                    { to: "/login", label: "Login", icon: LogIn, color: "hsl(200,100%,70%)" },
+                    { to: "/signup", label: "Sign up", icon: UserPlus, color: "hsl(45,100%,65%)" },
+                  ],
+            ).map((n) => (
               <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="block">
                 <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
               </Link>
