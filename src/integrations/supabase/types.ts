@@ -74,6 +74,54 @@ export type Database = {
         }
         Relationships: []
       }
+      bee_coin_balances: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      bee_coin_transactions: {
+        Row: {
+          agent: string | null
+          amount: number
+          created_at: string
+          id: string
+          kind: string
+          reason: string | null
+          user_id: string
+        }
+        Insert: {
+          agent?: string | null
+          amount: number
+          created_at?: string
+          id?: string
+          kind: string
+          reason?: string | null
+          user_id: string
+        }
+        Update: {
+          agent?: string | null
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          reason?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       channels: {
         Row: {
           created_at: string
@@ -225,6 +273,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_bee_coins: {
+        Args: { _amount: number; _reason: string; _user_id: string }
+        Returns: undefined
+      }
+      deduct_bee_coins: {
+        Args: { _agent: string; _amount: number; _reason: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
