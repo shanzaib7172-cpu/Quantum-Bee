@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   LogIn, UserPlus, Info, BookOpen, Home as HomeIcon, Cpu,
-  Users, Menu, X,
+  Users, Menu, X, User as UserIcon,
 } from "lucide-react";
 import beeLogo from "@/assets/bee-logo.png";
+import { useAuth } from "@/hooks/use-auth";
 
 const NAV = [
   { to: "/", label: "Home", icon: HomeIcon, color: "hsl(195,100%,70%)" },
@@ -54,6 +55,7 @@ const Icon3D = ({
 const TopBar = () => {
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <header
