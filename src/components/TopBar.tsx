@@ -91,6 +91,11 @@ const TopBar = () => {
           <Link to="/signup">
             <Icon3D Icon={UserPlus} label="Sign up" color="hsl(45,100%,65%)" active={pathname === "/signup"} />
           </Link>
+          {user && (
+            <Link to="/profile">
+              <Icon3D Icon={UserIcon} label="Profile" color="hsl(140,100%,65%)" active={pathname === "/profile"} />
+            </Link>
+          )}
         </nav>
 
         {/* Mobile toggle (only below md) */}
