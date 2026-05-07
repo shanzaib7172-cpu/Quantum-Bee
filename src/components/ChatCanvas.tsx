@@ -185,6 +185,11 @@ const ChatCanvas = () => {
       const msg = text || input;
       if (!msg.trim() || isLoading) return;
 
+      // Deduct Bee Coins for the chat itself. If response routes to an agent,
+      // the agent page will deduct its own additional cost on use.
+      const ok = await deduct(COIN_COSTS.beeAiChat, "Bee AI chat", "bee-ai");
+      if (!ok) return;
+
       const userMsg: Message = { role: "user", content: msg };
       const newMessages = [...messages, userMsg];
       setMessages(newMessages);
@@ -215,7 +220,7 @@ const ChatCanvas = () => {
         setIsLoading(false);
       }
     },
-    [input, isLoading, messages, streamChat, speakText, toast],
+    [input, isLoading, messages, streamChat, speakText, toast, deduct],
   );
 
   const toggleListening = useCallback(() => {
