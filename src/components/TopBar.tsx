@@ -129,7 +129,8 @@ const TopBar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-4 pb-4 animate-fade-in">
+        <div className="md:hidden px-4 pb-4 animate-fade-in space-y-2">
+          {user && <div className="flex justify-end"><BeeCoinBadge /></div>}
           <div
             className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-3xl relative overflow-hidden"
             style={{
