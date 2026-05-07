@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles, BookOpen } from "lucide-react";
+import { ArrowLeft, Zap, Target, MessageSquare, Code2, Palette, Rocket, Atom, Shield, Globe, Sparkles, BookOpen, Twitter, Linkedin, Instagram, Youtube, Github, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
