@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      agent_activity: {
+        Row: {
+          action: string
+          agent: string
+          id: string
+          occurred_at: string
+          user_id: string
+          value: number
+        }
+        Insert: {
+          action: string
+          agent: string
+          id?: string
+          occurred_at?: string
+          user_id: string
+          value?: number
+        }
+        Update: {
+          action?: string
+          agent?: string
+          id?: string
+          occurred_at?: string
+          user_id?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      api_keys: {
+        Row: {
+          created_at: string
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          revoked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          revoked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          revoked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       channels: {
         Row: {
           created_at: string
@@ -101,6 +161,42 @@ export type Database = {
           created_at?: string
           display_name?: string
           id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          agent: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metadata: Json
+          name: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          agent?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          name: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          agent?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metadata?: Json
+          name?: string
+          status?: string
           updated_at?: string
           user_id?: string
         }
