@@ -67,6 +67,7 @@ const ChatCanvas = () => {
   const cleanTextForSpeech = (text: string): string => {
     return text
       .replace(/^PLAN:\s*.*$/m, "")
+      .replace(/\[AGENT:[a-z]+\]/gi, "")
       .replace(/```chart[\s\S]*?```/g, " ")
       .replace(/```[\s\S]*?```/g, " code block ")
       .replace(/`([^`]+)`/g, "$1")
