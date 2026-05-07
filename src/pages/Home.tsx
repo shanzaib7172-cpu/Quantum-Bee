@@ -10,6 +10,7 @@ import sophiaCharacter from "@/assets/sophia-character.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
 import TopBar from "@/components/TopBar";
+import PlanetBeeOverview from "@/components/PlanetBeeOverview";
 
 const Home = () => {
   useReveal();
@@ -203,6 +204,9 @@ const Home = () => {
           ))}
         </div>
       </section>
+
+      {/* Planet Bee Overview — visual + new-revolution pillars + link to Earth */}
+      <PlanetBeeOverview />
 
       {/* Stats strip */}
       <section data-reveal className="relative z-10 px-6 py-14 max-w-6xl mx-auto w-full">

@@ -335,24 +335,36 @@ const SpaceBackground = ({
                   }}
                 />
 
-                {/* Bee wings (queen, pollen-star) */}
+                {/* Bee wings — centered behind body, fluttering */}
                 {(p.kind === "queen" || p.kind === "winged") && (
                   <>
-                    {[-30, 30].map((rot, i) => (
+                    {[-28, 28].map((rot, i) => (
                       <div
                         key={i}
                         className="absolute left-1/2 top-1/2 rounded-full pointer-events-none"
                         style={{
-                          width: s * 1.15, height: s * 0.72,
-                          // @ts-expect-error css var
-                          "--base": `translate(${i === 0 ? "-95%" : "-5%"},-95%) rotate(${rot}deg)`,
-                          transform: `translate(${i === 0 ? "-95%" : "-5%"},-95%) rotate(${rot}deg)`,
-                          background: `radial-gradient(ellipse at ${i === 0 ? "30%" : "70%"} 40%, hsl(0 0% 100% / 0.6), hsl(200 100% 90% / 0.18) 55%, transparent 75%)`,
-                          border: "1px solid hsl(0 0% 100% / 0.4)",
-                          animation: `qb-wing-flutter ${1.4 + i * 0.2}s ease-in-out infinite`,
+                          width: s * 0.95,
+                          height: s * 0.6,
+                          transformOrigin: i === 0 ? "100% 50%" : "0% 50%",
+                          transform: `translate(${i === 0 ? "-100%" : "0%"}, -85%) rotate(${rot}deg)`,
+                          background: `radial-gradient(ellipse at ${i === 0 ? "70%" : "30%"} 50%, hsl(0 0% 100% / 0.7), hsl(200 100% 90% / 0.22) 55%, transparent 78%)`,
+                          border: "1px solid hsl(0 0% 100% / 0.45)",
+                          boxShadow: "0 0 12px hsl(200 100% 80% / 0.3)",
+                          animation: `qb-wing-flutter${i} ${1.6 + i * 0.2}s ease-in-out infinite`,
+                          zIndex: 0,
                         }}
                       />
                     ))}
+                    <style>{`
+                      @keyframes qb-wing-flutter0 {
+                        0%,100% { transform: translate(-100%,-85%) rotate(-28deg) scaleY(1); }
+                        50%     { transform: translate(-100%,-85%) rotate(-22deg) scaleY(0.7); }
+                      }
+                      @keyframes qb-wing-flutter1 {
+                        0%,100% { transform: translate(0%,-85%) rotate(28deg) scaleY(1); }
+                        50%     { transform: translate(0%,-85%) rotate(22deg) scaleY(0.7); }
+                      }
+                    `}</style>
                   </>
                 )}
 
