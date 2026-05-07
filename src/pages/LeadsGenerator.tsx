@@ -17,6 +17,7 @@ import TopBar from "@/components/TopBar";
 import SpaceBackground from "@/components/SpaceBackground";
 import beeLogo from "@/assets/bee-logo.png";
 import annaCharacter from "@/assets/anna-character.png";
+import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
 
 const STORAGE_KEY = "beee_n8n_webhook_url";
 
@@ -53,6 +54,7 @@ const LeadsGenerator = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const { toast } = useToast();
+  const { deduct } = useBeeCoins();
 
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -73,6 +75,11 @@ const LeadsGenerator = () => {
       toast({ variant: "destructive", title: "Missing fields", description: "Please fill in all required fields." });
       return;
     }
+
+    const requestedCount = parseInt(count) || 10;
+    const cost = Math.max(0.1, (COIN_COSTS.annaLeads1k * requestedCount) / 1000);
+    const ok = await deduct(Number(cost.toFixed(2)), `Anna leads x${requestedCount}`, "anna");
+    if (!ok) return;
 
     setIsLoading(true);
     setResult(null);
