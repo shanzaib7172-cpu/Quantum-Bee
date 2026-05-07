@@ -8,6 +8,7 @@ import AnimatedBee from "./AnimatedBee";
 import VoicePopup from "./VoicePopup";
 import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
 import { generatePlanPdf } from "@/lib/pdfPlan";
+import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
 
 interface Message {
   role: "user" | "assistant";
