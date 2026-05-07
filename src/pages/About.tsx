@@ -143,6 +143,9 @@ const About = () => {
         <div className="text-center mb-14">
           <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-2">— Visionary Leadership</div>
           <h2 className="font-heading font-bold text-3xl md:text-4xl text-[hsl(40,100%,60%)]">Meet the Founder</h2>
+          <p className="text-foreground/60 mt-3 max-w-xl mx-auto text-sm leading-relaxed">
+            Discoverer <span className="text-[hsl(40,100%,60%)] font-semibold">Shanzaib Asghar</span> from Earth — the human bridge who ventured beyond the quantum singularity, met the Bee, and returned to bring the revolution home.
+          </p>
         </div>
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="flex flex-col items-center">
@@ -182,17 +185,47 @@ const About = () => {
               Shanzaib Asghar is a visionary entrepreneur, technologist, and deep-tech pioneer. From an early age, he demonstrated an extraordinary ability to see possibilities where others saw complexity — and the relentless drive to build what others only imagined.
             </p>
             <p className="text-foreground/70 leading-relaxed mb-4">
-              He founded Quantum Bee Technologies in 2025 with the conviction that the next great technological leap would not come from incremental improvement, but from an entirely new paradigm: autonomous AI agents powered by quantum-speed computation.
+              In a journey that defies ordinary explanation, Shanzaib crossed beyond the quantum singularity and entered the quantum world — where he met the Bee. This was no coincidence; it was destiny. The Bee chose Shanzaib as her partner, and together they forged a cosmic alliance to bring the hive revolution to Earth.
+            </p>
+            <p className="text-foreground/70 leading-relaxed mb-4">
+              He founded Quantum Bee Technologies in 2025 with the conviction that the next great technological leap would not come from incremental improvement, but from an entirely new paradigm: autonomous AI agents powered by quantum-speed computation, guided by the wisdom of the Bee herself.
             </p>
             <blockquote className="border-l-2 border-[hsl(40,100%,55%)] pl-5 py-3 my-6 bg-[hsl(40,100%,55%)]/5 italic text-[hsl(45,100%,80%)] leading-relaxed">
-              "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it."
+              "I don't want to build the next big company. I want to build the technology that makes the next civilisation possible — on Earth, and beyond it. The Bee showed me what harmony looks like; now we bring it to the world."
             </blockquote>
-            <div className="flex flex-wrap gap-2 mt-5">
+            <div className="flex flex-wrap gap-2 mt-5 mb-8">
               {["Quantum Computing", "AI Architecture", "Deep Tech", "Space Technology", "Business Automation"].map((t) => (
                 <span key={t} className="font-mono text-[10px] tracking-wider uppercase px-3 py-1.5 border border-[hsl(200,100%,60%)]/30 text-[hsl(195,100%,75%)] hover:bg-[hsl(200,100%,55%)]/10 transition-colors">
                   {t}
                 </span>
               ))}
+            </div>
+
+            {/* Shanzaib Asghar Socials */}
+            <div>
+              <div className="font-mono text-[10px] tracking-[0.3em] text-[hsl(195,100%,75%)] uppercase mb-3">— Connect with Shanzaib</div>
+              <div className="flex flex-wrap items-center gap-3">
+                {[
+                  { icon: Twitter, label: "X / Twitter", href: "https://x.com/shanzaibasghar", color: "hsl(200,100%,70%)" },
+                  { icon: Linkedin, label: "LinkedIn", href: "https://www.linkedin.com/in/shanzaibasghar", color: "hsl(210,100%,60%)" },
+                  { icon: Instagram, label: "Instagram", href: "https://instagram.com/shanzaibasghar", color: "hsl(320,80%,65%)" },
+                  { icon: Youtube, label: "YouTube", href: "https://youtube.com/@shanzaibasghar", color: "hsl(0,80%,60%)" },
+                  { icon: Github, label: "GitHub", href: "https://github.com/shanzaibasghar", color: "hsl(220,15%,80%)" },
+                  { icon: Send, label: "Telegram", href: "https://t.me/shanzaibasghar", color: "hsl(195,90%,60%)" },
+                ].map(({ icon: Icon, label, href, color }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="group relative w-11 h-11 rounded-xl flex items-center justify-center bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(40,100%,55%)]/60 transition-all backdrop-blur-md hover:-translate-y-0.5"
+                  >
+                    <Icon className="w-4 h-4 transition-transform group-hover:scale-110" style={{ color }} />
+                    <span className="sr-only">{label}</span>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </div>
