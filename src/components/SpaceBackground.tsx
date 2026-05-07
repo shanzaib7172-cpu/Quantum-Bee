@@ -255,53 +255,54 @@ const SpaceBackground = ({
           `}</style>
 
           {[
-            // jupiter — banded gas giant
+            // queen bee planet — large golden body with bold black stripes
             {
-              key: "jupiter", top: "12%", left: "8%", size: 70,
-              bg: "radial-gradient(circle at 35% 35%, hsl(35 75% 80%) 0%, hsl(28 60% 55%) 35%, hsl(20 55% 35%) 70%, hsl(15 50% 18%) 100%)",
-              bands: "repeating-linear-gradient(0deg, transparent 0 6px, hsl(25 50% 25% / 0.55) 6px 8px, transparent 8px 14px, hsl(35 70% 75% / 0.35) 14px 16px)",
-              glow: "hsl(30 80% 60% / 0.45)",
+              key: "queen-bee", top: "12%", left: "8%", size: 80,
+              bg: "radial-gradient(circle at 32% 30%, hsl(50 100% 88%) 0%, hsl(45 100% 60%) 35%, hsl(38 100% 45%) 70%, hsl(30 90% 25%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 9px, hsl(0 0% 5% / 0.85) 9px 16px, transparent 16px 22px)",
+              glow: "hsl(45 100% 60% / 0.65)",
+              ring: true, // bee wings
               dur: 110, anim: "a",
             },
-            // saturn — with ring
+            // worker bee planet — with translucent wings
             {
-              key: "saturn", top: "70%", left: "82%", size: 56,
-              bg: "radial-gradient(circle at 35% 35%, hsl(45 80% 80%) 0%, hsl(40 65% 60%) 40%, hsl(35 55% 35%) 80%, hsl(30 50% 20%) 100%)",
-              bands: "repeating-linear-gradient(0deg, transparent 0 4px, hsl(35 50% 30% / 0.5) 4px 6px)",
-              glow: "hsl(45 80% 60% / 0.45)",
+              key: "worker-bee", top: "70%", left: "82%", size: 60,
+              bg: "radial-gradient(circle at 35% 35%, hsl(50 100% 85%) 0%, hsl(45 100% 58%) 40%, hsl(38 95% 42%) 80%, hsl(28 85% 22%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 7px, hsl(0 0% 5% / 0.85) 7px 12px, transparent 12px 17px)",
+              glow: "hsl(45 100% 60% / 0.55)",
               ring: true,
               dur: 130, anim: "b",
             },
-            // mars — red
+            // amber bee planet — diagonal stripes
             {
-              key: "mars", top: "78%", left: "12%", size: 28,
-              bg: "radial-gradient(circle at 32% 32%, hsl(15 80% 65%) 0%, hsl(8 70% 45%) 50%, hsl(0 60% 22%) 100%)",
-              bands: "radial-gradient(circle at 70% 60%, hsl(0 60% 25% / 0.6) 8%, transparent 12%), radial-gradient(circle at 25% 70%, hsl(0 50% 20% / 0.55) 6%, transparent 10%)",
-              glow: "hsl(10 80% 50% / 0.4)",
+              key: "amber-bee", top: "78%", left: "12%", size: 32,
+              bg: "radial-gradient(circle at 32% 32%, hsl(48 100% 80%) 0%, hsl(40 100% 55%) 50%, hsl(30 90% 30%) 100%)",
+              bands: "repeating-linear-gradient(20deg, transparent 0 5px, hsl(0 0% 5% / 0.8) 5px 9px, transparent 9px 13px)",
+              glow: "hsl(40 100% 55% / 0.5)",
               dur: 95, anim: "a",
             },
-            // mercury — small grey
+            // honey droplet planet — small, glassy
             {
-              key: "mercury", top: "22%", left: "88%", size: 18,
-              bg: "radial-gradient(circle at 35% 30%, hsl(30 10% 70%) 0%, hsl(25 8% 45%) 60%, hsl(20 8% 22%) 100%)",
-              bands: "radial-gradient(circle at 60% 70%, hsl(0 0% 15% / 0.55) 8%, transparent 12%)",
-              glow: "hsl(30 10% 60% / 0.3)",
+              key: "honey-drop", top: "22%", left: "88%", size: 22,
+              bg: "radial-gradient(circle at 35% 30%, hsl(50 100% 90%) 0%, hsl(42 100% 62%) 60%, hsl(32 90% 32%) 100%)",
+              bands: "radial-gradient(circle at 60% 70%, hsl(30 90% 25% / 0.5) 8%, transparent 14%)",
+              glow: "hsl(45 100% 65% / 0.5)",
               dur: 80, anim: "b",
             },
-            // venus — pale gold
+            // pollen planet — pale gold
             {
-              key: "venus", top: "55%", left: "4%", size: 36,
-              bg: "radial-gradient(circle at 35% 35%, hsl(45 90% 85%) 0%, hsl(38 70% 65%) 50%, hsl(30 55% 35%) 100%)",
-              bands: "repeating-linear-gradient(15deg, transparent 0 5px, hsl(40 60% 55% / 0.4) 5px 7px)",
-              glow: "hsl(45 90% 65% / 0.5)",
+              key: "pollen", top: "55%", left: "4%", size: 40,
+              bg: "radial-gradient(circle at 35% 35%, hsl(52 100% 92%) 0%, hsl(48 95% 70%) 50%, hsl(40 80% 38%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 6px, hsl(0 0% 8% / 0.7) 6px 10px, transparent 10px 15px)",
+              glow: "hsl(48 100% 68% / 0.55)",
               dur: 105, anim: "a",
             },
-            // moon — small with crater texture, has its own orbit dot? keep simple
+            // tiny scout bee planet
             {
-              key: "moon", top: "30%", left: "62%", size: 22,
-              bg: "radial-gradient(circle at 35% 30%, hsl(0 0% 92%) 0%, hsl(0 0% 70%) 55%, hsl(220 10% 35%) 100%)",
-              bands: "radial-gradient(circle at 60% 65%, hsl(0 0% 30% / 0.55) 10%, transparent 14%), radial-gradient(circle at 30% 75%, hsl(0 0% 25% / 0.5) 7%, transparent 10%), radial-gradient(circle at 70% 30%, hsl(0 0% 30% / 0.45) 6%, transparent 9%)",
-              glow: "hsl(220 30% 80% / 0.45)",
+              key: "scout-bee", top: "30%", left: "62%", size: 24,
+              bg: "radial-gradient(circle at 35% 30%, hsl(50 100% 88%) 0%, hsl(45 100% 60%) 55%, hsl(32 85% 28%) 100%)",
+              bands: "repeating-linear-gradient(0deg, transparent 0 4px, hsl(0 0% 5% / 0.85) 4px 7px, transparent 7px 10px)",
+              glow: "hsl(45 100% 60% / 0.5)",
               dur: 90, anim: "b",
             },
           ].map((p) => (
@@ -316,19 +317,34 @@ const SpaceBackground = ({
                 animation: `qb-planet-drift-${p.anim} ${p.dur}s linear infinite alternate`,
               }}
             >
-              {/* Saturn ring (behind) */}
+              {/* Bee wings (behind body) */}
               {p.ring && (
-                <div
-                  className="absolute left-1/2 top-1/2 rounded-full"
-                  style={{
-                    width: p.size * 2.2,
-                    height: p.size * 0.55,
-                    transform: "translate(-50%,-50%) rotate(-22deg)",
-                    background:
-                      "radial-gradient(ellipse, transparent 35%, hsl(40 60% 70% / 0.85) 42%, hsl(35 55% 50% / 0.5) 55%, transparent 62%)",
-                    filter: "blur(0.4px)",
-                  }}
-                />
+                <>
+                  <div
+                    className="absolute left-1/2 top-1/2 rounded-full"
+                    style={{
+                      width: p.size * 1.1,
+                      height: p.size * 0.7,
+                      transform: `translate(-95%,-95%) rotate(-30deg)`,
+                      background:
+                        "radial-gradient(ellipse at 30% 40%, hsl(0 0% 100% / 0.55), hsl(200 100% 90% / 0.18) 55%, transparent 75%)",
+                      border: "1px solid hsl(0 0% 100% / 0.35)",
+                      filter: "blur(0.3px)",
+                    }}
+                  />
+                  <div
+                    className="absolute left-1/2 top-1/2 rounded-full"
+                    style={{
+                      width: p.size * 1.1,
+                      height: p.size * 0.7,
+                      transform: `translate(-5%,-95%) rotate(30deg)`,
+                      background:
+                        "radial-gradient(ellipse at 70% 40%, hsl(0 0% 100% / 0.55), hsl(200 100% 90% / 0.18) 55%, transparent 75%)",
+                      border: "1px solid hsl(0 0% 100% / 0.35)",
+                      filter: "blur(0.3px)",
+                    }}
+                  />
+                </>
               )}
               {/* Planet body */}
               <div
