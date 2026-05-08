@@ -278,7 +278,7 @@ const StudyBee = () => {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button onClick={createChannel} className="text-[hsl(220,60%,3%)]" style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>Create</Button>
+                    <Button onClick={createChannel} className="text-slate-100" style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>Create</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
