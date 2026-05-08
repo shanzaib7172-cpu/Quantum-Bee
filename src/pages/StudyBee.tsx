@@ -12,6 +12,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger,
 } from "@/components/ui/dialog";
 import TopBar from "@/components/TopBar";
+import beeLogo from "@/assets/bee-logo.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -232,12 +233,17 @@ const StudyBee = () => {
       <div className="relative z-10 flex flex-1 max-w-[1500px] w-full mx-auto px-2 sm:px-4 py-4 gap-2 sm:gap-3 min-h-[calc(100vh-72px)]">
         {/* Server rail (icons) */}
         <nav className="hidden md:flex w-[68px] flex-col items-center gap-3 py-3 rounded-2xl bg-[hsl(228,25%,7%)]/80 backdrop-blur-xl border border-white/5">
-          <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-[hsl(220,60%,3%)] font-bold text-lg shadow-lg"
-            style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
-            🐝
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg overflow-hidden"
+            style={{
+              background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))`,
+              boxShadow: `0 0 20px -4px ${ACCENT}`,
+            }}
+          >
+            <img src={beeLogo} alt="Planet Bee" className="w-9 h-9 object-contain" />
           </div>
           <div className="w-8 h-px bg-white/10" />
-          <button title="Study Bee" className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/5">
+          <button title="Planet Bee Community" className="w-12 h-12 rounded-2xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition border border-white/5 active:scale-95">
             <GraduationCap className="w-5 h-5 text-[hsl(50,100%,65%)]" />
           </button>
         </nav>
@@ -247,7 +253,7 @@ const StudyBee = () => {
           <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
             <div>
               <div className="text-[10px] font-mono uppercase tracking-[0.25em] text-white/40">Server</div>
-              <div className="font-heading font-bold text-white">Study Bee</div>
+              <div className="font-heading font-bold text-white">Planet Bee Community</div>
             </div>
             <ChevronDown className="w-4 h-4 text-white/40" />
           </div>
