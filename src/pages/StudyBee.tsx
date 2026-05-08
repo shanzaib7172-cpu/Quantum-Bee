@@ -308,6 +308,7 @@ const StudyBee = () => {
             {user ? (
               <>
                 <Avatar className="w-8 h-8 border border-white/10">
+                  {profiles.get(user.id)?.avatar_url && <AvatarImage src={profiles.get(user.id)!.avatar_url!} alt={profileName} />}
                   <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
                     {initials(profileName || user.email || "B")}
                   </AvatarFallback>
