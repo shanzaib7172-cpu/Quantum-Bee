@@ -145,6 +145,22 @@ const VoicePopup = ({
           <X className="w-4 h-4" />
         </button>
 
+        <div className="absolute top-3 left-3 flex items-center gap-1 p-1 rounded-full border border-bee/20 bg-background/40 backdrop-blur">
+          {(["en-US", "ur-PK"] as const).map((code) => (
+            <button
+              key={code}
+              onClick={() => setLang(code)}
+              className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider transition-colors ${
+                lang === code
+                  ? "bg-bee/30 text-bee"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {code === "en-US" ? "EN" : "اُردُو"}
+            </button>
+          ))}
+        </div>
+
         {/* Glowing bee with rings */}
         <div className="relative flex items-center justify-center">
           <div
