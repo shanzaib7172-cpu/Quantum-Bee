@@ -7,6 +7,7 @@ import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
 import TopBar from "@/components/TopBar";
 import blogCover from "@/assets/blog-planet-bee-cover.png";
+import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
 
 const posts = [
   {
@@ -20,14 +21,16 @@ const posts = [
     color: "hsl(40,100%,60%)",
   },
   {
-    id: "swarm-intelligence",
-    tag: "AI Agents",
+    id: "bee-ai-engine",
+    slug: "/blogs/bee-ai-engine",
+    tag: "Vision · Strategy",
     date: "Apr 2026",
-    read: "6 min",
-    title: "Swarm Intelligence: How Anna, Jack, David & Sophia Work as One",
+    read: "7 min",
+    title: "Bee AI: The Engine of the New Business Era",
     excerpt:
-      "An inside look at the multi-agent architecture that lets four autonomous AIs share memory, hand off tasks, and operate a full business pipeline 24/7.",
+      "A revolutionary business operating system designed to eliminate the Physical Lag of the modern world — and shift entire companies into Quantum Speed.",
     color: "hsl(200,100%,65%)",
+    image: beeAiEngineCover,
   },
   {
     id: "mars-stack",
