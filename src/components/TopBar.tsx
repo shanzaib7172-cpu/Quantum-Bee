@@ -80,7 +80,7 @@ const TopBar = () => {
         </Link>
 
         {/* Desktop nav (visible sm+) */}
-        <nav className="hidden sm:flex items-center gap-1 md:gap-1.5 flex-nowrap justify-end overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-w-0">
+        <nav className="hidden sm:flex flex-1 items-center gap-1 md:gap-1.5 flex-nowrap justify-end overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-w-0 pl-1 pr-1 [scroll-snap-type:x_proximity]">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to}>
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
