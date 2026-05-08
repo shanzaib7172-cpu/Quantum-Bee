@@ -460,7 +460,7 @@ const StudyBee = () => {
                 </label>
               )}
               <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
-                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
+                
                 <Textarea
                   ref={inputRef}
                   value={input}
