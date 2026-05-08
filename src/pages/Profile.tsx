@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -469,22 +470,26 @@ function ApiKeys() {
 /* ───────── Profile Header (avatar + name) ───────── */
 
 function ProfileHeader({ userId, email }: { userId: string; email: string }) {
-  const [profile, setProfile] = useState<{ display_name: string; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; avatar_url: string | null; bio: string | null } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [name, setName] = useState("");
+  const [editingBio, setEditingBio] = useState(false);
+  const [bio, setBio] = useState("");
+  const [savingBio, setSavingBio] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const load = async () => {
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, avatar_url")
+      .select("display_name, avatar_url, bio")
       .eq("user_id", userId)
       .maybeSingle();
     if (data) {
-      setProfile(data);
+      setProfile(data as any);
       setName(data.display_name || "");
+      setBio((data as any).bio || "");
     }
   };
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [userId]);
