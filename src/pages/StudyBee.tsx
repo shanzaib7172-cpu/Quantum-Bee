@@ -321,9 +321,6 @@ const StudyBee = () => {
                   </div>
                 </div>
                 <Dialog open={profileOpen} onOpenChange={setProfileOpen}>
-                  <DialogTrigger asChild>
-                    <button className="p-2 rounded hover:bg-white/10 text-white/60"><Settings className="w-4 h-4" /></button>
-                  </DialogTrigger>
                   <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white">
                     <DialogHeader><DialogTitle>Edit profile</DialogTitle></DialogHeader>
                     <div className="space-y-3">
