@@ -30,25 +30,17 @@ type AgentCard = {
   name: string;
   desc: string;
   avatar: string;
-  price: string;
   link?: string;
   locked?: boolean;
 };
 
 const agentCards: AgentCard[] = [
-  { name: "Anna", desc: "Leads Generator · from $50", avatar: annaCharacter, price: "$50+", link: "/leads-generator" },
-  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, price: "$20/mo", link: "/product-shoot" },
-  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, price: "$25/mo", link: "/jack" },
-  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, price: "—", locked: true },
-  { name: "Mark", desc: "Business Management", avatar: markCharacter, price: "—", locked: true },
-  { name: "Peter", desc: "Product image & UGC ads", avatar: peterCharacter, price: "—", locked: true },
-];
-
-const visionHistory = [
-  { title: "Marketing strategy analysis", time: "2 hours ago" },
-  { title: "Product redesign concepts", time: "Yesterday" },
-  { title: "Competitor landscape map", time: "3 days ago" },
-  { title: "Q1 revenue forecast", time: "1 week ago" },
+  { name: "Anna", desc: "Leads Generator", avatar: annaCharacter, link: "/leads-generator" },
+  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, link: "/product-shoot" },
+  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, link: "/jack" },
+  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, locked: true },
+  { name: "Mark", desc: "Business Management", avatar: markCharacter, locked: true },
+  { name: "Peter", desc: "Product image & UGC ads", avatar: peterCharacter, locked: true },
 ];
 
 interface DrawerMenuProps {

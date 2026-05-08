@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useBeeCoins } from "@/hooks/use-bee-coins";
 import { useAuth } from "@/hooks/use-auth";
+import beeLogo from "@/assets/bee-logo.png";
 
 const BeeCoinBadge = () => {
   const { user } = useAuth();
@@ -22,7 +23,12 @@ const BeeCoinBadge = () => {
     >
       <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1/2 rounded-t-full opacity-70"
         style={{ background: "linear-gradient(180deg, hsl(0 0% 100% / 0.35), transparent)" }} />
-      <span className="relative z-10 text-base leading-none">🐝</span>
+      <img
+        src={beeLogo}
+        alt=""
+        className="relative z-10 w-4 h-4 object-contain"
+        style={{ filter: "drop-shadow(0 0 6px hsl(45 100% 60% / 0.9))" }}
+      />
       <span className="relative z-10 tabular-nums">{balance.toFixed(balance % 1 === 0 ? 0 : 2)}</span>
       <span className="relative z-10 hidden sm:inline opacity-80">coins</span>
     </Link>
