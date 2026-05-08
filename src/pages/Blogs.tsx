@@ -98,24 +98,30 @@ const Blogs = () => {
 
       {/* Featured */}
       <section data-reveal className="relative z-10 px-6 max-w-6xl mx-auto w-full">
-        <div className="relative rounded-2xl overflow-hidden border border-[hsl(40,100%,55%)]/30 bg-gradient-to-br from-[hsl(220,40%,8%)]/80 via-[hsl(220,40%,6%)]/80 to-[hsl(220,40%,4%)]/80 backdrop-blur-xl p-8 md:p-12">
-          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-[hsl(40,100%,55%)]/15 blur-3xl" />
-          <div className="absolute -bottom-20 -left-20 w-80 h-80 rounded-full bg-[hsl(200,100%,55%)]/15 blur-3xl" />
-          <div className="relative">
-            <div className="flex flex-wrap items-center gap-3 mb-4 font-mono text-[10px] tracking-widest uppercase text-[hsl(195,100%,75%)]">
-              <span className="px-2.5 py-1 rounded-md bg-[hsl(40,100%,55%)]/15 border border-[hsl(40,100%,55%)]/30 text-[hsl(40,100%,70%)]">Featured</span>
-              <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" />{posts[0].date}</span>
-              <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" />{posts[0].read}</span>
+        <Link to="/blogs/discovery-of-planet-bee" className="block group">
+          <div className="relative rounded-2xl overflow-hidden border border-[hsl(40,100%,55%)]/30 bg-gradient-to-br from-[hsl(220,40%,8%)]/80 via-[hsl(220,40%,6%)]/80 to-[hsl(220,40%,4%)]/80 backdrop-blur-xl grid md:grid-cols-2 gap-0 transition-all hover:border-[hsl(40,100%,55%)]/60 hover:shadow-[0_0_60px_-10px_hsl(40,100%,55%,0.5)]">
+            <div className="relative h-64 md:h-full min-h-[320px] overflow-hidden">
+              <img src={blogCover} alt="The Discovery of Planet Bee" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[hsl(220,40%,6%)]/80 md:to-[hsl(220,40%,6%)]" />
             </div>
-            <h2 className="font-heading font-black text-3xl md:text-5xl leading-tight bg-gradient-to-br from-white via-[hsl(40,100%,75%)] to-[hsl(195,100%,75%)] bg-clip-text text-transparent">
-              {posts[0].title}
-            </h2>
-            <p className="mt-5 text-foreground/70 max-w-2xl leading-relaxed">{posts[0].excerpt}</p>
-            <Button size="lg" className="mt-7 h-12 px-7 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
-              Read full essay <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <div className="relative p-8 md:p-10 flex flex-col justify-center">
+              <div className="flex flex-wrap items-center gap-3 mb-4 font-mono text-[10px] tracking-widest uppercase text-[hsl(195,100%,75%)]">
+                <span className="px-2.5 py-1 rounded-md bg-[hsl(40,100%,55%)]/15 border border-[hsl(40,100%,55%)]/30 text-[hsl(40,100%,70%)]">Featured · Origin Story</span>
+                <span className="flex items-center gap-1.5"><Calendar className="w-3 h-3" />May 2026</span>
+                <span className="flex items-center gap-1.5"><Clock className="w-3 h-3" />9 min</span>
+              </div>
+              <h2 className="font-heading font-black text-2xl md:text-4xl leading-tight bg-gradient-to-br from-white via-[hsl(40,100%,75%)] to-[hsl(195,100%,75%)] bg-clip-text text-transparent">
+                The Discovery of Planet Bee: A Vision for a Beautiful Earth
+              </h2>
+              <p className="mt-4 text-foreground/70 leading-relaxed">
+                Shanzaib's leap into the quantum world, the meeting with the Bee, and the founding mission to make Earth as beautiful and efficient as Planet Bee.
+              </p>
+              <Button size="lg" className="mt-6 h-12 px-7 self-start bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
+                Read full essay <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </div>
-        </div>
+        </Link>
       </section>
 
       {/* Grid */}
