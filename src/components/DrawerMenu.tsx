@@ -55,6 +55,28 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [unlockAgent, setUnlockAgent] = useState<AgentCard | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [chats, setChats] = useState<{ id: string; title: string; updated_at: string }[]>([]);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    supabase
+      .from("chat_sessions")
+      .select("id, title, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => setChats(data || []));
+  }, [open, user]);
+
+  const formatTime = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   const runAnalyze = async () => {
     if (!analyzeUrl.trim() || analyzing) return;
