@@ -79,7 +79,11 @@ const VoicePopup = ({
         setIsListening(false);
         setThinking(true);
         try {
-          const reply = await onSendMessage(text);
+          const prompt =
+            lang === "ur-PK"
+              ? `${text}\n\n(Reply in Urdu using Urdu script.)`
+              : text;
+          const reply = await onSendMessage(prompt);
           if (typeof reply === "string" && reply) {
             setLastAssistant(reply);
           }
