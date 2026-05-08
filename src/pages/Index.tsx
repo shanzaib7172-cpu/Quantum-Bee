@@ -59,7 +59,7 @@ const Index = () => {
         <button
           onClick={() => setDrawerOpen(true)}
           aria-label="Open menu"
-          className="p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all active:scale-95"
+          className="sm:hidden p-2 rounded-xl text-white/60 hover:text-white hover:bg-white/5 transition-all active:scale-95"
         >
           <Menu className="w-4 h-4" />
         </button>
