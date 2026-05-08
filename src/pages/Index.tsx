@@ -4,7 +4,7 @@ import { Link, Navigate } from "react-router-dom";
 import { DrawerMenu } from "@/components/DrawerMenu";
 import ChatCanvas from "@/components/ChatCanvas";
 import TopBar from "@/components/TopBar";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import { useAuth } from "@/hooks/use-auth";
 
 const Index = () => {
@@ -28,8 +28,8 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
-      <SpaceBackground density={0.6} rocks={0} blackhole={false} planets={false} />
+    <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
+      <StarfieldNight density={0.7} />
 
       <div className="relative z-30">
         <TopBar />
