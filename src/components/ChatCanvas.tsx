@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import VoicePopup from "./VoicePopup";
 import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
 import { generatePlanPdf } from "@/lib/pdfPlan";
 import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface Message {
   role: "user" | "assistant";
@@ -37,6 +39,39 @@ const ChatCanvas = () => {
   const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const { toast } = useToast();
   const { deduct } = useBeeCoins();
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sessionIdRef = useRef<string | null>(null);
+  const urlChatId = searchParams.get("chat");
+
+  // Load an existing chat session when ?chat=<id> is present
+  useEffect(() => {
+    if (!user) {
+      sessionIdRef.current = null;
+      setMessages([]);
+      return;
+    }
+    if (urlChatId) {
+      sessionIdRef.current = urlChatId;
+      supabase
+        .from("chat_messages")
+        .select("role, content")
+        .eq("session_id", urlChatId)
+        .order("created_at", { ascending: true })
+        .then(({ data }) => {
+          if (data) {
+            setMessages(
+              data
+                .filter((m) => m.role === "user" || m.role === "assistant")
+                .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            );
+          }
+        });
+    } else {
+      sessionIdRef.current = null;
+      setMessages([]);
+    }
+  }, [urlChatId, user]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
