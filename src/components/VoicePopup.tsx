@@ -30,6 +30,7 @@ const VoicePopup = ({
   const [transcript, setTranscript] = useState("");
   const [thinking, setThinking] = useState(false);
   const [lastAssistant, setLastAssistant] = useState<string>("");
+  const [lang, setLang] = useState<"en-US" | "ur-PK">("en-US");
   const recognitionRef = useRef<any>(null);
 
   // Greet on open
