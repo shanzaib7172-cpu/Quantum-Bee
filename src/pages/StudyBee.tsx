@@ -346,7 +346,7 @@ const StudyBee = () => {
                 </Dialog>
               </>
             ) : (
-              <Button asChild size="sm" className="w-full text-[hsl(220,60%,3%)] border-0"
+              <Button asChild size="sm" className="w-full text-slate-100 border-0"
                 style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                 <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-2" />Sign in to chat</Link>
               </Button>
