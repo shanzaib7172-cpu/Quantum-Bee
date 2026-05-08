@@ -24,6 +24,8 @@ import SpaceBee from "./pages/SpaceBee.tsx";
 import StudyBee from "./pages/StudyBee.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Recharge from "./pages/Recharge.tsx";
+import Privacy from "./pages/Privacy.tsx";
+import Terms from "./pages/Terms.tsx";
 import BeeCursor from "./components/BeeCursor.tsx";
 import IntroAnimation from "./components/IntroAnimation.tsx";
 
@@ -58,6 +60,8 @@ const App = () => (
           <Route path="/study-bee" element={<StudyBee />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/recharge" element={<Recharge />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
