@@ -13,7 +13,7 @@ const NAV = [
   { to: "/about", label: "About", icon: Info, color: "hsl(40,100%,65%)" },
   { to: "/blogs", label: "Blogs", icon: BookOpen, color: "hsl(280,80%,75%)" },
   { to: "/bee-ai", label: "Bee AI", icon: Cpu, color: "hsl(170,100%,60%)" },
-  { to: "/study-bee", label: "Community", icon: Users, color: "hsl(50,100%,65%)" },
+  { to: "/study-bee", label: "Planet Bee Community", icon: Users, color: "hsl(50,100%,65%)" },
 ];
 
 const Icon3D = ({

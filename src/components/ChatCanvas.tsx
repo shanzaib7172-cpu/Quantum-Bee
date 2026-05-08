@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { Send, Paperclip, Mic, MicOff, Volume2, Loader2, FileDown, AudioLines, ArrowRight } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import VoicePopup from "./VoicePopup";
 import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
 import { generatePlanPdf } from "@/lib/pdfPlan";
 import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 
 interface Message {
   role: "user" | "assistant";
@@ -37,6 +39,39 @@ const ChatCanvas = () => {
   const lockedVoiceRef = useRef<SpeechSynthesisVoice | null>(null);
   const { toast } = useToast();
   const { deduct } = useBeeCoins();
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sessionIdRef = useRef<string | null>(null);
+  const urlChatId = searchParams.get("chat");
+
+  // Load an existing chat session when ?chat=<id> is present
+  useEffect(() => {
+    if (!user) {
+      sessionIdRef.current = null;
+      setMessages([]);
+      return;
+    }
+    if (urlChatId) {
+      sessionIdRef.current = urlChatId;
+      supabase
+        .from("chat_messages")
+        .select("role, content")
+        .eq("session_id", urlChatId)
+        .order("created_at", { ascending: true })
+        .then(({ data }) => {
+          if (data) {
+            setMessages(
+              data
+                .filter((m) => m.role === "user" || m.role === "assistant")
+                .map((m) => ({ role: m.role as "user" | "assistant", content: m.content })),
+            );
+          }
+        });
+    } else {
+      sessionIdRef.current = null;
+      setMessages([]);
+    }
+  }, [urlChatId, user]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -196,10 +231,46 @@ const ChatCanvas = () => {
       setInput("");
       setIsLoading(true);
 
+      // Ensure a session exists; create on first message
+      let sid = sessionIdRef.current;
+      if (!sid && user) {
+        const title = msg.split(/\s+/).slice(0, 6).join(" ").slice(0, 60) || "New chat";
+        const { data } = await supabase
+          .from("chat_sessions")
+          .insert({ user_id: user.id, title })
+          .select("id")
+          .single();
+        if (data?.id) {
+          sid = data.id;
+          sessionIdRef.current = sid;
+          setSearchParams({ chat: sid }, { replace: true });
+        }
+      }
+      if (sid && user) {
+        await supabase.from("chat_messages").insert({
+          session_id: sid,
+          user_id: user.id,
+          role: "user",
+          content: msg,
+        });
+      }
+
       try {
         const response = await streamChat(newMessages);
         if (response) {
           setTimeout(() => speakText(response), 300);
+          if (sid && user) {
+            await supabase.from("chat_messages").insert({
+              session_id: sid,
+              user_id: user.id,
+              role: "assistant",
+              content: response,
+            });
+            await supabase
+              .from("chat_sessions")
+              .update({ updated_at: new Date().toISOString() })
+              .eq("id", sid);
+          }
         }
         return response;
       } catch (e) {
@@ -220,7 +291,7 @@ const ChatCanvas = () => {
         setIsLoading(false);
       }
     },
-    [input, isLoading, messages, streamChat, speakText, toast, deduct],
+    [input, isLoading, messages, streamChat, speakText, toast, deduct, user, setSearchParams],
   );
 
   const toggleListening = useCallback(() => {

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import {
   Sparkles,
   Search,
@@ -30,25 +31,17 @@ type AgentCard = {
   name: string;
   desc: string;
   avatar: string;
-  price: string;
   link?: string;
   locked?: boolean;
 };
 
 const agentCards: AgentCard[] = [
-  { name: "Anna", desc: "Leads Generator · from $50", avatar: annaCharacter, price: "$50+", link: "/leads-generator" },
-  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, price: "$20/mo", link: "/product-shoot" },
-  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, price: "$25/mo", link: "/jack" },
-  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, price: "—", locked: true },
-  { name: "Mark", desc: "Business Management", avatar: markCharacter, price: "—", locked: true },
-  { name: "Peter", desc: "Product image & UGC ads", avatar: peterCharacter, price: "—", locked: true },
-];
-
-const visionHistory = [
-  { title: "Marketing strategy analysis", time: "2 hours ago" },
-  { title: "Product redesign concepts", time: "Yesterday" },
-  { title: "Competitor landscape map", time: "3 days ago" },
-  { title: "Q1 revenue forecast", time: "1 week ago" },
+  { name: "Anna", desc: "Leads Generator", avatar: annaCharacter, link: "/leads-generator" },
+  { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, link: "/product-shoot" },
+  { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, link: "/jack" },
+  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, locked: true },
+  { name: "Mark", desc: "Business Management", avatar: markCharacter, locked: true },
+  { name: "Peter", desc: "Product image & UGC ads", avatar: peterCharacter, locked: true },
 ];
 
 interface DrawerMenuProps {
@@ -62,6 +55,28 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [unlockAgent, setUnlockAgent] = useState<AgentCard | null>(null);
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [chats, setChats] = useState<{ id: string; title: string; updated_at: string }[]>([]);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    supabase
+      .from("chat_sessions")
+      .select("id, title, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(20)
+      .then(({ data }) => setChats(data || []));
+  }, [open, user]);
+
+  const formatTime = (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return "just now";
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  };
 
   const runAnalyze = async () => {
     if (!analyzeUrl.trim() || analyzing) return;
@@ -111,7 +126,10 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
           {/* New Vision */}
-          <button className="w-full flex items-center gap-3 p-3 rounded-xl glass glass-highlight hover:bg-secondary/50 transition-all group">
+          <button
+            onClick={() => { onClose(); navigate("/bee-ai"); }}
+            className="w-full flex items-center gap-3 p-3 rounded-xl glass glass-highlight hover:bg-secondary/50 active:scale-[0.98] transition-all group"
+          >
             <div className="w-9 h-9 rounded-lg bg-bee/10 flex items-center justify-center group-hover:bg-bee/20 transition-colors">
               <Plus className="w-4 h-4 text-bee" />
             </div>
@@ -189,20 +207,16 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                       navigate(agent.link);
                     }
                   }}
-                  className={`glass rounded-xl p-3 transition-all group relative overflow-hidden ${
+                  className={`glass rounded-xl p-3 transition-all duration-200 group relative overflow-hidden ${
                     agent.locked
                       ? "cursor-not-allowed opacity-70"
-                      : "hover:bg-secondary/40 cursor-pointer"
+                      : "hover:bg-secondary/40 hover:-translate-y-0.5 hover:shadow-[0_0_20px_-4px_hsl(45_100%_55%/0.5)] active:scale-[0.96] cursor-pointer"
                   }`}
                 >
-                  {agent.locked ? (
+                  {agent.locked && (
                     <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
                       <Lock className="w-2.5 h-2.5" />
                       Soon
-                    </div>
-                  ) : (
-                    <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
-                      {agent.price}
                     </div>
                   )}
                   <div className="relative w-10 h-10 mb-2 rounded-full overflow-hidden border border-bee/20 bg-secondary/40">
@@ -238,15 +252,24 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
               </span>
             </div>
             <div className="space-y-1">
-              {visionHistory.map((item, i) => (
+              {chats.length === 0 && (
+                <p className="text-[10px] text-muted-foreground/60 px-2.5 py-2">
+                  {user ? "No chats yet — start your first vision." : "Sign in to save your chats."}
+                </p>
+              )}
+              {chats.map((item) => (
                 <button
-                  key={i}
+                  key={item.id}
+                  onClick={() => {
+                    onClose();
+                    navigate(`/bee-ai?chat=${item.id}`);
+                  }}
                   className="w-full text-left p-2.5 rounded-lg hover:bg-secondary/40 transition-colors group"
                 >
                   <p className="text-sm text-foreground/80 group-hover:text-foreground truncate transition-colors">
                     {item.title}
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.time}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{formatTime(item.updated_at)}</p>
                 </button>
               ))}
             </div>
