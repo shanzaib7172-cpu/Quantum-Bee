@@ -278,7 +278,7 @@ const StudyBee = () => {
                     </div>
                   </div>
                   <DialogFooter>
-                    <Button onClick={createChannel} className="text-[hsl(220,60%,3%)]" style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>Create</Button>
+                    <Button onClick={createChannel} className="text-slate-100" style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>Create</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -337,7 +337,7 @@ const StudyBee = () => {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
+                      <Button onClick={saveProfile} disabled={savingProfile} className="text-slate-100"
                         style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                         {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
                       </Button>
@@ -346,7 +346,7 @@ const StudyBee = () => {
                 </Dialog>
               </>
             ) : (
-              <Button asChild size="sm" className="w-full text-[hsl(220,60%,3%)] border-0"
+              <Button asChild size="sm" className="w-full text-slate-100 border-0"
                 style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                 <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-2" />Sign in to chat</Link>
               </Button>
@@ -471,7 +471,7 @@ const StudyBee = () => {
                   className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
                 />
                 <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
-                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-slate-100 border-0"
                   style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                   {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 </Button>
@@ -481,7 +481,7 @@ const StudyBee = () => {
             <div className="px-3 sm:px-4 pb-3">
               <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3">
                 <span className="text-sm text-white/60">Sign in to join the conversation.</span>
-                <Button asChild size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                <Button asChild size="sm" className="h-8 px-3 text-slate-100 border-0"
                   style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                   <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-1.5" />Sign in</Link>
                 </Button>
