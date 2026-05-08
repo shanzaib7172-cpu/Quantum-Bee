@@ -8,6 +8,7 @@ import SocialLinks from "@/components/SocialLinks";
 import TopBar from "@/components/TopBar";
 import blogCover from "@/assets/blog-planet-bee-cover.png";
 import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
+import healthBeeQuantumCover from "@/assets/blog-health-bee-quantum.png";
 
 const posts = [
   {
@@ -33,14 +34,16 @@ const posts = [
     image: beeAiEngineCover,
   },
   {
-    id: "mars-stack",
-    tag: "Space Tech",
+    id: "health-bee-quantum",
+    slug: "/blogs/health-bee-quantum",
+    tag: "Health · Quantum",
     date: "Mar 2026",
-    read: "10 min",
-    title: "Designing the Mars Quantum Stack",
+    read: "8 min",
+    title: "Health Bee: The Quantum Revolution in Molecular Discovery",
     excerpt:
-      "The infrastructure problem nobody talks about: how do you run a civilisation on a planet with 14-minute light-speed lag? Quantum entanglement.",
-    color: "hsl(280,80%,70%)",
+      "Moving beyond classical trial-and-error medicine into Quantum Molecular Synthesis — a Quantum Shield for humanity, built from the chemistry of life itself.",
+    color: "hsl(195,100%,70%)",
+    image: healthBeeQuantumCover,
   },
   {
     id: "ethical-ai",
