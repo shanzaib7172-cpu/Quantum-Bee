@@ -15,6 +15,7 @@ import Blogs from "./pages/Blogs.tsx";
 import BlogPlanetBee from "./pages/BlogPlanetBee.tsx";
 import BlogBeeAiEngine from "./pages/BlogBeeAiEngine.tsx";
 import BlogHealthBeeQuantum from "./pages/BlogHealthBeeQuantum.tsx";
+import BlogSpaceBeeQuantum from "./pages/BlogSpaceBeeQuantum.tsx";
 import HealthBee from "./pages/HealthBee.tsx";
 import Profile from "./pages/Profile.tsx";
 import SpaceBee from "./pages/SpaceBee.tsx";
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/blogs/discovery-of-planet-bee" element={<BlogPlanetBee />} />
           <Route path="/blogs/bee-ai-engine" element={<BlogBeeAiEngine />} />
           <Route path="/blogs/health-bee-quantum" element={<BlogHealthBeeQuantum />} />
+          <Route path="/blogs/space-bee-quantum" element={<BlogSpaceBeeQuantum />} />
           <Route path="/health-bee" element={<HealthBee />} />
           <Route path="/space-bee" element={<SpaceBee />} />
           <Route path="/study-bee" element={<StudyBee />} />

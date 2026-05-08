@@ -9,6 +9,7 @@ import TopBar from "@/components/TopBar";
 import blogCover from "@/assets/blog-planet-bee-cover.png";
 import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
 import healthBeeQuantumCover from "@/assets/blog-health-bee-quantum.png";
+import spaceBeeQuantumCover from "@/assets/blog-space-bee-quantum.png";
 
 const posts = [
   {
@@ -46,14 +47,16 @@ const posts = [
     image: healthBeeQuantumCover,
   },
   {
-    id: "ethical-ai",
-    tag: "Ethics",
+    id: "space-bee-quantum",
+    slug: "/blogs/space-bee-quantum",
+    tag: "Space · Quantum",
     date: "Feb 2026",
-    read: "5 min",
-    title: "Ethical AI by Design, Not by Apology",
+    read: "9 min",
+    title: "Space Bee — The Quantum Leap into the Black Hole and Beyond",
     excerpt:
-      "Transparency, fairness and human oversight aren't features we bolt on — they're the constraints we design every Bee AI agent inside of.",
-    color: "hsl(170,100%,55%)",
+      "While NASA and SpaceX master rocket hardware, Space Bee targets the final intellectual frontier — merging general relativity and quantum mechanics in deep space.",
+    color: "hsl(230,100%,75%)",
+    image: spaceBeeQuantumCover,
   },
   {
     id: "whatsapp-revolution",
