@@ -337,7 +337,7 @@ const StudyBee = () => {
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button onClick={saveProfile} disabled={savingProfile} className="text-[hsl(220,60%,3%)]"
+                      <Button onClick={saveProfile} disabled={savingProfile} className="text-slate-100"
                         style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                         {savingProfile ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
                       </Button>
