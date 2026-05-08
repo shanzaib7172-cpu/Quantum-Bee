@@ -80,7 +80,7 @@ const TopBar = () => {
         </Link>
 
         {/* Desktop nav (visible md+) */}
-        <nav className="hidden md:flex items-center gap-1 flex-wrap justify-end">
+        <nav className="hidden sm:flex items-center gap-1 flex-wrap justify-end">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to}>
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
@@ -110,7 +110,7 @@ const TopBar = () => {
         <button
           aria-label="Toggle menu"
           onClick={() => setOpen((s) => !s)}
-          className="md:hidden relative w-10 h-10 grid place-items-center rounded-full text-white overflow-hidden"
+          className="sm:hidden relative w-10 h-10 grid place-items-center rounded-full text-white overflow-hidden"
           style={{
             background: "linear-gradient(180deg, hsl(0 0% 100% / 0.14), hsl(0 0% 100% / 0.04))",
             border: "1px solid hsl(0 0% 100% / 0.18)",
@@ -129,7 +129,7 @@ const TopBar = () => {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden px-4 pb-4 animate-fade-in space-y-2">
+        <div className="sm:hidden px-4 pb-4 animate-fade-in space-y-2">
           {user && <div className="flex justify-end"><BeeCoinBadge /></div>}
           <div
             className="grid grid-cols-2 sm:grid-cols-3 gap-2 p-3 rounded-3xl relative overflow-hidden"
