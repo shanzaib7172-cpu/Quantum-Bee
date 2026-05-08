@@ -10,6 +10,7 @@ import blogCover from "@/assets/blog-planet-bee-cover.png";
 import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
 import healthBeeQuantumCover from "@/assets/blog-health-bee-quantum.png";
 import spaceBeeQuantumCover from "@/assets/blog-space-bee-quantum.png";
+import quantumBeeCityCover from "@/assets/blog-quantum-bee-city.png";
 
 const posts = [
   {
@@ -59,14 +60,16 @@ const posts = [
     image: spaceBeeQuantumCover,
   },
   {
-    id: "whatsapp-revolution",
-    tag: "Product",
+    id: "quantum-bee-city",
+    slug: "/blogs/quantum-bee-city",
+    tag: "City · Blueprint",
     date: "Jan 2026",
-    read: "7 min",
-    title: "How Jack Turned WhatsApp into a Sales Engine",
+    read: "8 min",
+    title: "The Blueprint for Planet Bee: Building the First Quantum City on Earth",
     excerpt:
-      "From simple messages to autonomous funnels, payment processing and segmented broadcasts — the case study behind our WhatsApp automation agent.",
-    color: "hsl(140,70%,55%)",
+      "Quantum Bee City is the physical twin of Planet Bee — a hybrid quantum-classical metropolis with Bee Robot logistics, an Urban Digital Twin, and a zero-carbon grid.",
+    color: "hsl(40,100%,60%)",
+    image: quantumBeeCityCover,
   },
   {
     id: "quantum-healthcare",
