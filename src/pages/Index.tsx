@@ -29,19 +29,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
-      <SpaceBackground density={0.45} rocks={0} blackhole={false} planets />
-
-      {/* Ambient glow */}
-      <div
-        className="fixed inset-0 pointer-events-none z-0"
-        style={{
-          background: `
-            radial-gradient(ellipse at 15% 20%, hsl(45 100% 55% / 0.08) 0%, transparent 55%),
-            radial-gradient(ellipse at 85% 30%, hsl(195 100% 60% / 0.08) 0%, transparent 55%),
-            radial-gradient(ellipse at 50% 100%, hsl(280 80% 65% / 0.06) 0%, transparent 50%)
-          `,
-        }}
-      />
+      <SpaceBackground density={0.6} rocks={0} blackhole={false} planets={false} />
 
       <div className="relative z-30">
         <TopBar />

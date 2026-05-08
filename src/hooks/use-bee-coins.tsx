@@ -29,7 +29,7 @@ export function useBeeCoins() {
     refresh();
     if (!user) return;
     const ch = supabase
-      .channel("bee_coin_balance")
+      .channel(`bee_coin_balance:${user.id}:${Math.random().toString(36).slice(2)}`)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table: "bee_coin_balances", filter: `user_id=eq.${user.id}` },
