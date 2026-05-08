@@ -142,15 +142,22 @@ const Blogs = () => {
               key={p.id}
               className="group relative rounded-2xl overflow-hidden bg-[hsl(220,40%,8%)]/70 backdrop-blur-xl border border-[hsl(200,100%,60%)]/15 hover:border-[hsl(40,100%,55%)]/50 transition-all"
             >
-              <div className="h-36 relative overflow-hidden" style={{ background: `radial-gradient(circle at 30% 30%, ${p.color}55, transparent 70%), linear-gradient(135deg, hsl(220,40%,10%), hsl(220,60%,4%))` }}>
-                <div className="absolute inset-0 opacity-30" style={{
-                  backgroundImage: "linear-gradient(hsl(200 100% 70%) 1px, transparent 1px), linear-gradient(90deg, hsl(200 100% 70%) 1px, transparent 1px)",
-                  backgroundSize: "24px 24px",
-                }} />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-20 h-20 rounded-full blur-2xl group-hover:blur-3xl transition-all" style={{ background: p.color }} />
+              {(p as any).image ? (
+                <div className="h-40 relative overflow-hidden">
+                  <img src={(p as any).image} alt={p.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[hsl(220,40%,6%)]/85 via-[hsl(220,40%,6%)]/20 to-transparent" />
                 </div>
-              </div>
+              ) : (
+                <div className="h-36 relative overflow-hidden" style={{ background: `radial-gradient(circle at 30% 30%, ${p.color}55, transparent 70%), linear-gradient(135deg, hsl(220,40%,10%), hsl(220,60%,4%))` }}>
+                  <div className="absolute inset-0 opacity-30" style={{
+                    backgroundImage: "linear-gradient(hsl(200 100% 70%) 1px, transparent 1px), linear-gradient(90deg, hsl(200 100% 70%) 1px, transparent 1px)",
+                    backgroundSize: "24px 24px",
+                  }} />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-20 h-20 rounded-full blur-2xl group-hover:blur-3xl transition-all" style={{ background: p.color }} />
+                  </div>
+                </div>
+              )}
               <div className="p-6">
                 <div className="flex items-center gap-2 font-mono text-[10px] tracking-widest uppercase mb-3" style={{ color: p.color }}>
                   <Tag className="w-3 h-3" /> {p.tag}
@@ -163,9 +170,15 @@ const Blogs = () => {
                   {p.title}
                 </h3>
                 <p className="mt-3 text-sm text-foreground/65 leading-relaxed line-clamp-3">{p.excerpt}</p>
-                <button className="mt-4 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,75%)] hover:text-[hsl(40,100%,70%)] transition-colors">
-                  Read more <ArrowRight className="w-3 h-3" />
-                </button>
+                {(p as any).slug ? (
+                  <Link to={(p as any).slug} className="mt-4 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,75%)] hover:text-[hsl(40,100%,70%)] transition-colors">
+                    Read more <ArrowRight className="w-3 h-3" />
+                  </Link>
+                ) : (
+                  <button className="mt-4 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,75%)] hover:text-[hsl(40,100%,70%)] transition-colors">
+                    Read more <ArrowRight className="w-3 h-3" />
+                  </button>
+                )}
               </div>
             </article>
           ))}
