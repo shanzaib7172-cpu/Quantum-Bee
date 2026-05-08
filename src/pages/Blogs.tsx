@@ -116,7 +116,7 @@ const Blogs = () => {
               <p className="mt-4 text-foreground/70 leading-relaxed">
                 Shanzaib's leap into the quantum world, the meeting with the Bee, and the founding mission to make Earth as beautiful and efficient as Planet Bee.
               </p>
-              <Button size="lg" className="mt-6 h-12 px-7 self-start bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)]">
+              <Button size="lg" className="mt-6 h-12 px-7 self-start bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] font-semibold border-0 hover:opacity-95 shadow-[0_0_40px_-5px_hsl(40,100%,55%,0.5)] text-slate-100">
                 Read full essay <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </div>
