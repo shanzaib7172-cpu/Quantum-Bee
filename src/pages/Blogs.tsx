@@ -5,6 +5,7 @@ import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
+import SiteFooter from "@/components/SiteFooter";
 import TopBar from "@/components/TopBar";
 import blogCover from "@/assets/blog-planet-bee-cover.png";
 import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
@@ -220,9 +221,7 @@ const Blogs = () => {
         </div>
       </section>
 
-      <footer className="relative z-10 px-6 py-6 text-center text-xs text-foreground/50 border-t border-[hsl(200,100%,60%)]/10">
-        © {new Date().getFullYear()} Quantum Bee Technologies — Beyond the Quantum Singularity.
-      </footer>
+      <SiteFooter />
     </div>
   );
 };
