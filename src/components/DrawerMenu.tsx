@@ -181,20 +181,16 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
                       navigate(agent.link);
                     }
                   }}
-                  className={`glass rounded-xl p-3 transition-all group relative overflow-hidden ${
+                  className={`glass rounded-xl p-3 transition-all duration-200 group relative overflow-hidden ${
                     agent.locked
                       ? "cursor-not-allowed opacity-70"
-                      : "hover:bg-secondary/40 cursor-pointer"
+                      : "hover:bg-secondary/40 hover:-translate-y-0.5 hover:shadow-[0_0_20px_-4px_hsl(45_100%_55%/0.5)] active:scale-[0.96] cursor-pointer"
                   }`}
                 >
-                  {agent.locked ? (
+                  {agent.locked && (
                     <div className="absolute top-2 right-2 flex items-center gap-1 text-[9px] font-mono font-medium text-primary bg-primary/10 border border-primary/20 px-1.5 py-0.5 rounded-md">
                       <Lock className="w-2.5 h-2.5" />
                       Soon
-                    </div>
-                  ) : (
-                    <div className="absolute top-2 right-2 text-[10px] font-mono font-medium text-bee bg-bee/10 px-1.5 py-0.5 rounded-md">
-                      {agent.price}
                     </div>
                   )}
                   <div className="relative w-10 h-10 mb-2 rounded-full overflow-hidden border border-bee/20 bg-secondary/40">
