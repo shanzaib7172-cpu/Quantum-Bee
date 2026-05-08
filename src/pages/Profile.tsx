@@ -576,6 +576,37 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
               <button onClick={() => setEditingName(true)} className="text-xs text-muted-foreground hover:text-foreground">edit</button>
             </div>
             <p className="text-sm text-muted-foreground truncate">{email}</p>
+
+            <div className="mt-3">
+              {editingBio ? (
+                <div className="space-y-2">
+                  <Textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Tell the swarm about yourself…"
+                    maxLength={280}
+                    rows={3}
+                    className="bg-secondary/30 border-border/50 resize-none"
+                  />
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
+                    <span className="text-[10px] text-muted-foreground">{bio.length}/280</span>
+                    <Button size="sm" onClick={saveBio} disabled={savingBio} className="bg-bee/15 text-bee border border-bee/30" variant="ghost">
+                      {savingBio ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save bio"}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setBio(profile?.bio || ""); setEditingBio(false); }}>Cancel</Button>
+                  </div>
+                </div>
+              ) : profile?.bio ? (
+                <div className="flex items-start gap-2 justify-center sm:justify-start">
+                  <p className="text-sm text-foreground/80 italic max-w-xl whitespace-pre-wrap">"{profile.bio}"</p>
+                  <button onClick={() => setEditingBio(true)} className="text-xs text-muted-foreground hover:text-foreground shrink-0">edit</button>
+                </div>
+              ) : (
+                <button onClick={() => setEditingBio(true)} className="text-xs text-bee hover:text-bee/80 underline-offset-2 hover:underline">
+                  + Add a bio
+                </button>
+              )}
+            </div>
           </>
         )}
       </div>
