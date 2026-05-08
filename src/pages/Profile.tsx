@@ -105,6 +105,7 @@ export default function Profile() {
           {tab === "api" && <ApiKeys />}
         </main>
         </div>
+        </div>
       </div>
     </div>
   );
