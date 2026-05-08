@@ -481,7 +481,7 @@ const StudyBee = () => {
             <div className="px-3 sm:px-4 pb-3">
               <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3">
                 <span className="text-sm text-white/60">Sign in to join the conversation.</span>
-                <Button asChild size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                <Button asChild size="sm" className="h-8 px-3 text-slate-100 border-0"
                   style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                   <Link to="/login"><LogIn className="w-3.5 h-3.5 mr-1.5" />Sign in</Link>
                 </Button>
