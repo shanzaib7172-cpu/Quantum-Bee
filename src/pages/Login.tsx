@@ -32,8 +32,8 @@ const Login = () => {
 
   return (
     <AuthScene
-      title="Welcome back"
-      subtitle="Sign in to your Bee AI command center"
+      title="Re-enter Planet Bee"
+      subtitle="Sign in to your hive command center"
       footer={
         <>
           Don't have an account?{" "}
