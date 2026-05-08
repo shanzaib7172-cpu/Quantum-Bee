@@ -249,15 +249,24 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
               </span>
             </div>
             <div className="space-y-1">
-              {visionHistory.map((item, i) => (
+              {chats.length === 0 && (
+                <p className="text-[10px] text-muted-foreground/60 px-2.5 py-2">
+                  {user ? "No chats yet — start your first vision." : "Sign in to save your chats."}
+                </p>
+              )}
+              {chats.map((item) => (
                 <button
-                  key={i}
+                  key={item.id}
+                  onClick={() => {
+                    onClose();
+                    navigate(`/bee-ai?chat=${item.id}`);
+                  }}
                   className="w-full text-left p-2.5 rounded-lg hover:bg-secondary/40 transition-colors group"
                 >
                   <p className="text-sm text-foreground/80 group-hover:text-foreground truncate transition-colors">
                     {item.title}
                   </p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{item.time}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{formatTime(item.updated_at)}</p>
                 </button>
               ))}
             </div>
