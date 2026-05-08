@@ -182,7 +182,7 @@ const Blogs = () => {
             placeholder="you@future.com"
             className="flex-1 h-12 px-4 rounded-xl bg-[hsl(220,40%,8%)]/70 border border-[hsl(200,100%,60%)]/20 focus:border-[hsl(40,100%,55%)]/60 outline-none text-sm placeholder:text-foreground/40"
           />
-          <Button type="submit" size="lg" className="h-12 px-6 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] text-[hsl(220,60%,3%)] font-semibold border-0">
+          <Button type="submit" size="lg" className="h-12 px-6 bg-gradient-to-r from-[hsl(40,100%,55%)] to-[hsl(195,100%,55%)] font-semibold border-0 text-slate-100">
             Subscribe
           </Button>
         </form>
