@@ -1,38 +1,31 @@
-## Bee AI / Community / Profile Polish + Chat History + Login Gate
+## Goal
+Keep all TopBar buttons (Home, About, Blogs, Bee AI, Planet Bee Community, BeeCoin badge, Login/Sign up or Profile) on a single horizontal line — no wrapping to a second row, even on narrow viewports like the current 673px preview.
 
-### 1. Header parity on Bee AI page
-- In `src/pages/Index.tsx` (Bee AI), replace the custom header with the same `TopBar` used on Home, so the Profile button + Bee Coins badge match exactly. Keep the drawer menu trigger and back arrow as a small left cluster above the chat.
+## Changes (single file: `src/components/TopBar.tsx`)
 
-### 2. Navigation rename + logo swap (Community)
-- In `src/components/TopBar.tsx`, rename the `/study-bee` nav entry from "Community" → "Planet Bee Community" (label only; route unchanged to avoid breakage).
-- In `src/pages/StudyBee.tsx`, replace any generic/emoji bee with `@/assets/bee-logo.png` in the header/branding.
-- In `src/components/BeeCoinBadge.tsx`, swap the coin icon for the same `bee-logo.png` (small, with a soft glow), so the wallet uses our bee.
+1. **Remove `flex-wrap` from the desktop nav** so chips stay on one row.
+   - Replace `hidden sm:flex items-center gap-1 flex-wrap justify-end` with `hidden sm:flex items-center gap-1 flex-nowrap justify-end overflow-x-auto`.
 
-### 3. Drawer Marketplace cleanup
-- In `src/components/DrawerMenu.tsx`:
-  - Remove the `price` prop / `$` price chip on every agent card (both unlocked and "Soon" variants keep only the lock chip).
-  - Remove the descriptive "from $50 / $20/mo / $25/mo" suffixes in `agentCards` (keep clean role descriptions like "Leads Generator", "Product Model Shoot AI", "WhatsApp Automation").
-  - Add a small press/scale animation on each card (`active:scale-95 transition-transform`) and a subtle hover glow ring.
+2. **Prevent each chip from shrinking or breaking** so labels stay intact and the row scrolls horizontally if it ever overflows.
+   - Add `shrink-0` to the `Icon3D` wrapper span (and to the `BeeCoinBadge` container) so they keep their natural width.
+   - Labels already have `whitespace-nowrap` — keep that.
 
-### 4. Login gate for Bee AI
-- Wrap `src/pages/Index.tsx` so unauthenticated users are redirected to `/login?redirect=/bee-ai` (using `useAuth`). Show a brief loading state while session resolves.
+3. **Tighten spacing on small desktop widths** so everything fits without scroll at ~640–800px.
+   - Reduce nav `gap-1` → `gap-0.5` and chip padding from `px-3 py-1.5` → `px-2 py-1` at the `sm` breakpoint, restoring the larger spacing at `md+` (e.g. `sm:px-2 md:px-3`).
+   - Shorten the long label "Planet Bee Community" displayed in the chip to "Community" (or hide the label below `md` and show icon-only) so the row fits the 673px viewport without horizontal scroll.
 
-### 5. Chat history (titles + storage)
-- New table `chat_sessions` (user_id, title, created_at, updated_at) and `chat_messages` (session_id, role, content, created_at) with RLS = own rows.
-- In `ChatCanvas`, on first user message create a session, derive title from first 6 words, persist every message. Add a "My Visions" / "Chats" list in the drawer that reads recent sessions and lets the user reopen one (loads messages into the canvas).
-- Replace the static `visionHistory` array in `DrawerMenu` with live data from `chat_sessions`.
+4. **Hide the brand wordmark below `md`** (already `hidden sm:inline`) — change to `hidden md:inline` to free up space for the nav row at sm widths.
 
-### 6. Visual upgrade: Bee AI, Community, Profile pages
-Match the Home page aesthetic: deep space gradient background, glassmorphism panels, gold/cyan glow accents, `font-heading` gradient titles, framer-style fade-in.
-- Add a shared `<SpaceBackground />` (already exists) + ambient radial gradients to:
-  - `src/pages/Index.tsx` (Bee AI shell)
-  - `src/pages/StudyBee.tsx` (Planet Bee Community)
-  - `src/pages/Profile.tsx`
-- Convert plain cards/sections to `glass-strong glass-highlight rounded-2xl` with bee-gold accent borders and `shadow-[0_0_40px_-10px_hsl(45_100%_55%/0.4)]`.
-- Add `animate-fade-in` on sections; gradient text on H1s.
+5. **Allow horizontal scroll as a graceful fallback** with `overflow-x-auto` and `scrollbar-none` (custom utility or inline style `scrollbarWidth: 'none'`) so if the user shrinks further, buttons slide instead of wrapping.
 
-### Technical notes
-- DB migration runs first (separate approval), then code edits.
-- No payment/business logic changes — Bee Coins logic stays as-is.
-- Routes unchanged; only labels, visuals, auth gate, and chat persistence added.
-- Files touched: `TopBar.tsx`, `BeeCoinBadge.tsx`, `DrawerMenu.tsx`, `ChatCanvas.tsx`, `pages/Index.tsx`, `pages/StudyBee.tsx`, `pages/Profile.tsx`. New migration for `chat_sessions` + `chat_messages`.
+## Out of scope
+- Mobile menu (`sm:hidden`) is unchanged.
+- No changes to routing, page contents, or other components.
+
+## Open question
+At 673px wide with 5 nav chips + coin badge + profile chip, the row is tight. Pick one:
+- **A.** Shorten "Planet Bee Community" → "Community" in the chip label (recommended).
+- **B.** Keep full labels and allow horizontal scroll inside the nav.
+- **C.** Show icon-only chips between `sm` and `md`, full labels at `md+`.
+
+Default if unspecified: **A**.

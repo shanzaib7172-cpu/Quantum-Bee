@@ -13,14 +13,14 @@ const NAV = [
   { to: "/about", label: "About", icon: Info, color: "hsl(40,100%,65%)" },
   { to: "/blogs", label: "Blogs", icon: BookOpen, color: "hsl(280,80%,75%)" },
   { to: "/bee-ai", label: "Bee AI", icon: Cpu, color: "hsl(170,100%,60%)" },
-  { to: "/study-bee", label: "Planet Bee Community", icon: Users, color: "hsl(50,100%,65%)" },
+  { to: "/study-bee", label: "Community", icon: Users, color: "hsl(50,100%,65%)" },
 ];
 
 const Icon3D = ({
   Icon, label, color, active,
 }: { Icon: any; label: string; color: string; active: boolean }) => (
   <span
-    className={`group relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-150
+    className={`group relative inline-flex shrink-0 items-center gap-1.5 px-2 md:px-3 py-1 md:py-1.5 rounded-full text-xs font-medium tracking-wide transition-all duration-150
       border overflow-hidden isolate select-none
       hover:-translate-y-[1px] active:translate-y-[2px] active:scale-95
       ${active ? "text-white" : "text-white/75 hover:text-white"}`}
@@ -74,13 +74,13 @@ const TopBar = () => {
               style={{ filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.7))" }}
             />
           </div>
-          <span className="hidden sm:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="hidden md:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Bee
           </span>
         </Link>
 
-        {/* Desktop nav (visible md+) */}
-        <nav className="hidden sm:flex items-center gap-1 flex-wrap justify-end">
+        {/* Desktop nav (visible sm+) */}
+        <nav className="hidden sm:flex items-center gap-0.5 md:gap-1 flex-nowrap justify-end overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-w-0">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to}>
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
