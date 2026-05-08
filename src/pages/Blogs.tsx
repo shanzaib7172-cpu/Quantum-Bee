@@ -6,6 +6,7 @@ import beeLogo from "@/assets/bee-logo.png";
 import SpaceBackground from "@/components/SpaceBackground";
 import SocialLinks from "@/components/SocialLinks";
 import TopBar from "@/components/TopBar";
+import blogCover from "@/assets/blog-planet-bee-cover.png";
 
 const posts = [
   {
