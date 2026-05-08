@@ -30,6 +30,7 @@ const VoicePopup = ({
   const [transcript, setTranscript] = useState("");
   const [thinking, setThinking] = useState(false);
   const [lastAssistant, setLastAssistant] = useState<string>("");
+  const [lang, setLang] = useState<"en-US" | "ur-PK">("en-US");
   const recognitionRef = useRef<any>(null);
 
   // Greet on open
@@ -67,7 +68,7 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = "en-US";
+    recognition.lang = lang;
 
     recognition.onresult = async (event: any) => {
       const text = Array.from(event.results)
@@ -78,7 +79,11 @@ const VoicePopup = ({
         setIsListening(false);
         setThinking(true);
         try {
-          const reply = await onSendMessage(text);
+          const prompt =
+            lang === "ur-PK"
+              ? `${text}\n\n(Reply in Urdu using Urdu script.)`
+              : text;
+          const reply = await onSendMessage(prompt);
           if (typeof reply === "string" && reply) {
             setLastAssistant(reply);
           }
@@ -93,7 +98,7 @@ const VoicePopup = ({
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  }, [isSpeaking, stopSpeaking, onSendMessage]);
+  }, [isSpeaking, stopSpeaking, onSendMessage, lang]);
 
   const toggle = () => {
     if (isListening) {
@@ -139,6 +144,22 @@ const VoicePopup = ({
         >
           <X className="w-4 h-4" />
         </button>
+
+        <div className="absolute top-3 left-3 flex items-center gap-1 p-1 rounded-full border border-bee/20 bg-background/40 backdrop-blur">
+          {(["en-US", "ur-PK"] as const).map((code) => (
+            <button
+              key={code}
+              onClick={() => setLang(code)}
+              className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider transition-colors ${
+                lang === code
+                  ? "bg-bee/30 text-bee"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {code === "en-US" ? "EN" : "اُردُو"}
+            </button>
+          ))}
+        </div>
 
         {/* Glowing bee with rings */}
         <div className="relative flex items-center justify-center">

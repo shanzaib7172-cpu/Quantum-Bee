@@ -127,10 +127,20 @@ const ChatCanvas = () => {
     window.speechSynthesis.cancel();
     const cleaned = cleanTextForSpeech(text);
     if (!cleaned) return;
+    const isUrdu = /[\u0600-\u06FF]/.test(cleaned);
     const utterance = new SpeechSynthesisUtterance(cleaned);
     utterance.rate = 1.0;
     utterance.pitch = 1.1;
-    if (lockedVoiceRef.current) {
+    if (isUrdu) {
+      const voices = window.speechSynthesis.getVoices();
+      const urVoice =
+        voices.find((v) => /^ur(-|_)/i.test(v.lang)) ||
+        voices.find((v) => /urdu/i.test(v.name)) ||
+        voices.find((v) => /^hi(-|_)/i.test(v.lang)) ||
+        voices.find((v) => /^ar(-|_)/i.test(v.lang));
+      if (urVoice) utterance.voice = urVoice;
+      utterance.lang = urVoice?.lang || "ur-PK";
+    } else if (lockedVoiceRef.current) {
       utterance.voice = lockedVoiceRef.current;
       utterance.lang = lockedVoiceRef.current.lang;
     }
