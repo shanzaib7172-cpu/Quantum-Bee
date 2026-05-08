@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -469,22 +470,26 @@ function ApiKeys() {
 /* ───────── Profile Header (avatar + name) ───────── */
 
 function ProfileHeader({ userId, email }: { userId: string; email: string }) {
-  const [profile, setProfile] = useState<{ display_name: string; avatar_url: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ display_name: string; avatar_url: string | null; bio: string | null } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [name, setName] = useState("");
+  const [editingBio, setEditingBio] = useState(false);
+  const [bio, setBio] = useState("");
+  const [savingBio, setSavingBio] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const load = async () => {
     const { data } = await supabase
       .from("profiles")
-      .select("display_name, avatar_url")
+      .select("display_name, avatar_url, bio")
       .eq("user_id", userId)
       .maybeSingle();
     if (data) {
-      setProfile(data);
+      setProfile(data as any);
       setName(data.display_name || "");
+      setBio((data as any).bio || "");
     }
   };
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [userId]);
@@ -509,14 +514,26 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
     const url = `${pub.publicUrl}?v=${Date.now()}`;
     await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", userId);
     setUploading(false);
-    setProfile((p) => p ? { ...p, avatar_url: url } : { display_name: name, avatar_url: url });
+    setProfile((p) => p ? { ...p, avatar_url: url } : { display_name: name, avatar_url: url, bio: "" });
     toast({ title: "Profile picture updated 🐝" });
   };
 
   const saveName = async () => {
     if (!name.trim()) return;
     await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
-    setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null });
+    setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null, bio: "" });
+
+    // saveBio defined below
+  };
+
+  const saveBio = async () => {
+    setSavingBio(true);
+    const { error } = await supabase.from("profiles").update({ bio: bio.trim() || null }).eq("user_id", userId);
+    setSavingBio(false);
+    if (error) { toast({ variant: "destructive", title: "Failed", description: error.message }); return; }
+    setProfile((p) => p ? { ...p, bio: bio.trim() || null } : { display_name: name, avatar_url: null, bio: bio.trim() || null });
+    setEditingBio(false);
+    toast({ title: "Bio updated ✨" });
     setEditingName(false);
     toast({ title: "Name updated" });
   };
@@ -559,6 +576,37 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
               <button onClick={() => setEditingName(true)} className="text-xs text-muted-foreground hover:text-foreground">edit</button>
             </div>
             <p className="text-sm text-muted-foreground truncate">{email}</p>
+
+            <div className="mt-3">
+              {editingBio ? (
+                <div className="space-y-2">
+                  <Textarea
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="Tell the swarm about yourself…"
+                    maxLength={280}
+                    rows={3}
+                    className="bg-secondary/30 border-border/50 resize-none"
+                  />
+                  <div className="flex items-center gap-2 justify-center sm:justify-start">
+                    <span className="text-[10px] text-muted-foreground">{bio.length}/280</span>
+                    <Button size="sm" onClick={saveBio} disabled={savingBio} className="bg-bee/15 text-bee border border-bee/30" variant="ghost">
+                      {savingBio ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Save bio"}
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => { setBio(profile?.bio || ""); setEditingBio(false); }}>Cancel</Button>
+                  </div>
+                </div>
+              ) : profile?.bio ? (
+                <div className="flex items-start gap-2 justify-center sm:justify-start">
+                  <p className="text-sm text-foreground/80 italic max-w-xl whitespace-pre-wrap">"{profile.bio}"</p>
+                  <button onClick={() => setEditingBio(true)} className="text-xs text-muted-foreground hover:text-foreground shrink-0">edit</button>
+                </div>
+              ) : (
+                <button onClick={() => setEditingBio(true)} className="text-xs text-bee hover:text-bee/80 underline-offset-2 hover:underline">
+                  + Add a bio
+                </button>
+              )}
+            </div>
           </>
         )}
       </div>
