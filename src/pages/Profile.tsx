@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TopBar from "@/components/TopBar";
+import SpaceBackground from "@/components/SpaceBackground";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -45,11 +46,22 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <TopBar />
-      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-        <ProfileHeader userId={user.id} email={user.email || ""} />
-        <div className="grid md:grid-cols-[220px_1fr] gap-6">
+    <div className="min-h-screen bg-[hsl(228,30%,5%)] text-foreground relative overflow-hidden">
+      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          background: `
+            radial-gradient(ellipse at 20% 15%, hsl(45 100% 55% / 0.10) 0%, transparent 55%),
+            radial-gradient(ellipse at 80% 85%, hsl(195 100% 60% / 0.08) 0%, transparent 55%)
+          `,
+        }}
+      />
+      <div className="relative z-10">
+        <TopBar />
+        <div className="max-w-6xl mx-auto px-4 py-6 space-y-6 animate-fade-in">
+          <ProfileHeader userId={user.id} email={user.email || ""} />
+          <div className="grid md:grid-cols-[220px_1fr] gap-6">
         <aside className="space-y-1">
           <div className="px-3 py-3 mb-2 rounded-xl glass">
             <p className="text-xs text-muted-foreground">Signed in</p>
