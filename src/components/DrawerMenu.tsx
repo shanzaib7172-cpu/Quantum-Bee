@@ -126,7 +126,10 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
 
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
           {/* New Vision */}
-          <button className="w-full flex items-center gap-3 p-3 rounded-xl glass glass-highlight hover:bg-secondary/50 transition-all group">
+          <button
+            onClick={() => { onClose(); navigate("/bee-ai"); }}
+            className="w-full flex items-center gap-3 p-3 rounded-xl glass glass-highlight hover:bg-secondary/50 active:scale-[0.98] transition-all group"
+          >
             <div className="w-9 h-9 rounded-lg bg-bee/10 flex items-center justify-center group-hover:bg-bee/20 transition-colors">
               <Plus className="w-4 h-4 text-bee" />
             </div>
