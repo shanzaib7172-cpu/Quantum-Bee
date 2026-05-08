@@ -471,7 +471,7 @@ const StudyBee = () => {
                   className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
                 />
                 <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
-                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-[hsl(220,60%,3%)] border-0"
+                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-slate-100 border-0"
                   style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                   {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 </Button>
