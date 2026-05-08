@@ -74,13 +74,13 @@ const TopBar = () => {
               style={{ filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.7))" }}
             />
           </div>
-          <span className="hidden sm:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="hidden md:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Bee
           </span>
         </Link>
 
-        {/* Desktop nav (visible md+) */}
-        <nav className="hidden sm:flex items-center gap-1 flex-wrap justify-end">
+        {/* Desktop nav (visible sm+) */}
+        <nav className="hidden sm:flex items-center gap-0.5 md:gap-1 flex-nowrap justify-end overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden min-w-0">
           {NAV.map((n) => (
             <Link key={n.to} to={n.to}>
               <Icon3D Icon={n.icon} label={n.label} color={n.color} active={pathname === n.to} />
