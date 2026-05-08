@@ -74,7 +74,7 @@ const TopBar = () => {
               style={{ filter: "drop-shadow(0 0 8px hsl(195 100% 60% / 0.7))" }}
             />
           </div>
-          <span className="hidden md:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
+          <span className="hidden sm:inline text-base font-heading font-bold tracking-tight bg-gradient-to-r from-[hsl(40,100%,65%)] via-[hsl(195,100%,75%)] to-[hsl(230,100%,75%)] bg-clip-text text-transparent">
             Quantum Bee
           </span>
         </Link>
