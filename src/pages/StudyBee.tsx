@@ -500,6 +500,7 @@ const StudyBee = () => {
               {members.map((m) => (
                 <div key={m.user_id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5">
                   <Avatar className="w-7 h-7">
+                    {m.avatar_url && <AvatarImage src={m.avatar_url} alt={m.display_name} />}
                     <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-[10px] font-bold">
                       {initials(m.display_name)}
                     </AvatarFallback>
