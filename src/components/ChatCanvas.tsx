@@ -133,6 +133,10 @@ const ChatCanvas = () => {
       .replace(/!\[.*?\]\(.*?\)/g, "image")
       .replace(/\[([^\]]+)\]\(.*?\)/g, "$1")
       .replace(/[>\-•~|]/g, "")
+      // Strip emoji & pictographs so the voice agent never reads them aloud
+      .replace(/\p{Extended_Pictographic}/gu, "")
+      .replace(/[\u{1F1E6}-\u{1F1FF}]/gu, "")
+      .replace(/[\u200D\uFE0F\u20E3]/g, "")
       .replace(/\n{2,}/g, ". ")
       .replace(/\n/g, " ")
       .replace(/\s{2,}/g, " ")
