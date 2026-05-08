@@ -19,12 +19,29 @@ interface Message {
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
-const suggestions = [
-  "Analyze my website's UX",
-  "Generate a marketing plan",
-  "Show Q1 sales analytics",
-  "Design a brand identity",
+const suggestions: { label: string; prompt: string }[] = [
+  {
+    label: "Analyze my website's UX",
+    prompt:
+      "Analyze my website's UX. Review navigation, hierarchy, readability, mobile responsiveness, and conversion flow. Give me a prioritized list of issues with concrete fixes.",
+  },
+  {
+    label: "Generate a marketing plan",
+    prompt:
+      "Generate a 90-day marketing plan for my business. Include target audience, channels, content calendar, KPIs, and budget allocation.",
+  },
+  {
+    label: "Show Q1 sales analytics",
+    prompt:
+      "Show me a Q1 sales analytics breakdown with revenue trends, top products, customer segments, and a chart of monthly performance.",
+  },
+  {
+    label: "Design a brand identity",
+    prompt:
+      "Help me design a brand identity. Suggest a color palette, typography pairing, logo direction, tone of voice, and brand values.",
+  },
 ];
+
 
 const ChatCanvas = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -462,11 +479,11 @@ const ChatCanvas = () => {
               <div className="flex flex-wrap gap-2 mt-8 justify-center">
                 {suggestions.map((s) => (
                   <button
-                    key={s}
-                    onClick={() => setInput(s)}
+                    key={s.label}
+                    onClick={() => setInput(s.prompt)}
                     className="px-4 py-2 text-xs rounded-full glass glass-highlight text-foreground/80 hover:text-foreground hover:bg-secondary/50 transition-all"
                   >
-                    {s}
+                    {s.label}
                   </button>
                 ))}
               </div>
