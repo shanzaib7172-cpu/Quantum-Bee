@@ -11,6 +11,7 @@ import beeAiEngineCover from "@/assets/blog-bee-ai-engine.png";
 import healthBeeQuantumCover from "@/assets/blog-health-bee-quantum.png";
 import spaceBeeQuantumCover from "@/assets/blog-space-bee-quantum.png";
 import quantumBeeCityCover from "@/assets/blog-quantum-bee-city.png";
+import studyBeeAcademyCover from "@/assets/blog-study-bee-academy.png";
 
 const posts = [
   {
@@ -72,14 +73,16 @@ const posts = [
     image: quantumBeeCityCover,
   },
   {
-    id: "quantum-healthcare",
-    tag: "Sectors",
+    id: "study-bee-academy",
+    slug: "/blogs/study-bee-academy",
+    tag: "Education · Community",
     date: "Jan 2026",
     read: "9 min",
-    title: "Quantum Computing Will Rewrite Healthcare First",
+    title: "Study Bee: The Global Classroom for the Quantum Era",
     excerpt:
-      "Drug discovery, genomic analysis, personalised medicine — why healthcare is the first sector ready to absorb quantum-scale acceleration.",
-    color: "hsl(0,70%,65%)",
+      "The educational heart of the Quantum Bee ecosystem — where humans master AI × Quantum Computing together, from Python foundations to QML and real-world missions.",
+    color: "hsl(280,80%,75%)",
+    image: studyBeeAcademyCover,
   },
 ];
 
