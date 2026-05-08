@@ -13,6 +13,7 @@ import LeadsGenerator from "./pages/LeadsGenerator.tsx";
 import Jack from "./pages/Jack.tsx";
 import Blogs from "./pages/Blogs.tsx";
 import BlogPlanetBee from "./pages/BlogPlanetBee.tsx";
+import BlogBeeAiEngine from "./pages/BlogBeeAiEngine.tsx";
 import HealthBee from "./pages/HealthBee.tsx";
 import Profile from "./pages/Profile.tsx";
 import SpaceBee from "./pages/SpaceBee.tsx";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/jack" element={<Jack />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/discovery-of-planet-bee" element={<BlogPlanetBee />} />
+          <Route path="/blogs/bee-ai-engine" element={<BlogBeeAiEngine />} />
           <Route path="/health-bee" element={<HealthBee />} />
           <Route path="/space-bee" element={<SpaceBee />} />
           <Route path="/study-bee" element={<StudyBee />} />
