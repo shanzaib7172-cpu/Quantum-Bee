@@ -44,8 +44,8 @@ const Signup = () => {
 
   return (
     <AuthScene
-      title="Join Bee AI"
-      subtitle="Launch your AI agent crew in seconds"
+      title="Register on Planet Bee"
+      subtitle="Join the quantum hive — claim your citizenship"
       footer={
         <>
           Already have an account?{" "}

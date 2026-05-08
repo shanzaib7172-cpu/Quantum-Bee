@@ -7,7 +7,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger,
 } from "@/components/ui/dialog";
@@ -308,6 +308,7 @@ const StudyBee = () => {
             {user ? (
               <>
                 <Avatar className="w-8 h-8 border border-white/10">
+                  {profiles.get(user.id)?.avatar_url && <AvatarImage src={profiles.get(user.id)!.avatar_url!} alt={profileName} />}
                   <AvatarFallback style={{ background: `hsl(${hueFor(user.id)} 70% 45%)` }} className="text-white text-xs font-bold">
                     {initials(profileName || user.email || "B")}
                   </AvatarFallback>
@@ -421,6 +422,7 @@ const StudyBee = () => {
                   <div className="w-10 flex-shrink-0">
                     {!grouped ? (
                       <Avatar className="w-10 h-10 mt-0.5 border border-white/10">
+                        {prof?.avatar_url && <AvatarImage src={prof.avatar_url} alt={name} />}
                         <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-sm font-bold">
                           {initials(name)}
                         </AvatarFallback>
@@ -458,7 +460,7 @@ const StudyBee = () => {
                 </label>
               )}
               <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
-                <button type="button" className="text-white/40 hover:text-white/70 p-1"><Paperclip className="w-4 h-4" /></button>
+                
                 <Textarea
                   ref={inputRef}
                   value={input}
@@ -498,6 +500,7 @@ const StudyBee = () => {
               {members.map((m) => (
                 <div key={m.user_id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5">
                   <Avatar className="w-7 h-7">
+                    {m.avatar_url && <AvatarImage src={m.avatar_url} alt={m.display_name} />}
                     <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-[10px] font-bold">
                       {initials(m.display_name)}
                     </AvatarFallback>
