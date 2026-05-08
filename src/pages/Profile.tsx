@@ -514,14 +514,26 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
     const url = `${pub.publicUrl}?v=${Date.now()}`;
     await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", userId);
     setUploading(false);
-    setProfile((p) => p ? { ...p, avatar_url: url } : { display_name: name, avatar_url: url });
+    setProfile((p) => p ? { ...p, avatar_url: url } : { display_name: name, avatar_url: url, bio: "" });
     toast({ title: "Profile picture updated 🐝" });
   };
 
   const saveName = async () => {
     if (!name.trim()) return;
     await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
-    setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null });
+    setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null, bio: "" });
+
+    // saveBio defined below
+  };
+
+  const saveBio = async () => {
+    setSavingBio(true);
+    const { error } = await supabase.from("profiles").update({ bio: bio.trim() || null }).eq("user_id", userId);
+    setSavingBio(false);
+    if (error) { toast({ variant: "destructive", title: "Failed", description: error.message }); return; }
+    setProfile((p) => p ? { ...p, bio: bio.trim() || null } : { display_name: name, avatar_url: null, bio: bio.trim() || null });
+    setEditingBio(false);
+    toast({ title: "Bio updated ✨" });
     setEditingName(false);
     toast({ title: "Name updated" });
   };
