@@ -231,10 +231,46 @@ const ChatCanvas = () => {
       setInput("");
       setIsLoading(true);
 
+      // Ensure a session exists; create on first message
+      let sid = sessionIdRef.current;
+      if (!sid && user) {
+        const title = msg.split(/\s+/).slice(0, 6).join(" ").slice(0, 60) || "New chat";
+        const { data } = await supabase
+          .from("chat_sessions")
+          .insert({ user_id: user.id, title })
+          .select("id")
+          .single();
+        if (data?.id) {
+          sid = data.id;
+          sessionIdRef.current = sid;
+          setSearchParams({ chat: sid }, { replace: true });
+        }
+      }
+      if (sid && user) {
+        await supabase.from("chat_messages").insert({
+          session_id: sid,
+          user_id: user.id,
+          role: "user",
+          content: msg,
+        });
+      }
+
       try {
         const response = await streamChat(newMessages);
         if (response) {
           setTimeout(() => speakText(response), 300);
+          if (sid && user) {
+            await supabase.from("chat_messages").insert({
+              session_id: sid,
+              user_id: user.id,
+              role: "assistant",
+              content: response,
+            });
+            await supabase
+              .from("chat_sessions")
+              .update({ updated_at: new Date().toISOString() })
+              .eq("id", sid);
+          }
         }
         return response;
       } catch (e) {
@@ -255,7 +291,7 @@ const ChatCanvas = () => {
         setIsLoading(false);
       }
     },
-    [input, isLoading, messages, streamChat, speakText, toast, deduct],
+    [input, isLoading, messages, streamChat, speakText, toast, deduct, user, setSearchParams],
   );
 
   const toggleListening = useCallback(() => {
