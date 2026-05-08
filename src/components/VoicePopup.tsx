@@ -68,7 +68,7 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = "en-US";
+    recognition.lang = lang;
 
     recognition.onresult = async (event: any) => {
       const text = Array.from(event.results)
