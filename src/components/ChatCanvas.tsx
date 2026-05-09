@@ -143,12 +143,11 @@ const ChatCanvas = () => {
       .trim();
   };
 
-  const speakText = useCallback((text: string) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const fallbackBrowserSpeak = useCallback((cleaned: string, isUrdu: boolean) => {
     if (!("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();
-    const cleaned = cleanTextForSpeech(text);
-    if (!cleaned) return;
-    const isUrdu = /[\u0600-\u06FF]/.test(cleaned);
     const utterance = new SpeechSynthesisUtterance(cleaned);
     utterance.rate = 1.0;
     utterance.pitch = 1.1;
@@ -170,6 +169,56 @@ const ChatCanvas = () => {
     utterance.onerror = () => setIsSpeaking(false);
     window.speechSynthesis.speak(utterance);
   }, []);
+
+  const speakText = useCallback(
+    async (text: string) => {
+      const cleaned = cleanTextForSpeech(text);
+      if (!cleaned) return;
+      const isUrdu = /[\u0600-\u06FF]/.test(cleaned);
+
+      // Stop any prior playback
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+      try {
+        setIsSpeaking(true);
+        const resp = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/tts`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ text: cleaned, isUrdu }),
+          }
+        );
+        if (!resp.ok) throw new Error(`TTS ${resp.status}`);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const audio = new Audio(url);
+        audioRef.current = audio;
+        audio.onended = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(url);
+        };
+        audio.onerror = () => {
+          setIsSpeaking(false);
+          URL.revokeObjectURL(url);
+        };
+        await audio.play();
+      } catch (err) {
+        console.error("ElevenLabs TTS failed, falling back:", err);
+        setIsSpeaking(false);
+        fallbackBrowserSpeak(cleaned, isUrdu);
+      }
+    },
+    [fallbackBrowserSpeak]
+  );
 
   const streamChat = useCallback(
     async (allMessages: Message[]) => {
@@ -370,7 +419,12 @@ const ChatCanvas = () => {
   }, [isListening, handleSend]);
 
   const stopSpeaking = useCallback(() => {
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     setIsSpeaking(false);
   }, []);
 
