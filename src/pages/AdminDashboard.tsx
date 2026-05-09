@@ -414,6 +414,8 @@ const Overview = () => {
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
       const totalClicks = ((blogClicksAll.data ?? []) as any[]).reduce((s, r) => s + Number(r.clicks || 0), 0);
+      const paidUserIds = new Set(allCompleted.map((p) => p.user_id).filter(Boolean));
+      const paidMembers = paidUserIds.size;
 
       return {
         totalUsers: users.count ?? 0,
