@@ -24,6 +24,7 @@ import {
   Ban,
   PauseCircle,
   Send,
+  Download,
 } from "lucide-react";
 import {
   ResponsiveContainer,
