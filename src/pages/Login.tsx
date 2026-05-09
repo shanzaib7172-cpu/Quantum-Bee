@@ -15,10 +15,18 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [outro, setOutro] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
+
+  const playOutroThen = (path: string) => {
+    // Make sure the intro doesn't replay after we land
+    try { sessionStorage.setItem("beee_intro_played_v11", "1"); } catch {}
+    setOutro(true);
+    setTimeout(() => navigate(path), 5000);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
