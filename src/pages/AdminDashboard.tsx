@@ -290,7 +290,7 @@ const Overview = () => {
         ? new Date(Date.now() - rangeMeta.days * 86400000).toISOString()
         : new Date("2020-01-01").toISOString();
 
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll] =
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll, sessionsTrend, blogClicksAll] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
           supabase.from("community_messages").select("*", { count: "exact", head: true }),
@@ -302,6 +302,8 @@ const Overview = () => {
           supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
           supabase.from("payments").select("amount, created_at, status"),
+          supabase.from("chat_sessions").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("blog_clicks").select("slug, clicks, updated_at"),
         ]);
 
       const allCompleted = ((paymentsAll.data ?? []) as any[]).filter((p) => p.status === "completed");
@@ -309,6 +311,7 @@ const Overview = () => {
       const todayRevenue = allCompleted
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
+      const totalClicks = ((blogClicksAll.data ?? []) as any[]).reduce((s, r) => s + Number(r.clicks || 0), 0);
 
       return {
         totalUsers: users.count ?? 0,
@@ -320,8 +323,10 @@ const Overview = () => {
         totalRevenue,
         todayRevenue,
         totalOrders: allCompleted.length,
+        totalClicks,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
+        sessionsTrend: (sessionsTrend.data ?? []) as { created_at: string }[],
         paymentsTrend: ((paymentsTrend.data ?? []) as any[]).filter((p) => p.status === "completed"),
         sinceIso,
       };
