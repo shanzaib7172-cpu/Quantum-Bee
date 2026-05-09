@@ -886,6 +886,10 @@ const CouponsSection = () => {
           </TableBody>
         </Table>
       </Card>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>{editing ? "Edit coupon" : "New coupon"}</DialogTitle></DialogHeader>
           <div className="space-y-3">
             <div><Label>Code</Label><Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="BEE20" /></div>
             <div><Label>Discount %</Label><Input type="number" min={1} max={100} value={form.discount_percent} onChange={(e) => setForm((f) => ({ ...f, discount_percent: Number(e.target.value) }))} /></div>
