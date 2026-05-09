@@ -222,6 +222,53 @@ const RANGE_OPTIONS: { value: RangeKey; label: string; days: number | null }[] =
   { value: "all", label: "All time", days: null },
 ];
 
+const RangedExport = ({
+  filename,
+  fetcher,
+  size = "sm",
+  className = "border-border/60",
+  defaultRange = "30",
+}: {
+  filename: string;
+  fetcher: (sinceIso: string | null, rangeLabel: string) => Promise<Record<string, any>[]>;
+  size?: "sm" | "default";
+  className?: string;
+  defaultRange?: RangeKey;
+}) => {
+  const [range, setRange] = useState<RangeKey>(defaultRange);
+  const [busy, setBusy] = useState(false);
+  const meta = RANGE_OPTIONS.find((r) => r.value === range)!;
+  const onClick = async () => {
+    setBusy(true);
+    try {
+      const sinceIso = meta.days ? new Date(Date.now() - meta.days * 86400000).toISOString() : null;
+      const rows = await fetcher(sinceIso, meta.label);
+      downloadCSV(`${filename}-${range === "all" ? "all-time" : `last-${range}d`}`, rows);
+    } catch (e: any) {
+      toast({ variant: "destructive", title: "Export failed", description: e?.message ?? "Unknown error" });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+        <SelectTrigger className={`${size === "sm" ? "h-8 text-xs" : "h-9"} w-[140px] bg-secondary/40 border-border/50`}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {RANGE_OPTIONS.map((o) => (
+            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button size={size} variant="outline" className={className} disabled={busy} onClick={onClick}>
+        <Download className={`${size === "sm" ? "w-3 h-3" : "w-4 h-4"} mr-1`} />{busy ? "…" : "Export CSV"}
+      </Button>
+    </div>
+  );
+};
+
 const Overview = () => {
   const [range, setRange] = useState<RangeKey>("30");
   const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
@@ -345,22 +392,21 @@ const Overview = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
+          <div className="flex items-center gap-2 flex-wrap">
+            <RangedExport
+              filename="payments-revenue"
               className="border-bee/40 text-bee hover:bg-bee/10"
-              onClick={async () => {
-                const { data, error } = await supabase
+              fetcher={async (sinceIso) => {
+                let q = supabase
                   .from("payments")
                   .select("id, created_at, user_id, provider, package, bee_coins, amount, currency, status, external_id")
                   .order("created_at", { ascending: false });
-                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
-                downloadCSV("payments-revenue", (data ?? []) as any[]);
+                if (sinceIso) q = q.gte("created_at", sinceIso);
+                const { data, error } = await q;
+                if (error) throw error;
+                return (data ?? []) as any[];
               }}
-            >
-              <Download className="w-4 h-4 mr-1" />Export CSV
-            </Button>
+            />
             <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
           </div>
         </div>
@@ -878,18 +924,26 @@ const BlogsSection = () => {
         description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
         action={
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="border-border/60"
-              onClick={() => {
-                const rows = [
-                  ...((blogs ?? []) as any[]).map((b) => ({
+          <div className="flex items-center gap-2 flex-wrap">
+            <RangedExport
+              filename="blog-clicks"
+              fetcher={async (sinceIso) => {
+                let bq = supabase.from("blogs").select("title, slug, published, created_at");
+                if (sinceIso) bq = bq.gte("created_at", sinceIso);
+                const { data: dbBlogs, error } = await bq;
+                if (error) throw error;
+                let cq = supabase.from("blog_clicks").select("slug, clicks, updated_at");
+                if (sinceIso) cq = cq.gte("updated_at", sinceIso);
+                const { data: clicksRows } = await cq;
+                const cmap = new Map<string, number>();
+                ((clicksRows ?? []) as any[]).forEach((c) => cmap.set(c.slug, Number(c.clicks || 0)));
+                return [
+                  ...((dbBlogs ?? []) as any[]).map((b) => ({
                     type: "custom",
                     title: b.title,
                     slug: b.slug,
                     status: b.published ? "published" : "draft",
-                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    clicks: cmap.get(b.slug) ?? 0,
                     created_at: b.created_at,
                   })),
                   ...STATIC_BLOGS.map((b) => ({
@@ -897,15 +951,12 @@ const BlogsSection = () => {
                     title: b.title,
                     slug: b.slug,
                     status: "published",
-                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    clicks: cmap.get(b.slug) ?? 0,
                     created_at: "",
                   })),
                 ];
-                downloadCSV("blog-clicks", rows);
               }}
-            >
-              <Download className="w-4 h-4 mr-1" />Export CSV
-            </Button>
+            />
             <Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>
           </div>
         }
@@ -1121,22 +1172,20 @@ const CouponsSection = () => {
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
         <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Redemption history</p>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-border/60 h-7 text-xs"
-              onClick={async () => {
-                const { data, error } = await supabase
+          <div className="flex items-center gap-2 flex-wrap">
+            <RangedExport
+              filename="coupon-redemptions"
+              fetcher={async (sinceIso) => {
+                let q = supabase
                   .from("coupon_redemptions")
                   .select("id, created_at, coupon_code, user_id, order_amount, discount_amount")
                   .order("created_at", { ascending: false });
-                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
-                downloadCSV("coupon-redemptions", (data ?? []) as any[]);
+                if (sinceIso) q = q.gte("created_at", sinceIso);
+                const { data, error } = await q;
+                if (error) throw error;
+                return (data ?? []) as any[];
               }}
-            >
-              <Download className="w-3 h-3 mr-1" />Export CSV
-            </Button>
+            />
             <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
           </div>
         </div>
