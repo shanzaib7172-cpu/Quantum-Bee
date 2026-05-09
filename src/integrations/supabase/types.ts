@@ -122,6 +122,45 @@ export type Database = {
         }
         Relationships: []
       }
+      blogs: {
+        Row: {
+          author_id: string | null
+          content: string
+          cover_url: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          published: boolean
+          slug: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          content: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          slug: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          content?: string
+          cover_url?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          slug?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       channels: {
         Row: {
           created_at: string
@@ -242,6 +281,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          discount_percent: number
+          expires_at: string | null
+          id: string
+          max_uses: number | null
+          updated_at: string
+          uses: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_percent: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          updated_at?: string
+          uses?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          discount_percent?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number | null
+          updated_at?: string
+          uses?: number
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
