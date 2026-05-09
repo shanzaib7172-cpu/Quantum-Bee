@@ -72,12 +72,12 @@ const Login = () => {
         </div>
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email</Label>
+          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email or username</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
