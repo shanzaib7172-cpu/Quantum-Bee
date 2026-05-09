@@ -447,12 +447,14 @@ const StudyBee = () => {
                 <div key={m.id} className={`group flex gap-3 px-2 py-0.5 rounded hover:bg-white/[0.02] ${grouped ? "" : "mt-3"}`}>
                   <div className="w-10 flex-shrink-0">
                     {!grouped ? (
-                      <Avatar className="w-10 h-10 mt-0.5 border border-white/10">
-                        {prof?.avatar_url && <AvatarImage src={prof.avatar_url} alt={name} />}
-                        <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-sm font-bold">
-                          {initials(name)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <button onClick={() => openMember(m.user_id)} aria-label={`View ${name}'s profile`}>
+                        <Avatar className="w-10 h-10 mt-0.5 border border-white/10 cursor-pointer hover:ring-2 hover:ring-[hsl(50,100%,65%)]/40 transition">
+                          {prof?.avatar_url && <AvatarImage src={prof.avatar_url} alt={name} />}
+                          <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-sm font-bold">
+                            {initials(name)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </button>
                     ) : (
                       <span className="text-[10px] text-white/0 group-hover:text-white/30 block text-center mt-1">
                         {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -462,7 +464,7 @@ const StudyBee = () => {
                   <div className="flex-1 min-w-0">
                     {!grouped && (
                       <div className="flex items-baseline gap-2">
-                        <span className="font-semibold text-white" style={{ color: `hsl(${hueFor(m.user_id)} 80% 75%)` }}>{name}</span>
+                        <button onClick={() => openMember(m.user_id)} className="font-semibold text-white hover:underline" style={{ color: `hsl(${hueFor(m.user_id)} 80% 75%)` }}>{name}</button>
                         <span className="text-[10px] text-white/40">{formatTime(m.created_at)}</span>
                       </div>
                     )}
