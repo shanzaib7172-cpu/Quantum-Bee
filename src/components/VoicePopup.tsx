@@ -93,8 +93,10 @@ const VoicePopup = ({
       if (!text) return;
       setThinking(true);
       try {
-        const isUrdu = /[\u0600-\u06FF]/.test(text);
-        const prompt = isUrdu ? `${text}\n\n(Reply in Urdu using Urdu script.)` : text;
+        const isUrdu = lang === "ur" || /[\u0600-\u06FF]/.test(text);
+        const prompt = isUrdu
+          ? `${text}\n\n(Reply ONLY in Urdu using Urdu script. Do not use English.)`
+          : text;
         const reply = await onSendMessage(prompt);
         if (typeof reply === "string" && reply) setLastAssistant(reply);
       } finally {
