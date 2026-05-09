@@ -372,6 +372,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          created_by: string | null
+          icon: string | null
+          id: string
+          link: string | null
+          title: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          icon?: string | null
+          id?: string
+          link?: string | null
+          title: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          created_by?: string | null
+          icon?: string | null
+          id?: string
+          link?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -415,29 +445,38 @@ export type Database = {
         Row: {
           avatar_url: string | null
           bio: string | null
+          blocked: boolean
           created_at: string
           display_name: string
           id: string
+          suspended: boolean
           updated_at: string
           user_id: string
+          verified: boolean
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          blocked?: boolean
           created_at?: string
           display_name?: string
           id?: string
+          suspended?: boolean
           updated_at?: string
           user_id: string
+          verified?: boolean
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          blocked?: boolean
           created_at?: string
           display_name?: string
           id?: string
+          suspended?: boolean
           updated_at?: string
           user_id?: string
+          verified?: boolean
         }
         Relationships: []
       }

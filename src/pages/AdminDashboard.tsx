@@ -18,6 +18,12 @@ import {
   Pencil,
   ArrowLeft,
   ExternalLink,
+  Bell,
+  MoreVertical,
+  BadgeCheck,
+  Ban,
+  PauseCircle,
+  Send,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -59,6 +65,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import { STATIC_BLOGS } from "@/lib/blogClicks";
@@ -69,7 +89,8 @@ type Section =
   | "community"
   | "blogs"
   | "coupons"
-  | "payments";
+  | "payments"
+  | "notifications";
 
 const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -78,6 +99,7 @@ const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "blogs", label: "Blogs", icon: FileText },
   { key: "coupons", label: "Coupons", icon: Ticket },
   { key: "payments", label: "Payments", icon: CreditCard },
+  { key: "notifications", label: "Notifications", icon: Bell },
 ];
 
 const fmtDate = (iso: string) =>
@@ -162,45 +184,48 @@ const SectionHeader = ({
 
 /* ============================== OVERVIEW ============================== */
 
+type RangeKey = "7" | "30" | "60" | "90" | "365" | "all";
+const RANGE_OPTIONS: { value: RangeKey; label: string; days: number | null }[] = [
+  { value: "7", label: "Last 7 days", days: 7 },
+  { value: "30", label: "Last 30 days", days: 30 },
+  { value: "60", label: "Last 60 days", days: 60 },
+  { value: "90", label: "Last 90 days", days: 90 },
+  { value: "365", label: "Last 1 year", days: 365 },
+  { value: "all", label: "All time", days: null },
+];
+
 const Overview = () => {
+  const [range, setRange] = useState<RangeKey>("30");
+  const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
+
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["admin-stats-extended"],
+    queryKey: ["admin-stats-extended", range],
     queryFn: async () => {
       const todayIso = new Date(new Date().toDateString()).toISOString();
-      const last30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, payments] =
+      const sinceIso = rangeMeta.days
+        ? new Date(Date.now() - rangeMeta.days * 86400000).toISOString()
+        : new Date("2020-01-01").toISOString();
+
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
-          supabase
-            .from("community_messages")
-            .select("*", { count: "exact", head: true }),
-          supabase
-            .from("user_roles")
-            .select("*", { count: "exact", head: true })
-            .eq("role", "admin"),
-          supabase
-            .from("profiles")
-            .select("*", { count: "exact", head: true })
-            .gte("created_at", todayIso),
+          supabase.from("community_messages").select("*", { count: "exact", head: true }),
+          supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin"),
+          supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", todayIso),
           supabase.from("blogs").select("*", { count: "exact", head: true }),
           supabase.from("coupons").select("*", { count: "exact", head: true }),
-          supabase
-            .from("profiles")
-            .select("created_at")
-            .gte("created_at", last30)
-            .order("created_at", { ascending: true }),
-          supabase
-            .from("community_messages")
-            .select("created_at")
-            .gte("created_at", last30)
-            .order("created_at", { ascending: true }),
+          supabase.from("profiles").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
           supabase.from("payments").select("amount, created_at, status"),
         ]);
-      const completed = ((payments.data ?? []) as any[]).filter((p) => p.status === "completed");
-      const totalRevenue = completed.reduce((s, p) => s + Number(p.amount || 0), 0);
-      const todayRevenue = completed
+
+      const allCompleted = ((paymentsAll.data ?? []) as any[]).filter((p) => p.status === "completed");
+      const totalRevenue = allCompleted.reduce((s, p) => s + Number(p.amount || 0), 0);
+      const todayRevenue = allCompleted
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
+
       return {
         totalUsers: users.count ?? 0,
         totalMessages: msgs.count ?? 0,
@@ -210,35 +235,55 @@ const Overview = () => {
         totalCoupons: coupons.count ?? 0,
         totalRevenue,
         todayRevenue,
-        totalOrders: completed.length,
+        totalOrders: allCompleted.length,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
+        paymentsTrend: ((paymentsTrend.data ?? []) as any[]).filter((p) => p.status === "completed"),
+        sinceIso,
       };
     },
   });
 
   const trendData = useMemo(() => {
-    const days: Record<string, { date: string; users: number; messages: number }> =
-      {};
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000);
-      const k = d.toISOString().slice(0, 10);
-      days[k] = {
-        date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-        users: 0,
-        messages: 0,
-      };
+    if (!stats) return [];
+    const days = rangeMeta.days ?? Math.max(
+      1,
+      Math.ceil((Date.now() - new Date(stats.sinceIso).getTime()) / 86400000),
+    );
+    const cap = Math.min(days, 400);
+    const bucket: "day" | "month" = days > 90 ? "month" : "day";
+    const map: Record<string, { date: string; users: number; messages: number; revenue: number }> = {};
+
+    if (bucket === "day") {
+      for (let i = cap - 1; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000);
+        const k = d.toISOString().slice(0, 10);
+        map[k] = {
+          date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+          users: 0, messages: 0, revenue: 0,
+        };
+      }
+    } else {
+      const months = Math.max(1, Math.ceil(cap / 30));
+      for (let i = months - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i, 1);
+        const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        map[k] = {
+          date: d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }),
+          users: 0, messages: 0, revenue: 0,
+        };
+      }
     }
-    (stats?.profilesTrend ?? []).forEach((r) => {
-      const k = r.created_at.slice(0, 10);
-      if (days[k]) days[k].users += 1;
-    });
-    (stats?.msgsTrend ?? []).forEach((r) => {
-      const k = r.created_at.slice(0, 10);
-      if (days[k]) days[k].messages += 1;
-    });
-    return Object.values(days);
-  }, [stats]);
+
+    const keyOf = (iso: string) => bucket === "day" ? iso.slice(0, 10) : iso.slice(0, 7);
+
+    stats.profilesTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].users += 1; });
+    stats.msgsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].messages += 1; });
+    stats.paymentsTrend.forEach((r: any) => { const k = keyOf(r.created_at); if (map[k]) map[k].revenue += Number(r.amount || 0); });
+
+    return Object.values(map);
+  }, [stats, rangeMeta.days]);
 
   const pieData = [
     { name: "Members", value: Math.max(0, (stats?.totalUsers ?? 0) - (stats?.totalAdmins ?? 0)) },
@@ -288,10 +333,25 @@ const Overview = () => {
       </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
-        <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
-          Activity — Last 30 days
-        </h3>
-        <div className="h-64">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Activity · Users & Revenue
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">{rangeMeta.label}</p>
+          </div>
+          <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+            <SelectTrigger className="w-[180px] h-9 bg-secondary/40 border-border/50">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RANGE_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData}>
               <defs>
@@ -299,17 +359,19 @@ const Overview = () => {
                   <stop offset="0%" stopColor="hsl(45 100% 55%)" stopOpacity={0.6} />
                   <stop offset="100%" stopColor="hsl(45 100% 55%)" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="gMsgs" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(195 100% 60%)" stopOpacity={0.6} />
-                  <stop offset="100%" stopColor="hsl(195 100% 60%)" stopOpacity={0} />
+                <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(140 80% 55%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(140 80% 55%)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
               <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
-              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-              <Area type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" fill="url(#gUsers)" name="New users" />
-              <Area type="monotone" dataKey="messages" stroke="hsl(195 100% 60%)" fill="url(#gMsgs)" name="Messages" />
+              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(140 80% 55%)" fontSize={11} tickFormatter={(v) => `$${v}`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} formatter={(v: any, n: any) => n === "Revenue" ? [`$${Number(v).toFixed(2)}`, n] : [v, n]} />
+              <Legend />
+              <Area yAxisId="left" type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" fill="url(#gUsers)" name="New users" />
+              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="hsl(140 80% 55%)" fill="url(#gRev)" name="Revenue" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
@@ -390,35 +452,32 @@ const Overview = () => {
 const UsersSection = () => {
   const qc = useQueryClient();
   const { user } = useAuth();
+  const [detailUid, setDetailUid] = useState<string | null>(null);
+
   const { data: usersData, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
       const [{ data: profiles }, { data: roles }] = await Promise.all([
         supabase
           .from("profiles")
-          .select("id, user_id, display_name, avatar_url, created_at")
+          .select("id, user_id, display_name, avatar_url, bio, created_at, updated_at, verified, suspended, blocked")
           .order("created_at", { ascending: false })
           .limit(200),
         supabase.from("user_roles").select("user_id, role"),
       ]);
-      const adminIds = new Set(
-        ((roles ?? []) as any[])
-          .filter((r) => r.role === "admin")
-          .map((r) => r.user_id),
-      );
-      return ((profiles ?? []) as any[]).map((p) => ({
-        ...p,
-        isAdmin: adminIds.has(p.user_id),
-      }));
+      const adminIds = new Set(((roles ?? []) as any[]).filter((r) => r.role === "admin").map((r) => r.user_id));
+      return ((profiles ?? []) as any[]).map((p) => ({ ...p, isAdmin: adminIds.has(p.user_id) }));
     },
   });
+
+  const refetchAll = () => qc.invalidateQueries({ queryKey: ["admin-users"] });
 
   const grant = useMutation({
     mutationFn: async (uid: string) => {
       const { error } = await supabase.from("user_roles").insert({ user_id: uid, role: "admin" });
       if (error) throw error;
     },
-    onSuccess: () => { toast({ title: "Admin granted" }); qc.invalidateQueries({ queryKey: ["admin-users"] }); },
+    onSuccess: () => { toast({ title: "Admin granted" }); refetchAll(); },
     onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
   });
   const revoke = useMutation({
@@ -426,9 +485,29 @@ const UsersSection = () => {
       const { error } = await supabase.from("user_roles").delete().eq("user_id", uid).eq("role", "admin");
       if (error) throw error;
     },
-    onSuccess: () => { toast({ title: "Admin revoked" }); qc.invalidateQueries({ queryKey: ["admin-users"] }); },
+    onSuccess: () => { toast({ title: "Admin revoked" }); refetchAll(); },
     onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
   });
+
+  const updateFlag = useMutation({
+    mutationFn: async ({ uid, patch }: { uid: string; patch: Record<string, any> }) => {
+      const { error } = await supabase.from("profiles").update(patch as any).eq("user_id", uid);
+      if (error) throw error;
+    },
+    onSuccess: () => refetchAll(),
+    onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
+  });
+
+  const deleteProfile = useMutation({
+    mutationFn: async (uid: string) => {
+      const { error } = await supabase.from("profiles").delete().eq("user_id", uid);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast({ title: "Profile deleted" }); refetchAll(); },
+    onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
+  });
+
+  const detail = (usersData ?? []).find((u) => u.user_id === detailUid);
 
   return (
     <div>
@@ -441,18 +520,19 @@ const UsersSection = () => {
                 <TableHead className="w-12"></TableHead>
                 <TableHead>Display Name</TableHead>
                 <TableHead>Role</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Joined</TableHead>
-                <TableHead className="text-right">Action</TableHead>
+                <TableHead className="text-right w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {isLoading && (
-                <TableRow><TableCell colSpan={5} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>
+                <TableRow><TableCell colSpan={6} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>
               )}
-              {(usersData ?? []).map((u) => {
+              {(usersData ?? []).map((u: any) => {
                 const isSelf = user?.id === u.user_id;
                 return (
-                  <TableRow key={u.id} className="border-border/50">
+                  <TableRow key={u.id} className="border-border/50 cursor-pointer hover:bg-secondary/20" onClick={() => setDetailUid(u.user_id)}>
                     <TableCell>
                       <Avatar className="w-8 h-8 border border-border/50">
                         <AvatarImage src={u.avatar_url ?? undefined} />
@@ -462,8 +542,11 @@ const UsersSection = () => {
                       </Avatar>
                     </TableCell>
                     <TableCell className="font-medium">
-                      {u.display_name}
-                      {isSelf && <span className="ml-2 text-[10px] text-muted-foreground">(you)</span>}
+                      <div className="flex items-center gap-1.5">
+                        {u.display_name}
+                        {u.verified && <BadgeCheck className="w-4 h-4 text-bee-blue" />}
+                        {isSelf && <span className="ml-1 text-[10px] text-muted-foreground">(you)</span>}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {u.isAdmin ? (
@@ -472,17 +555,56 @@ const UsersSection = () => {
                         <Badge variant="secondary" className="bg-secondary text-muted-foreground">Member</Badge>
                       )}
                     </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {u.blocked && <Badge className="bg-destructive/20 text-destructive border-destructive/40">Blocked</Badge>}
+                        {u.suspended && <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40">Suspended</Badge>}
+                        {!u.blocked && !u.suspended && <Badge variant="secondary" className="text-[10px]">Active</Badge>}
+                      </div>
+                    </TableCell>
                     <TableCell className="text-muted-foreground text-xs">{fmtDate(u.created_at)}</TableCell>
-                    <TableCell className="text-right">
-                      {u.isAdmin ? (
-                        <Button size="sm" variant="ghost" disabled={isSelf || revoke.isPending} onClick={() => revoke.mutate(u.user_id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                          Remove Admin
-                        </Button>
-                      ) : (
-                        <Button size="sm" variant="ghost" disabled={grant.isPending} onClick={() => grant.mutate(u.user_id)} className="text-bee hover:text-bee hover:bg-bee/10">
-                          Make Admin
-                        </Button>
-                      )}
+                    <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" variant="ghost"><MoreVertical className="w-4 h-4" /></Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-52">
+                          <DropdownMenuItem onClick={() => setDetailUid(u.user_id)}>
+                            <Users className="w-4 h-4 mr-2" /> View profile
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => updateFlag.mutate({ uid: u.user_id, patch: { verified: !u.verified } })}>
+                            <BadgeCheck className="w-4 h-4 mr-2 text-bee-blue" />
+                            {u.verified ? "Unverify profile" : "Verify profile"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => updateFlag.mutate({ uid: u.user_id, patch: { suspended: !u.suspended } })}>
+                            <PauseCircle className="w-4 h-4 mr-2 text-amber-400" />
+                            {u.suspended ? "Unsuspend" : "Suspend"}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => updateFlag.mutate({ uid: u.user_id, patch: { blocked: !u.blocked } })}>
+                            <Ban className="w-4 h-4 mr-2 text-destructive" />
+                            {u.blocked ? "Unblock" : "Block"}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          {u.isAdmin ? (
+                            <DropdownMenuItem disabled={isSelf} onClick={() => revoke.mutate(u.user_id)} className="text-destructive">
+                              <ShieldCheck className="w-4 h-4 mr-2" /> Remove Admin
+                            </DropdownMenuItem>
+                          ) : (
+                            <DropdownMenuItem onClick={() => grant.mutate(u.user_id)}>
+                              <ShieldCheck className="w-4 h-4 mr-2 text-bee" /> Make Admin
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            disabled={isSelf}
+                            onClick={() => { if (confirm(`Delete profile of ${u.display_name}? This cannot be undone.`)) deleteProfile.mutate(u.user_id); }}
+                            className="text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" /> Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 );
@@ -491,6 +613,71 @@ const UsersSection = () => {
           </Table>
         </div>
       </Card>
+
+      <Dialog open={!!detailUid} onOpenChange={(o) => !o && setDetailUid(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader><DialogTitle>User profile</DialogTitle></DialogHeader>
+          {detail && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="w-16 h-16 border-2 border-bee/30">
+                  <AvatarImage src={detail.avatar_url ?? undefined} />
+                  <AvatarFallback className="bg-bee/15 text-bee text-xl">
+                    {(detail.display_name || "B")[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h3 className="text-lg font-heading font-semibold">{detail.display_name}</h3>
+                    {detail.verified && <BadgeCheck className="w-5 h-5 text-bee-blue" />}
+                  </div>
+                  <p className="text-xs font-mono text-muted-foreground break-all">{detail.user_id}</p>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap gap-1.5">
+                {detail.isAdmin && <Badge className="bg-bee/20 text-bee border-bee/40">Admin</Badge>}
+                {detail.verified && <Badge className="bg-bee-blue/20 text-bee-blue border-bee-blue/40">Verified</Badge>}
+                {detail.blocked && <Badge className="bg-destructive/20 text-destructive border-destructive/40">Blocked</Badge>}
+                {detail.suspended && <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40">Suspended</Badge>}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-mono text-muted-foreground">Joined</p>
+                  <p>{fmtDate(detail.created_at)}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-mono text-muted-foreground">Last updated</p>
+                  <p>{fmtDate(detail.updated_at)}</p>
+                </div>
+              </div>
+
+              {detail.bio && (
+                <div className="space-y-1">
+                  <p className="text-[10px] uppercase font-mono text-muted-foreground">Bio</p>
+                  <p className="text-sm text-foreground/80">{detail.bio}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/50">
+                <Button size="sm" variant="ghost" onClick={() => updateFlag.mutate({ uid: detail.user_id, patch: { verified: !detail.verified } })}>
+                  <BadgeCheck className="w-4 h-4 mr-1.5 text-bee-blue" />
+                  {detail.verified ? "Unverify" : "Verify"}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => updateFlag.mutate({ uid: detail.user_id, patch: { suspended: !detail.suspended } })}>
+                  <PauseCircle className="w-4 h-4 mr-1.5 text-amber-400" />
+                  {detail.suspended ? "Unsuspend" : "Suspend"}
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => updateFlag.mutate({ uid: detail.user_id, patch: { blocked: !detail.blocked } })}>
+                  <Ban className="w-4 h-4 mr-1.5 text-destructive" />
+                  {detail.blocked ? "Unblock" : "Block"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
@@ -955,6 +1142,128 @@ const PaymentsSection = () => {
   );
 };
 
+/* ============================== NOTIFICATIONS ============================== */
+
+const NotificationsSection = () => {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+  const [form, setForm] = useState({ title: "", body: "", link: "" });
+
+  const { data: items, isLoading } = useQuery({
+    queryKey: ["admin-notifications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const send = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        title: form.title.trim(),
+        body: form.body.trim() || null,
+        link: form.link.trim() || null,
+        created_by: user?.id ?? null,
+      };
+      const { error } = await supabase.from("notifications").insert(payload);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Notification sent" });
+      setForm({ title: "", body: "", link: "" });
+      qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+      qc.invalidateQueries({ queryKey: ["site-notifications"] });
+    },
+    onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("notifications").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Deleted" });
+      qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+      qc.invalidateQueries({ queryKey: ["site-notifications"] });
+    },
+  });
+
+  return (
+    <div className="space-y-5">
+      <SectionHeader
+        title="Notifications"
+        description="Broadcast announcements visible across the site"
+        icon={Bell}
+      />
+
+      <Card className="glass glass-highlight border-border/50 p-5 space-y-3">
+        <div>
+          <Label>Title</Label>
+          <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="New release · Bee AI v2 is live" />
+        </div>
+        <div>
+          <Label>Message</Label>
+          <Textarea rows={3} value={form.body} onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))} placeholder="Tell your community what's new..." />
+        </div>
+        <div>
+          <Label>Link (optional)</Label>
+          <Input value={form.link} onChange={(e) => setForm((f) => ({ ...f, link: e.target.value }))} placeholder="/blogs/bee-ai-engine" />
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={() => send.mutate()}
+            disabled={!form.title.trim() || send.isPending}
+            className="bg-bee text-bee-foreground hover:bg-bee/90"
+          >
+            {send.isPending ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Send className="w-4 h-4 mr-1.5" />}
+            Send notification
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 divide-y divide-border/50">
+        <div className="px-4 py-3">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+            Recent notifications · {items?.length ?? 0}
+          </p>
+        </div>
+        {isLoading && <div className="p-6 text-center"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></div>}
+        {(items ?? []).map((n: any) => (
+          <div key={n.id} className="p-4 flex items-start gap-3">
+            <div className="rounded-xl bg-bee/15 text-bee p-2 shrink-0">
+              <Bell className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm">{n.title}</p>
+              {n.body && <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-wrap break-words">{n.body}</p>}
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span className="text-[10px] font-mono text-muted-foreground">{fmtDate(n.created_at)}</span>
+                {n.link && (
+                  <Link to={n.link} className="text-[10px] font-mono text-bee-blue hover:underline inline-flex items-center gap-1">
+                    {n.link} <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+            </div>
+            <Button size="icon" variant="ghost" onClick={() => del.mutate(n.id)} className="text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        ))}
+        {!isLoading && (items ?? []).length === 0 && (
+          <div className="p-6 text-center text-sm text-muted-foreground">No notifications sent yet.</div>
+        )}
+      </Card>
+    </div>
+  );
+};
+
 /* ============================== LAYOUT ============================== */
 
 const AdminDashboard = () => {
@@ -976,6 +1285,7 @@ const AdminDashboard = () => {
     blogs: <BlogsSection />,
     coupons: <CouponsSection />,
     payments: <PaymentsSection />,
+    notifications: <NotificationsSection />,
   }[section];
 
   return (
