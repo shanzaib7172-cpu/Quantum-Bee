@@ -25,6 +25,9 @@ import {
   PauseCircle,
   Send,
   Download,
+  Wallet,
+  DollarSign,
+  Receipt,
 } from "lucide-react";
 import {
   ResponsiveContainer,
