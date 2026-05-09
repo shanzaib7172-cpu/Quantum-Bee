@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { useIsAdmin } from "@/hooks/useIsAdmin";
 import {
   Sparkles,
   Search,
@@ -11,6 +12,7 @@ import {
   X,
   Lock,
   Loader2,
+  Shield,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -56,6 +58,7 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
   const [unlockAgent, setUnlockAgent] = useState<AgentCard | null>(null);
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const [chats, setChats] = useState<{ id: string; title: string; updated_at: string }[]>([]);
 
   useEffect(() => {
@@ -139,6 +142,22 @@ const DrawerMenu = ({ open, onClose }: DrawerMenuProps) => {
             </div>
             <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
+
+          {isAdmin && (
+            <button
+              onClick={() => { onClose(); navigate("/admin"); }}
+              className="w-full flex items-center gap-3 p-3 rounded-xl glass glass-highlight hover:bg-secondary/50 active:scale-[0.98] transition-all group"
+            >
+              <div className="w-9 h-9 rounded-lg bg-bee/10 flex items-center justify-center group-hover:bg-bee/20 transition-colors">
+                <Shield className="w-4 h-4 text-bee" />
+              </div>
+              <div className="text-left">
+                <p className="text-sm font-medium text-foreground">Admin Panel</p>
+                <p className="text-xs text-muted-foreground">Quantum Bee control</p>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          )}
 
           {/* Analyze & Suggest */}
           <div className="space-y-2">
