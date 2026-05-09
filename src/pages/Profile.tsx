@@ -330,11 +330,17 @@ function Dashboard({ userId }: { userId: string }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, icon }: { label: string; value: string; icon?: string }) {
   return (
     <Card className="p-4 glass border-border/50">
-      <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="text-2xl font-heading font-semibold text-foreground mt-1">{value}</p>
+      <p className="text-xs uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+        {label}
+        {icon && <img src={icon} alt="" className="w-3.5 h-3.5 object-contain" />}
+      </p>
+      <p className="text-2xl font-heading font-semibold text-foreground mt-1 flex items-center gap-2">
+        {icon && <img src={icon} alt="" className="w-6 h-6 object-contain drop-shadow-[0_0_6px_hsl(45_100%_60%/0.7)]" />}
+        {value}
+      </p>
     </Card>
   );
 }
