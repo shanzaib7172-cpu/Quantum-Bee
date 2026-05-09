@@ -117,9 +117,12 @@ serve(async (req) => {
     }
 
     let r: Response;
+    const aiTimeout = setTimeout(() => controller.abort(), 22000);
+    const controller = new AbortController();
     try {
       r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
+        signal: controller.signal,
         headers: {
           Authorization: `Bearer ${LOVABLE_API_KEY}`,
           "Content-Type": "application/json",
@@ -133,6 +136,8 @@ serve(async (req) => {
     } catch (e) {
       console.error("AI gateway fetch failed:", e);
       return jsonResponse(fallbackBuild(latestUserPrompt(messages)));
+    } finally {
+      clearTimeout(aiTimeout);
     }
 
     if (!r.ok) {
