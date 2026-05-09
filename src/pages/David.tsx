@@ -33,9 +33,7 @@ const David = () => {
   const [activeTasks, setActiveTasks] = useState<string[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!user) navigate("/login");
-  }, [user, navigate]);
+  // Allow browsing without login; gate only the build action.
 
   useEffect(() => {
     const seeded = searchParams.get("prompt");
