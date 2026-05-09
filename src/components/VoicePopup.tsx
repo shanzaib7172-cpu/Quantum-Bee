@@ -30,6 +30,7 @@ const VoicePopup = ({
   const [transcript, setTranscript] = useState("");
   const [thinking, setThinking] = useState(false);
   const [lastAssistant, setLastAssistant] = useState<string>("");
+  const [lang, setLang] = useState<"en" | "ur">("en");
   const recognitionRef = useRef<any>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finalizedRef = useRef(false);
