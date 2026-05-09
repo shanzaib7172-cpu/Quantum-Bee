@@ -520,10 +520,11 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
 
   const saveName = async () => {
     if (!name.trim()) return;
-    await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
+    const { error } = await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
+    if (error) { toast({ variant: "destructive", title: "Failed", description: error.message }); return; }
     setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null, bio: "" });
-
-    // saveBio defined below
+    setEditingName(false);
+    toast({ title: "Name updated" });
   };
 
   const saveBio = async () => {
@@ -534,8 +535,6 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
     setProfile((p) => p ? { ...p, bio: bio.trim() || null } : { display_name: name, avatar_url: null, bio: bio.trim() || null });
     setEditingBio(false);
     toast({ title: "Bio updated ✨" });
-    setEditingName(false);
-    toast({ title: "Name updated" });
   };
 
   const initial = (profile?.display_name || email || "B").trim().charAt(0).toUpperCase();
