@@ -74,7 +74,7 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    recognition.lang = lang === "ur" ? "ur-PK" : "en-US";
+    recognition.lang = "en-US";
 
     finalizedRef.current = false;
     let latestText = "";
