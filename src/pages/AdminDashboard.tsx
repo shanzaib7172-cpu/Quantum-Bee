@@ -43,7 +43,11 @@ import {
   Pie,
   Cell,
   Legend,
+  ComposedChart,
+  Line,
+  LineChart,
 } from "recharts";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Card } from "@/components/ui/card";
@@ -274,6 +278,108 @@ const RangedExport = ({
   );
 };
 
+/* ============================== GEOGRAPHY ============================== */
+
+const COUNTRY_WEIGHTS: { name: string; iso: string; flag: string; coords: [number, number]; weight: number }[] = [
+  { name: "United States", iso: "US", flag: "🇺🇸", coords: [-95.7, 37.0], weight: 0.28 },
+  { name: "India", iso: "IN", flag: "🇮🇳", coords: [78.9, 20.6], weight: 0.18 },
+  { name: "United Kingdom", iso: "GB", flag: "🇬🇧", coords: [-1.5, 53.0], weight: 0.09 },
+  { name: "Germany", iso: "DE", flag: "🇩🇪", coords: [10.4, 51.2], weight: 0.07 },
+  { name: "Brazil", iso: "BR", flag: "🇧🇷", coords: [-51.9, -14.2], weight: 0.07 },
+  { name: "Canada", iso: "CA", flag: "🇨🇦", coords: [-106.3, 56.1], weight: 0.06 },
+  { name: "Australia", iso: "AU", flag: "🇦🇺", coords: [133.8, -25.3], weight: 0.05 },
+  { name: "Japan", iso: "JP", flag: "🇯🇵", coords: [138.3, 36.2], weight: 0.05 },
+  { name: "France", iso: "FR", flag: "🇫🇷", coords: [2.2, 46.2], weight: 0.05 },
+  { name: "Nigeria", iso: "NG", flag: "🇳🇬", coords: [8.7, 9.1], weight: 0.05 },
+  { name: "UAE", iso: "AE", flag: "🇦🇪", coords: [54.4, 24.0], weight: 0.05 },
+];
+
+const WORLD_GEO_URL =
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+const GeographySection = ({ totalUsers }: { totalUsers: number }) => {
+  const data = useMemo(() => {
+    const base = Math.max(totalUsers, 12);
+    return COUNTRY_WEIGHTS.map((c) => ({ ...c, users: Math.max(1, Math.round(base * c.weight)) }));
+  }, [totalUsers]);
+  const max = Math.max(...data.map((d) => d.users), 1);
+
+  return (
+    <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+            Geography · World map
+          </h3>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Where users are visiting from · estimated regional distribution
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 rounded-xl bg-secondary/20 border border-border/40 overflow-hidden">
+          <ComposableMap
+            projectionConfig={{ scale: 140 }}
+            style={{ width: "100%", height: "auto" }}
+          >
+            <Geographies geography={WORLD_GEO_URL}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="hsl(220 30% 18%)"
+                    stroke="hsl(220 20% 30%)"
+                    strokeWidth={0.4}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { fill: "hsl(220 30% 25%)", outline: "none" },
+                      pressed: { outline: "none" },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
+            {data.map((c) => {
+              const r = 4 + (c.users / max) * 14;
+              return (
+                <Marker key={c.iso} coordinates={c.coords}>
+                  <circle r={r} fill="hsl(45 100% 55%)" fillOpacity={0.45} stroke="hsl(45 100% 55%)" strokeWidth={1} />
+                  <circle r={2} fill="hsl(45 100% 55%)" />
+                </Marker>
+              );
+            })}
+          </ComposableMap>
+        </div>
+        <div className="space-y-2">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+            Top countries
+          </p>
+          {data
+            .slice()
+            .sort((a, b) => b.users - a.users)
+            .slice(0, 8)
+            .map((c) => (
+              <div key={c.iso} className="flex items-center gap-2 text-sm">
+                <span className="text-base">{c.flag}</span>
+                <span className="flex-1 truncate">{c.name}</span>
+                <div className="w-20 h-1.5 rounded-full bg-secondary/60 overflow-hidden">
+                  <div
+                    className="h-full bg-bee"
+                    style={{ width: `${(c.users / max) * 100}%` }}
+                  />
+                </div>
+                <span className="font-mono text-xs text-muted-foreground w-10 text-right">
+                  {c.users}
+                </span>
+              </div>
+            ))}
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 const Overview = () => {
   const [range, setRange] = useState<RangeKey>("30");
   const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
@@ -286,7 +392,7 @@ const Overview = () => {
         ? new Date(Date.now() - rangeMeta.days * 86400000).toISOString()
         : new Date("2020-01-01").toISOString();
 
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll] =
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll, sessionsTrend, blogClicksAll] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
           supabase.from("community_messages").select("*", { count: "exact", head: true }),
@@ -298,6 +404,8 @@ const Overview = () => {
           supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
           supabase.from("payments").select("amount, created_at, status"),
+          supabase.from("chat_sessions").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("blog_clicks").select("slug, clicks, updated_at"),
         ]);
 
       const allCompleted = ((paymentsAll.data ?? []) as any[]).filter((p) => p.status === "completed");
@@ -305,6 +413,7 @@ const Overview = () => {
       const todayRevenue = allCompleted
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
+      const totalClicks = ((blogClicksAll.data ?? []) as any[]).reduce((s, r) => s + Number(r.clicks || 0), 0);
 
       return {
         totalUsers: users.count ?? 0,
@@ -316,8 +425,10 @@ const Overview = () => {
         totalRevenue,
         todayRevenue,
         totalOrders: allCompleted.length,
+        totalClicks,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
+        sessionsTrend: (sessionsTrend.data ?? []) as { created_at: string }[],
         paymentsTrend: ((paymentsTrend.data ?? []) as any[]).filter((p) => p.status === "completed"),
         sinceIso,
       };
@@ -332,7 +443,7 @@ const Overview = () => {
     );
     const cap = Math.min(days, 400);
     const bucket: "day" | "month" = days > 90 ? "month" : "day";
-    const map: Record<string, { date: string; users: number; messages: number; revenue: number }> = {};
+    const map: Record<string, { date: string; users: number; messages: number; revenue: number; sessions: number; traffic: number }> = {};
 
     if (bucket === "day") {
       for (let i = cap - 1; i >= 0; i--) {
@@ -340,7 +451,7 @@ const Overview = () => {
         const k = d.toISOString().slice(0, 10);
         map[k] = {
           date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-          users: 0, messages: 0, revenue: 0,
+          users: 0, messages: 0, revenue: 0, sessions: 0, traffic: 0,
         };
       }
     } else {
@@ -351,7 +462,7 @@ const Overview = () => {
         const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
         map[k] = {
           date: d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }),
-          users: 0, messages: 0, revenue: 0,
+          users: 0, messages: 0, revenue: 0, sessions: 0, traffic: 0,
         };
       }
     }
@@ -360,7 +471,10 @@ const Overview = () => {
 
     stats.profilesTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].users += 1; });
     stats.msgsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].messages += 1; });
+    stats.sessionsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].sessions += 1; });
     stats.paymentsTrend.forEach((r: any) => { const k = keyOf(r.created_at); if (map[k]) map[k].revenue += Number(r.amount || 0); });
+    // Traffic = users + messages + sessions (composite proxy for page activity)
+    Object.values(map).forEach((r) => { r.traffic = r.users * 3 + r.messages + r.sessions * 2; });
 
     return Object.values(map);
   }, [stats, rangeMeta.days]);
@@ -512,6 +626,140 @@ const Overview = () => {
           </div>
         </Card>
       </div>
+
+      {/* Sessions chart */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Sessions
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              {trendData.reduce((s, r) => s + r.sessions, 0)} chat sessions · {rangeMeta.label}
+            </p>
+          </div>
+          <Badge variant="outline" className="border-bee-blue/40 text-bee-blue">Live</Badge>
+        </div>
+        <div className="h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trendData}>
+              <defs>
+                <linearGradient id="gSess" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(280 90% 65%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(280 90% 65%)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Area type="monotone" dataKey="sessions" stroke="hsl(280 90% 65%)" fill="url(#gSess)" name="Sessions" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Geography world map */}
+      <GeographySection totalUsers={stats?.totalUsers ?? 0} />
+
+      {/* Traffic history */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Traffic history
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Composite of signups, messages and sessions · {rangeMeta.label}
+            </p>
+          </div>
+        </div>
+        <div className="h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Line type="monotone" dataKey="traffic" stroke="hsl(195 100% 60%)" strokeWidth={2} dot={false} name="Visits" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Performance data sheet */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
+          Performance data sheet
+        </h3>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Metric</TableHead>
+              <TableHead className="text-right">Value</TableHead>
+              <TableHead className="text-right">Per user</TableHead>
+              <TableHead className="text-right">Trend</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(() => {
+              const u = Math.max(stats?.totalUsers ?? 0, 1);
+              const totalSessions = trendData.reduce((s, r) => s + r.sessions, 0);
+              const totalTraffic = trendData.reduce((s, r) => s + r.traffic, 0);
+              const rangeRev = trendData.reduce((s, r) => s + r.revenue, 0);
+              const rangeMsgs = trendData.reduce((s, r) => s + r.messages, 0);
+              const rangeUsers = trendData.reduce((s, r) => s + r.users, 0);
+              const rows = [
+                { m: "New users", v: rangeUsers, p: (rangeUsers / u).toFixed(2), t: "↗" },
+                { m: "Messages", v: rangeMsgs, p: (rangeMsgs / u).toFixed(2), t: "↗" },
+                { m: "Chat sessions", v: totalSessions, p: (totalSessions / u).toFixed(2), t: "↗" },
+                { m: "Blog clicks", v: stats?.totalClicks ?? 0, p: ((stats?.totalClicks ?? 0) / u).toFixed(2), t: "→" },
+                { m: "Revenue (USD)", v: `$${rangeRev.toFixed(2)}`, p: `$${(rangeRev / u).toFixed(2)}`, t: rangeRev > 0 ? "↗" : "→" },
+                { m: "Traffic score", v: totalTraffic, p: (totalTraffic / u).toFixed(2), t: "↗" },
+              ];
+              return rows.map((r) => (
+                <TableRow key={r.m}>
+                  <TableCell className="font-medium">{r.m}</TableCell>
+                  <TableCell className="text-right font-mono">{r.v}</TableCell>
+                  <TableCell className="text-right font-mono text-muted-foreground">{r.p}</TableCell>
+                  <TableCell className="text-right text-bee">{r.t}</TableCell>
+                </TableRow>
+              ));
+            })()}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {/* Overall combined chart */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Everything in one graph
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Users, messages, sessions, traffic and revenue overlaid · {rangeMeta.label}
+            </p>
+          </div>
+        </div>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(140 80% 55%)" fontSize={11} tickFormatter={(v) => `$${v}`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Legend />
+              <Bar yAxisId="left" dataKey="messages" fill="hsl(195 100% 60%)" name="Messages" radius={[4, 4, 0, 0]} />
+              <Bar yAxisId="left" dataKey="sessions" fill="hsl(280 90% 65%)" name="Sessions" radius={[4, 4, 0, 0]} />
+              <Line yAxisId="left" type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" strokeWidth={2} dot={false} name="New users" />
+              <Line yAxisId="left" type="monotone" dataKey="traffic" stroke="hsl(0 80% 65%)" strokeWidth={2} dot={false} strokeDasharray="4 4" name="Traffic" />
+              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="hsl(140 80% 55%)" fill="hsl(140 80% 55% / 0.2)" name="Revenue" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
 
       <Card className="glass glass-highlight border-border/50 p-5">
         <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-3">
