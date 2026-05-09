@@ -143,9 +143,12 @@ const Home = () => {
             asChild
             size="lg"
             variant="ghost"
-            className="h-12 px-7 text-foreground/80 hover:text-foreground border border-[hsl(200,100%,60%)]/20 hover:border-[hsl(200,100%,60%)]/40 hover:bg-[hsl(200,100%,55%)]/10"
+            className="h-12 px-7 text-foreground/80 hover:text-foreground border border-[hsl(50,100%,65%)]/30 hover:border-[hsl(50,100%,65%)]/50 hover:bg-[hsl(50,100%,55%)]/10"
           >
-            <a href="#about">Learn more</a>
+            <Link to="/study-bee">
+              <Users className="w-4 h-4 mr-2" />
+              Community
+            </Link>
           </Button>
         </div>
 
