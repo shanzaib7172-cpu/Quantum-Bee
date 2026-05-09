@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import AuthScene from "@/components/AuthScene";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import OutroAnimation from "@/components/OutroAnimation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
