@@ -65,6 +65,20 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import { STATIC_BLOGS } from "@/lib/blogClicks";
@@ -75,7 +89,8 @@ type Section =
   | "community"
   | "blogs"
   | "coupons"
-  | "payments";
+  | "payments"
+  | "notifications";
 
 const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -84,6 +99,7 @@ const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "blogs", label: "Blogs", icon: FileText },
   { key: "coupons", label: "Coupons", icon: Ticket },
   { key: "payments", label: "Payments", icon: CreditCard },
+  { key: "notifications", label: "Notifications", icon: Bell },
 ];
 
 const fmtDate = (iso: string) =>
