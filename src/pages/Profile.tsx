@@ -232,7 +232,7 @@ function Dashboard({ userId }: { userId: string }) {
       </header>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Stat label="Bee Coins 🐝" value={balance.toFixed(2)} />
+        <Stat label="Bee Coins" icon={beeLogo} value={balance.toFixed(2)} />
         <Stat label="Coins spent" value={totalSpent.toFixed(2)} />
         <Stat label="Projects" value={String(projectCount)} />
         <Stat label="Active API keys" value={String(keyCount)} />
