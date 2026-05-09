@@ -51,6 +51,11 @@ const VoicePopup = ({
   useEffect(() => {
     if (!open) {
       recognitionRef.current?.stop?.();
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+      }
+      finalizedRef.current = true;
       setIsListening(false);
       setTranscript("");
       stopSpeaking();
