@@ -813,7 +813,7 @@ const CouponsSection = () => {
   });
 
   return (
-    <div>
+    <div className="space-y-5">
       <SectionHeader
         title="Coupons & Offers"
         description="Create discount codes for Bee Coin packs"
