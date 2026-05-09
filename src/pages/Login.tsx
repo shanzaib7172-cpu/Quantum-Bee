@@ -8,16 +8,25 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import AuthScene from "@/components/AuthScene";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import OutroAnimation from "@/components/OutroAnimation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [outro, setOutro] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get("redirect") || "/";
+
+  const playOutroThen = (path: string) => {
+    // Make sure the intro doesn't replay after we land
+    try { sessionStorage.setItem("beee_intro_played_v11", "1"); } catch {}
+    setOutro(true);
+    setTimeout(() => navigate(path), 5000);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +49,7 @@ const Login = () => {
         toast({ variant: "destructive", title: "Login failed", description: error.message });
       } else {
         toast({ title: "Welcome back, Admin 🐝" });
-        navigate(redirectTo);
+        playOutroThen(redirectTo);
       }
       setLoading(false);
       return;
@@ -49,14 +58,16 @@ const Login = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
+      setLoading(false);
     } else {
       toast({ title: "Welcome back! 🐝" });
-      navigate(redirectTo);
+      playOutroThen(redirectTo);
     }
-    setLoading(false);
   };
 
   return (
+    <>
+    {outro && <OutroAnimation onDone={() => navigate(redirectTo)} />}
     <AuthScene
       title="Re-enter Planet Bee"
       subtitle="Sign in to your hive command center"
@@ -125,11 +136,12 @@ const Login = () => {
           }}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <LogIn className="w-4 h-4 mr-2" />}
-          Sign in
+          Log in to Earth
         </Button>
       </form>
       </div>
     </AuthScene>
+    </>
   );
 };
 
