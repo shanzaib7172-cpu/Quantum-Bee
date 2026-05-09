@@ -341,7 +341,7 @@ const Overview = () => {
     );
     const cap = Math.min(days, 400);
     const bucket: "day" | "month" = days > 90 ? "month" : "day";
-    const map: Record<string, { date: string; users: number; messages: number; revenue: number }> = {};
+    const map: Record<string, { date: string; users: number; messages: number; revenue: number; sessions: number; traffic: number }> = {};
 
     if (bucket === "day") {
       for (let i = cap - 1; i >= 0; i--) {
@@ -349,7 +349,7 @@ const Overview = () => {
         const k = d.toISOString().slice(0, 10);
         map[k] = {
           date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-          users: 0, messages: 0, revenue: 0,
+          users: 0, messages: 0, revenue: 0, sessions: 0, traffic: 0,
         };
       }
     } else {
