@@ -209,28 +209,6 @@ const VoicePopup = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-1 p-1 rounded-full bg-secondary/40 border border-border text-xs">
-          {(["en", "ur"] as const).map((l) => (
-            <button
-              key={l}
-              onClick={() => {
-                if (isListening) {
-                  recognitionRef.current?.stop?.();
-                  setIsListening(false);
-                }
-                setLang(l);
-              }}
-              className={`px-3 py-1 rounded-full transition-colors ${
-                lang === l
-                  ? "bg-bee/25 text-bee font-medium"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {l === "en" ? "English" : "اردو"}
-            </button>
-          ))}
-        </div>
-
         <div className="flex items-center gap-3">
           <button
             onClick={toggle}
