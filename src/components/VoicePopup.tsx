@@ -31,6 +31,8 @@ const VoicePopup = ({
   const [thinking, setThinking] = useState(false);
   const [lastAssistant, setLastAssistant] = useState<string>("");
   const recognitionRef = useRef<any>(null);
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const finalizedRef = useRef(false);
 
   // Greet on open
   useEffect(() => {
