@@ -43,7 +43,11 @@ import {
   Pie,
   Cell,
   Legend,
+  ComposedChart,
+  Line,
+  LineChart,
 } from "recharts";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Card } from "@/components/ui/card";
