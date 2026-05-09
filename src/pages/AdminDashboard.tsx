@@ -924,18 +924,26 @@ const BlogsSection = () => {
         description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
         action={
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="border-border/60"
-              onClick={() => {
-                const rows = [
-                  ...((blogs ?? []) as any[]).map((b) => ({
+          <div className="flex items-center gap-2 flex-wrap">
+            <RangedExport
+              filename="blog-clicks"
+              fetcher={async (sinceIso) => {
+                let bq = supabase.from("blogs").select("title, slug, published, created_at");
+                if (sinceIso) bq = bq.gte("created_at", sinceIso);
+                const { data: dbBlogs, error } = await bq;
+                if (error) throw error;
+                let cq = supabase.from("blog_clicks").select("slug, clicks, updated_at");
+                if (sinceIso) cq = cq.gte("updated_at", sinceIso);
+                const { data: clicksRows } = await cq;
+                const cmap = new Map<string, number>();
+                ((clicksRows ?? []) as any[]).forEach((c) => cmap.set(c.slug, Number(c.clicks || 0)));
+                return [
+                  ...((dbBlogs ?? []) as any[]).map((b) => ({
                     type: "custom",
                     title: b.title,
                     slug: b.slug,
                     status: b.published ? "published" : "draft",
-                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    clicks: cmap.get(b.slug) ?? 0,
                     created_at: b.created_at,
                   })),
                   ...STATIC_BLOGS.map((b) => ({
@@ -943,15 +951,12 @@ const BlogsSection = () => {
                     title: b.title,
                     slug: b.slug,
                     status: "published",
-                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    clicks: cmap.get(b.slug) ?? 0,
                     created_at: "",
                   })),
                 ];
-                downloadCSV("blog-clicks", rows);
               }}
-            >
-              <Download className="w-4 h-4 mr-1" />Export CSV
-            </Button>
+            />
             <Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>
           </div>
         }
