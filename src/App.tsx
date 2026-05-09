@@ -11,6 +11,7 @@ import Signup from "./pages/Signup.tsx";
 import ProductShoot from "./pages/ProductShoot.tsx";
 import LeadsGenerator from "./pages/LeadsGenerator.tsx";
 import Jack from "./pages/Jack.tsx";
+import David from "./pages/David.tsx";
 import Blogs from "./pages/Blogs.tsx";
 import BlogPlanetBee from "./pages/BlogPlanetBee.tsx";
 import BlogBeeAiEngine from "./pages/BlogBeeAiEngine.tsx";
@@ -50,6 +51,7 @@ const App = () => (
           <Route path="/product-shoot" element={<ProductShoot />} />
           <Route path="/leads-generator" element={<LeadsGenerator />} />
           <Route path="/jack" element={<Jack />} />
+          <Route path="/david" element={<David />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blogs/discovery-of-planet-bee" element={<BlogPlanetBee />} />
           <Route path="/blogs/bee-ai-engine" element={<BlogBeeAiEngine />} />
