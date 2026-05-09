@@ -556,6 +556,7 @@ const StudyBee = () => {
 
           {/* Composer */}
           {user ? (
+            canPost ? (
             <form onSubmit={send} className="px-3 sm:px-4 pb-3">
               {isAdmin && (
                 <label className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[hsl(50,100%,75%)] mb-1.5 ml-1">
@@ -563,8 +564,38 @@ const StudyBee = () => {
                   Post as announcement
                 </label>
               )}
+              {attachment && (
+                <div className="mb-2 flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10">
+                  {attachment.isImage ? (
+                    <img src={attachment.url} alt="" className="w-10 h-10 rounded object-cover" />
+                  ) : (
+                    <Paperclip className="w-4 h-4 text-white/60" />
+                  )}
+                  <span className="text-xs text-white/70 truncate flex-1">{attachment.name}</span>
+                  <button type="button" onClick={() => setAttachment(null)} className="text-white/40 hover:text-white text-xs">Remove</button>
+                </div>
+              )}
               <div className="flex items-end gap-2 rounded-xl bg-[hsl(228,18%,12%)] border border-white/5 px-3 py-2 focus-within:border-[hsl(50,100%,65%)]/40 transition">
-                
+                {isAdmin && (
+                  <>
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*,application/pdf,.doc,.docx,.txt,.zip"
+                      className="hidden"
+                      onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.currentTarget.value = ""; }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={uploading}
+                      className="text-white/50 hover:text-[hsl(50,100%,75%)] p-1 disabled:opacity-50"
+                      title="Attach file or image"
+                    >
+                      {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
+                    </button>
+                  </>
+                )}
                 <Textarea
                   ref={inputRef}
                   value={input}
@@ -575,12 +606,20 @@ const StudyBee = () => {
                   className="flex-1 min-h-0 max-h-40 resize-none border-0 bg-transparent focus-visible:ring-0 px-0 py-1 text-sm text-white placeholder:text-white/40"
                 />
                 <button type="button" className="text-white/40 hover:text-white/70 p-1"><Smile className="w-4 h-4" /></button>
-                <Button type="submit" disabled={sending || !input.trim()} size="sm" className="h-8 px-3 text-slate-100 border-0"
+                <Button type="submit" disabled={sending || (!input.trim() && !attachment)} size="sm" className="h-8 px-3 text-slate-100 border-0"
                   style={{ background: `linear-gradient(135deg, ${ACCENT}, hsl(40 100% 55%))` }}>
                   {sending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 </Button>
               </div>
             </form>
+            ) : (
+              <div className="px-3 sm:px-4 pb-3">
+                <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center gap-2 text-sm text-white/60">
+                  <Megaphone className="w-4 h-4 text-[hsl(50,100%,75%)]" />
+                  This channel is read-only — only admins can post in #{activeChannel?.name}.
+                </div>
+              </div>
+            )
           ) : (
             <div className="px-3 sm:px-4 pb-3">
               <div className="rounded-xl border border-white/10 bg-white/5 px-4 py-3 flex items-center justify-between gap-3">
