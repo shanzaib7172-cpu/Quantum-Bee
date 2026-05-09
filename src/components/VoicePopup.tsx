@@ -54,12 +54,21 @@ const VoicePopup = ({
   // Cleanup on close
   useEffect(() => {
     if (!open) {
-      recognitionRef.current?.stop?.();
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = null;
       }
+      if (vadRafRef.current) {
+        cancelAnimationFrame(vadRafRef.current);
+        vadRafRef.current = null;
+      }
       finalizedRef.current = true;
+      try { mediaRecorderRef.current?.stop(); } catch {}
+      mediaRecorderRef.current = null;
+      mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+      mediaStreamRef.current = null;
+      audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
       setIsListening(false);
       setTranscript("");
       stopSpeaking();
