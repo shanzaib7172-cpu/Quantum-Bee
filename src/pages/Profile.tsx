@@ -115,21 +115,28 @@ export default function Profile() {
 /* ───────── Dashboard ───────── */
 
 function Dashboard({ userId }: { userId: string }) {
+  const navigate = useNavigate();
   const [activity, setActivity] = useState<any[]>([]);
   const [projectCount, setProjectCount] = useState(0);
   const [keyCount, setKeyCount] = useState(0);
+  const [balance, setBalance] = useState<number>(0);
+  const [txs, setTxs] = useState<any[]>([]);
 
   useEffect(() => {
     (async () => {
       const since = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [{ data: act }, { count: pc }, { count: kc }] = await Promise.all([
+      const [{ data: act }, { count: pc }, { count: kc }, { data: bal }, { data: tx }] = await Promise.all([
         supabase.from("agent_activity").select("*").eq("user_id", userId).gte("occurred_at", since).order("occurred_at"),
         supabase.from("projects").select("*", { count: "exact", head: true }).eq("user_id", userId),
         supabase.from("api_keys").select("*", { count: "exact", head: true }).eq("user_id", userId).is("revoked_at", null),
+        supabase.from("bee_coin_balances").select("balance").eq("user_id", userId).maybeSingle(),
+        supabase.from("bee_coin_transactions").select("*").eq("user_id", userId).order("created_at", { ascending: false }).limit(200),
       ]);
       setActivity(act || []);
       setProjectCount(pc || 0);
       setKeyCount(kc || 0);
+      setBalance(Number(bal?.balance ?? 0));
+      setTxs(tx || []);
     })();
   }, [userId]);
 
@@ -149,6 +156,40 @@ function Dashboard({ userId }: { userId: string }) {
 
   const totalScore = activity.reduce((s, r) => s + Number(r.value || 1), 0);
 
+  // Bee coin analytics
+  const spendTxs = useMemo(() => txs.filter((t) => t.kind === "spend"), [txs]);
+  const earnTxs = useMemo(() => txs.filter((t) => t.kind !== "spend"), [txs]);
+  const totalSpent = useMemo(() => spendTxs.reduce((s, t) => s + Math.abs(Number(t.amount || 0)), 0), [spendTxs]);
+  const totalEarned = useMemo(() => earnTxs.reduce((s, t) => s + Math.abs(Number(t.amount || 0)), 0), [earnTxs]);
+
+  // Group spending by agent (or reason if no agent)
+  const byAgent = useMemo(() => {
+    const m: Record<string, number> = {};
+    spendTxs.forEach((t) => {
+      const k = t.agent || t.reason || "Other";
+      m[k] = (m[k] || 0) + Math.abs(Number(t.amount || 0));
+    });
+    return Object.entries(m)
+      .map(([name, value]) => ({ name, value: Number(value.toFixed(2)) }))
+      .sort((a, b) => b.value - a.value);
+  }, [spendTxs]);
+
+  // Daily spend last 14 days
+  const spendSeries = useMemo(() => {
+    const days: Record<string, number> = {};
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000).toISOString().slice(0, 10);
+      days[d] = 0;
+    }
+    spendTxs.forEach((t) => {
+      const d = String(t.created_at).slice(0, 10);
+      if (d in days) days[d] += Math.abs(Number(t.amount || 0));
+    });
+    return Object.entries(days).map(([d, v]) => ({ d: d.slice(5), v: Number(v.toFixed(2)) }));
+  }, [spendTxs]);
+
+  const PIE_COLORS = ["hsl(45,100%,55%)", "hsl(195,100%,60%)", "hsl(280,80%,65%)", "hsl(160,70%,55%)", "hsl(20,90%,60%)", "hsl(330,80%,65%)", "hsl(220,70%,60%)"];
+
   return (
     <div className="space-y-6">
       <header>
@@ -156,11 +197,100 @@ function Dashboard({ userId }: { userId: string }) {
         <p className="text-sm text-muted-foreground mt-1">Your hive at a glance — last 30 days.</p>
       </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Stat label="Total activity" value={String(totalScore)} />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <Stat label="Bee Coins 🐝" value={balance.toFixed(2)} />
+        <Stat label="Coins spent" value={totalSpent.toFixed(2)} />
         <Stat label="Projects" value={String(projectCount)} />
         <Stat label="Active API keys" value={String(keyCount)} />
       </div>
+
+      {/* Bee Coin Usage section */}
+      <Card className="p-4 glass border-border/50">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Bee Coin usage</p>
+            <p className="text-sm text-foreground/80 mt-0.5">
+              Earned <span className="text-bee font-medium">{totalEarned.toFixed(2)}</span> · Spent{" "}
+              <span className="text-bee-blue font-medium">{totalSpent.toFixed(2)}</span>
+            </p>
+          </div>
+          <Button
+            onClick={() => navigate("/chat")}
+            variant="ghost"
+            className="bg-bee/15 text-bee border border-bee/30 hover:bg-bee/25 text-xs h-8"
+          >
+            Open Bee AI chat →
+          </Button>
+        </div>
+
+        {spendTxs.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-8">
+            No coins spent yet. Start chatting with Bee AI to see your usage breakdown here.
+          </p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <p className="text-xs text-muted-foreground mb-2">Where your coins go</p>
+              <div className="h-56">
+                <ResponsiveContainer>
+                  <PieChart>
+                    <Pie data={byAgent} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} innerRadius={36} paddingAngle={2}>
+                      {byAgent.map((_, i) => (
+                        <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                    <Legend wrapperStyle={{ fontSize: 11 }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-2">Daily spend (last 14 days)</p>
+              <div className="h-56">
+                <ResponsiveContainer>
+                  <BarChart data={spendSeries}>
+                    <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.3} />
+                    <XAxis dataKey="d" stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
+                    <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                    <Bar dataKey="v" fill="hsl(195,100%,60%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* Recent transactions */}
+      <Card className="p-4 glass border-border/50">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Recent transactions</p>
+        {txs.length === 0 ? (
+          <p className="text-sm text-muted-foreground text-center py-6">No transactions yet.</p>
+        ) : (
+          <div className="divide-y divide-border/40">
+            {txs.slice(0, 10).map((t) => {
+              const isSpend = t.kind === "spend";
+              return (
+                <div key={t.id} className="flex items-center justify-between py-2 text-sm">
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-foreground">
+                      {t.agent ? <span className="text-bee">{t.agent}</span> : <span className="text-muted-foreground">System</span>}
+                      <span className="text-muted-foreground"> · {t.reason || (isSpend ? "Spend" : "Credit")}</span>
+                    </p>
+                    <p className="text-xs text-muted-foreground">{new Date(t.created_at).toLocaleString()}</p>
+                  </div>
+                  <span className={`text-sm font-medium tabular-nums ${isSpend ? "text-destructive" : "text-bee"}`}>
+                    {isSpend ? "−" : "+"}
+                    {Math.abs(Number(t.amount)).toFixed(2)}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </Card>
 
       <Card className="p-4 glass border-border/50">
         <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Activity over time</p>
@@ -175,6 +305,7 @@ function Dashboard({ userId }: { userId: string }) {
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">Total activity score: {totalScore}</p>
       </Card>
 
       <Card className="p-4 glass border-border/50">
