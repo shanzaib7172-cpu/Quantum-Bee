@@ -80,6 +80,31 @@ const StudyBee = () => {
   const [newChName, setNewChName] = useState("");
   const [newChDesc, setNewChDesc] = useState("");
 
+  // Member profile popup (view someone else's profile)
+  const [viewUserId, setViewUserId] = useState<string | null>(null);
+  const [viewProfile, setViewProfile] = useState<{ display_name: string; bio: string | null; avatar_url: string | null } | null>(null);
+  const [viewScore, setViewScore] = useState<{ messages: number; channels: number; score: number; rank: string } | null>(null);
+  const [viewLoading, setViewLoading] = useState(false);
+
+  const openMember = async (uid: string) => {
+    setViewUserId(uid);
+    setViewProfile(null);
+    setViewScore(null);
+    setViewLoading(true);
+    const [{ data: prof }, { count: msgCount }, { data: channelsActive }] = await Promise.all([
+      supabase.from("profiles").select("display_name, bio, avatar_url").eq("user_id", uid).maybeSingle(),
+      supabase.from("community_messages").select("*", { count: "exact", head: true }).eq("user_id", uid),
+      supabase.from("community_messages").select("channel_id").eq("user_id", uid).limit(500),
+    ]);
+    const msgs = msgCount ?? 0;
+    const channelSet = new Set((channelsActive ?? []).map((r: any) => r.channel_id));
+    const score = msgs * 5 + channelSet.size * 10;
+    const rank = score >= 500 ? "Hive Master" : score >= 200 ? "Queen Bee" : score >= 50 ? "Worker Bee" : "New Bee";
+    setViewProfile((prof as any) ?? { display_name: "Bee", bio: null, avatar_url: null });
+    setViewScore({ messages: msgs, channels: channelSet.size, score, rank });
+    setViewLoading(false);
+  };
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
