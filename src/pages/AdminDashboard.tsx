@@ -360,7 +360,7 @@ const Overview = () => {
         const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
         map[k] = {
           date: d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }),
-          users: 0, messages: 0, revenue: 0,
+          users: 0, messages: 0, revenue: 0, sessions: 0, traffic: 0,
         };
       }
     }
@@ -369,7 +369,10 @@ const Overview = () => {
 
     stats.profilesTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].users += 1; });
     stats.msgsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].messages += 1; });
+    stats.sessionsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].sessions += 1; });
     stats.paymentsTrend.forEach((r: any) => { const k = keyOf(r.created_at); if (map[k]) map[k].revenue += Number(r.amount || 0); });
+    // Traffic = users + messages + sessions (composite proxy for page activity)
+    Object.values(map).forEach((r) => { r.traffic = r.users * 3 + r.messages + r.sessions * 2; });
 
     return Object.values(map);
   }, [stats, rangeMeta.days]);
