@@ -61,6 +61,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
+import { STATIC_BLOGS } from "@/lib/blogClicks";
 
 type Section =
   | "overview"
