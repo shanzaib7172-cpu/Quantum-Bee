@@ -225,16 +225,28 @@ const StudyBee = () => {
 
   const send = async (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (!input.trim() || !user || !activeId) return;
+    if (!user || !activeId) return;
+    if (!input.trim() && !attachment) return;
+    if (isAdminOnlyChannel && !isAdmin) {
+      toast({ variant: "destructive", title: "Read-only channel", description: "Only admins can post here." });
+      return;
+    }
     setSending(true);
+    let content = input.trim();
+    if (attachment) {
+      const tag = attachment.isImage
+        ? `[[IMG:${attachment.url}]]`
+        : `[[FILE:${attachment.name}|${attachment.url}]]`;
+      content = content ? `${tag}\n${content}` : tag;
+    }
     const { error } = await supabase.from("community_messages").insert({
       user_id: user.id,
       channel_id: activeId,
-      content: input.trim(),
+      content,
       is_announcement: announce && isAdmin,
     } as any);
     if (error) toast({ variant: "destructive", title: "Couldn't send", description: error.message });
-    else { setInput(""); setAnnounce(false); inputRef.current?.focus(); }
+    else { setInput(""); setAnnounce(false); setAttachment(null); inputRef.current?.focus(); }
     setSending(false);
   };
 
