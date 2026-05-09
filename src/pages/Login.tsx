@@ -49,7 +49,7 @@ const Login = () => {
         toast({ variant: "destructive", title: "Login failed", description: error.message });
       } else {
         toast({ title: "Welcome back, Admin 🐝" });
-        navigate(redirectTo);
+        playOutroThen(redirectTo);
       }
       setLoading(false);
       return;
@@ -58,11 +58,11 @@ const Login = () => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
+      setLoading(false);
     } else {
       toast({ title: "Welcome back! 🐝" });
-      navigate(redirectTo);
+      playOutroThen(redirectTo);
     }
-    setLoading(false);
   };
 
   return (
