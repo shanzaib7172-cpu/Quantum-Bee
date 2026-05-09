@@ -403,7 +403,7 @@ const Overview = () => {
           supabase.from("profiles").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
-          supabase.from("payments").select("amount, created_at, status"),
+          supabase.from("payments").select("amount, created_at, status, user_id"),
           supabase.from("chat_sessions").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("blog_clicks").select("slug, clicks, updated_at"),
         ]);
@@ -414,6 +414,8 @@ const Overview = () => {
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
       const totalClicks = ((blogClicksAll.data ?? []) as any[]).reduce((s, r) => s + Number(r.clicks || 0), 0);
+      const paidUserIds = new Set(allCompleted.map((p) => p.user_id).filter(Boolean));
+      const paidMembers = paidUserIds.size;
 
       return {
         totalUsers: users.count ?? 0,
@@ -426,6 +428,7 @@ const Overview = () => {
         todayRevenue,
         totalOrders: allCompleted.length,
         totalClicks,
+        paidMembers,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
         sessionsTrend: (sessionsTrend.data ?? []) as { created_at: string }[],
@@ -479,11 +482,20 @@ const Overview = () => {
     return Object.values(map);
   }, [stats, rangeMeta.days]);
 
+  const totalUsers = stats?.totalUsers ?? 0;
+  const admins = stats?.totalAdmins ?? 0;
+  const paid = Math.min(stats?.paidMembers ?? 0, Math.max(totalUsers - admins, 0));
+  const freeMembers = Math.max(0, totalUsers - admins - paid);
   const pieData = [
-    { name: "Members", value: Math.max(0, (stats?.totalUsers ?? 0) - (stats?.totalAdmins ?? 0)) },
-    { name: "Admins", value: stats?.totalAdmins ?? 0 },
+    { name: "Free members", value: freeMembers },
+    { name: "Paid members", value: paid },
+    { name: "Admins", value: admins },
   ];
-  const PIE_COLORS = ["hsl(195 100% 60%)", "hsl(45 100% 55%)"];
+  const PIE_COLORS = ["hsl(195 100% 60%)", "hsl(140 80% 55%)", "hsl(45 100% 55%)"];
+  const membersBarData = [
+    { type: "Free members", count: freeMembers },
+    { type: "Paid members", count: paid },
+  ];
 
   return (
     <div className="space-y-6">
@@ -608,21 +620,43 @@ const Overview = () => {
         </Card>
 
         <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
-          <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
-            User roles
-          </h3>
-          <div className="h-56">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={2}>
-                  {pieData.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              User roles
+            </h3>
+            <span className="text-[11px] text-muted-foreground font-mono">
+              {paid} paid · {freeMembers} free
+            </span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={42} outerRadius={72} paddingAngle={2}>
+                    {pieData.map((_, i) => (
+                      <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="h-56">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={membersBarData} layout="vertical" margin={{ left: 10, right: 16, top: 8, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} horizontal={false} />
+                  <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={11} allowDecimals={false} />
+                  <YAxis type="category" dataKey="type" stroke="hsl(var(--muted-foreground))" fontSize={11} width={90} />
+                  <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+                  <Bar dataKey="count" radius={[0, 6, 6, 0]}>
+                    {membersBarData.map((_, i) => (
+                      <Cell key={i} fill={i === 0 ? "hsl(195 100% 60%)" : "hsl(140 80% 55%)"} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </Card>
       </div>
