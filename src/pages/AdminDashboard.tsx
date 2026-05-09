@@ -1172,22 +1172,20 @@ const CouponsSection = () => {
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
         <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Redemption history</p>
-          <div className="flex items-center gap-2">
-            <Button
-              size="sm"
-              variant="outline"
-              className="border-border/60 h-7 text-xs"
-              onClick={async () => {
-                const { data, error } = await supabase
+          <div className="flex items-center gap-2 flex-wrap">
+            <RangedExport
+              filename="coupon-redemptions"
+              fetcher={async (sinceIso) => {
+                let q = supabase
                   .from("coupon_redemptions")
                   .select("id, created_at, coupon_code, user_id, order_amount, discount_amount")
                   .order("created_at", { ascending: false });
-                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
-                downloadCSV("coupon-redemptions", (data ?? []) as any[]);
+                if (sinceIso) q = q.gte("created_at", sinceIso);
+                const { data, error } = await q;
+                if (error) throw error;
+                return (data ?? []) as any[];
               }}
-            >
-              <Download className="w-3 h-3 mr-1" />Export CSV
-            </Button>
+            />
             <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
           </div>
         </div>
