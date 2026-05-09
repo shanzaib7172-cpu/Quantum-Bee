@@ -53,6 +53,40 @@ const formatTime = (iso: string) => {
   return d.toLocaleString([], { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" });
 };
 
+const renderContent = (content: string) => {
+  const parts: React.ReactNode[] = [];
+  const re = /\[\[IMG:([^\]]+)\]\]|\[\[FILE:([^|]+)\|([^\]]+)\]\]/g;
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let key = 0;
+  while ((m = re.exec(content))) {
+    if (m.index > last) {
+      const text = content.slice(last, m.index).replace(/^\n|\n$/g, "");
+      if (text) parts.push(<span key={`t${key++}`}>{text}</span>);
+    }
+    if (m[1]) {
+      parts.push(
+        <a key={`i${key++}`} href={m[1]} target="_blank" rel="noopener noreferrer" className="block mt-1">
+          <img src={m[1]} alt="attachment" className="max-h-80 rounded-lg border border-white/10" />
+        </a>,
+      );
+    } else if (m[2]) {
+      parts.push(
+        <a key={`f${key++}`} href={m[3]} target="_blank" rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 mt-1 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 text-sm">
+          <Paperclip className="w-3.5 h-3.5" /> {m[2]}
+        </a>,
+      );
+    }
+    last = re.lastIndex;
+  }
+  if (last < content.length) {
+    const tail = content.slice(last).replace(/^\n/, "");
+    if (tail) parts.push(<span key={`t${key++}`}>{tail}</span>);
+  }
+  return <div className="whitespace-pre-wrap break-words">{parts}</div>;
+};
+
 const ADMIN_ONLY_CHANNELS = new Set(["announcements", "study-hall", "off-topic"]);
 
 const StudyBee = () => {
