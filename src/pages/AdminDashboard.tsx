@@ -254,6 +254,28 @@ const Overview = () => {
         icon={LayoutDashboard}
       />
 
+      <Card className="glass glass-highlight border-bee/30 p-5 sm:p-6 bg-gradient-to-br from-bee/10 via-transparent to-bee-blue/10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="rounded-2xl bg-bee/15 p-3 text-bee">
+              <CreditCard className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                Total Revenue
+              </p>
+              <p className="mt-1 text-3xl sm:text-4xl font-heading font-bold text-foreground">
+                ${(stats?.totalRevenue ?? 0).toFixed(2)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats?.totalOrders ?? 0} completed orders · ${(stats?.todayRevenue ?? 0).toFixed(2)} today
+              </p>
+            </div>
+          </div>
+          <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+        </div>
+      </Card>
+
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
         <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
@@ -261,8 +283,8 @@ const Overview = () => {
         <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
         <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
         <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
-        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="blue" hint="msgs per user" />
-        <StatCard label="Status" value={"Online"} icon={LayoutDashboard} loading={isLoading} tint="accent" />
+        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
+        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
       </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
