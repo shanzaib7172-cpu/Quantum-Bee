@@ -428,6 +428,7 @@ const Overview = () => {
         todayRevenue,
         totalOrders: allCompleted.length,
         totalClicks,
+        paidMembers,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
         sessionsTrend: (sessionsTrend.data ?? []) as { created_at: string }[],
