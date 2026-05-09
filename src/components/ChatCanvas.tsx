@@ -605,7 +605,23 @@ const ChatCanvas = () => {
                 <AnimatedBee isSpeaking={isSpeaking || isLoading} />
               </div>
 
-              {messages.map((msg, i) => (
+              {messages.map((msg, i) => {
+                const isAnalysis =
+                  msg.role === "assistant" && msg.content.startsWith(ANALYSIS_PREFIX);
+                let analysisData: AnalysisData | null = null;
+                if (isAnalysis) {
+                  try {
+                    analysisData = JSON.parse(msg.content.slice(ANALYSIS_PREFIX.length));
+                  } catch {}
+                }
+                if (isAnalysis && analysisData) {
+                  return (
+                    <div key={i} className="animate-fade-in">
+                      <AnalysisResult data={analysisData} />
+                    </div>
+                  );
+                }
+                return (
                 <div
                   key={i}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
