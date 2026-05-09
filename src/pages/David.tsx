@@ -55,6 +55,11 @@ const David = () => {
   const send = async () => {
     const text = prompt.trim();
     if (!text || busy) return;
+    if (!user) {
+      toast({ title: "Sign in to build", description: "Log in or create an account to let David build for you." });
+      navigate("/login");
+      return;
+    }
     if (balance < 1) {
       toast({ variant: "destructive", title: "Not enough Bee Coins 🐝", description: "Each build costs 1 coin. Recharge to continue." });
       return;
