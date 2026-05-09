@@ -152,20 +152,28 @@ serve(async (req) => {
     }
 
     if (!parsed.html) {
-      return new Response(JSON.stringify({ error: "bad_ai_output", raw: raw.slice(0, 500) }), {
-        status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      console.error("Bad AI output:", raw.slice(0, 500));
+      return jsonResponse(fallbackBuild(latestUserPrompt(messages)));
+    }
+
+    // Charge 1 bee coin only after a successful AI build.
+    const { data: deducted, error: deductErr } = await userClient.rpc("deduct_bee_coins", {
+      _amount: 1,
+      _reason: "David web build",
+      _agent: "david",
+    });
+    if (deductErr || deducted === false) {
+      return jsonResponse({ error: "insufficient_coins", message: "Not enough Bee Coins. Recharge to keep building." }, 402);
     }
 
     return new Response(JSON.stringify({
+      fallback: false,
       tasks: Array.isArray(parsed.tasks) ? parsed.tasks.slice(0, 12) : [],
       summary: parsed.summary || "Built your app.",
       html: parsed.html,
     }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     console.error("david-build error:", e);
-    return new Response(JSON.stringify({ error: e instanceof Error ? e.message : "Unknown" }), {
-      status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return jsonResponse(fallbackBuild("a polished web app"));
   }
 });
