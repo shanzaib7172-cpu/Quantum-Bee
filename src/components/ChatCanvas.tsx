@@ -360,6 +360,30 @@ const ChatCanvas = () => {
       }
 
       try {
+        // Intercept "analyze this website" intents → run our analyzer & render rich card
+        const analyzeUrl = detectAnalyzeIntent(msg);
+        if (analyzeUrl) {
+          const { data, error } = await supabase.functions.invoke("analyze-website", {
+            body: { url: analyzeUrl },
+          });
+          if (error || !data || (data as any).error) {
+            throw new Error((data as any)?.error || error?.message || "Analyze failed");
+          }
+          const cardContent = ANALYSIS_PREFIX + JSON.stringify(data);
+          const summary = (data as any)?.analysis?.summary || "Here's your website analysis.";
+          setMessages((prev) => [...prev, { role: "assistant", content: cardContent }]);
+          setTimeout(() => speakText(summary), 300);
+          if (sid && user) {
+            await supabase.from("chat_messages").insert({
+              session_id: sid, user_id: user.id, role: "assistant", content: cardContent,
+            });
+            await supabase.from("chat_sessions")
+              .update({ updated_at: new Date().toISOString() })
+              .eq("id", sid);
+          }
+          return cardContent;
+        }
+
         const response = await streamChat(newMessages);
         if (response) {
           setTimeout(() => speakText(response), 300);
