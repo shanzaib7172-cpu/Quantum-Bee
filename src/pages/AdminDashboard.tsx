@@ -94,7 +94,8 @@ type Section =
   | "blogs"
   | "coupons"
   | "payments"
-  | "notifications";
+  | "notifications"
+  | "expenses";
 
 const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "overview", label: "Dashboard", icon: LayoutDashboard },
@@ -104,6 +105,7 @@ const NAV: { key: Section; label: string; icon: React.ElementType }[] = [
   { key: "coupons", label: "Coupons", icon: Ticket },
   { key: "payments", label: "Payments", icon: CreditCard },
   { key: "notifications", label: "Notifications", icon: Bell },
+  { key: "expenses", label: "Expenses", icon: Wallet },
 ];
 
 const fmtDate = (iso: string) =>
