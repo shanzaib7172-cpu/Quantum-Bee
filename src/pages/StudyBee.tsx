@@ -514,7 +514,7 @@ const StudyBee = () => {
                     <div className="flex items-center gap-2 mb-1 text-[10px] uppercase tracking-widest font-mono text-[hsl(50,100%,75%)]">
                       <Megaphone className="w-3 h-3" /> Announcement · {name} · {formatTime(m.created_at)}
                     </div>
-                    <div className="text-sm text-white/90 whitespace-pre-wrap">{m.content}</div>
+                    <div className="text-sm text-white/90">{renderContent(m.content)}</div>
                   </div>
                 );
               }
@@ -544,7 +544,7 @@ const StudyBee = () => {
                         <span className="text-[10px] text-white/40">{formatTime(m.created_at)}</span>
                       </div>
                     )}
-                    <div className="text-sm text-white/85 whitespace-pre-wrap break-words">{m.content}</div>
+                    <div className="text-sm text-white/85">{renderContent(m.content)}</div>
                   </div>
                 </div>
               );
