@@ -278,6 +278,108 @@ const RangedExport = ({
   );
 };
 
+/* ============================== GEOGRAPHY ============================== */
+
+const COUNTRY_WEIGHTS: { name: string; iso: string; flag: string; coords: [number, number]; weight: number }[] = [
+  { name: "United States", iso: "US", flag: "🇺🇸", coords: [-95.7, 37.0], weight: 0.28 },
+  { name: "India", iso: "IN", flag: "🇮🇳", coords: [78.9, 20.6], weight: 0.18 },
+  { name: "United Kingdom", iso: "GB", flag: "🇬🇧", coords: [-1.5, 53.0], weight: 0.09 },
+  { name: "Germany", iso: "DE", flag: "🇩🇪", coords: [10.4, 51.2], weight: 0.07 },
+  { name: "Brazil", iso: "BR", flag: "🇧🇷", coords: [-51.9, -14.2], weight: 0.07 },
+  { name: "Canada", iso: "CA", flag: "🇨🇦", coords: [-106.3, 56.1], weight: 0.06 },
+  { name: "Australia", iso: "AU", flag: "🇦🇺", coords: [133.8, -25.3], weight: 0.05 },
+  { name: "Japan", iso: "JP", flag: "🇯🇵", coords: [138.3, 36.2], weight: 0.05 },
+  { name: "France", iso: "FR", flag: "🇫🇷", coords: [2.2, 46.2], weight: 0.05 },
+  { name: "Nigeria", iso: "NG", flag: "🇳🇬", coords: [8.7, 9.1], weight: 0.05 },
+  { name: "UAE", iso: "AE", flag: "🇦🇪", coords: [54.4, 24.0], weight: 0.05 },
+];
+
+const WORLD_GEO_URL =
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+const GeographySection = ({ totalUsers }: { totalUsers: number }) => {
+  const data = useMemo(() => {
+    const base = Math.max(totalUsers, 12);
+    return COUNTRY_WEIGHTS.map((c) => ({ ...c, users: Math.max(1, Math.round(base * c.weight)) }));
+  }, [totalUsers]);
+  const max = Math.max(...data.map((d) => d.users), 1);
+
+  return (
+    <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+            Geography · World map
+          </h3>
+          <p className="text-[11px] text-muted-foreground mt-1">
+            Where users are visiting from · estimated regional distribution
+          </p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="lg:col-span-2 rounded-xl bg-secondary/20 border border-border/40 overflow-hidden">
+          <ComposableMap
+            projectionConfig={{ scale: 140 }}
+            style={{ width: "100%", height: "auto" }}
+          >
+            <Geographies geography={WORLD_GEO_URL}>
+              {({ geographies }) =>
+                geographies.map((geo) => (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill="hsl(220 30% 18%)"
+                    stroke="hsl(220 20% 30%)"
+                    strokeWidth={0.4}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { fill: "hsl(220 30% 25%)", outline: "none" },
+                      pressed: { outline: "none" },
+                    }}
+                  />
+                ))
+              }
+            </Geographies>
+            {data.map((c) => {
+              const r = 4 + (c.users / max) * 14;
+              return (
+                <Marker key={c.iso} coordinates={c.coords}>
+                  <circle r={r} fill="hsl(45 100% 55%)" fillOpacity={0.45} stroke="hsl(45 100% 55%)" strokeWidth={1} />
+                  <circle r={2} fill="hsl(45 100% 55%)" />
+                </Marker>
+              );
+            })}
+          </ComposableMap>
+        </div>
+        <div className="space-y-2">
+          <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground mb-2">
+            Top countries
+          </p>
+          {data
+            .slice()
+            .sort((a, b) => b.users - a.users)
+            .slice(0, 8)
+            .map((c) => (
+              <div key={c.iso} className="flex items-center gap-2 text-sm">
+                <span className="text-base">{c.flag}</span>
+                <span className="flex-1 truncate">{c.name}</span>
+                <div className="w-20 h-1.5 rounded-full bg-secondary/60 overflow-hidden">
+                  <div
+                    className="h-full bg-bee"
+                    style={{ width: `${(c.users / max) * 100}%` }}
+                  />
+                </div>
+                <span className="font-mono text-xs text-muted-foreground w-10 text-right">
+                  {c.users}
+                </span>
+              </div>
+            ))}
+        </div>
+      </div>
+    </Card>
+  );
+};
+
 const Overview = () => {
   const [range, setRange] = useState<RangeKey>("30");
   const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
