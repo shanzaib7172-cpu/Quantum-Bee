@@ -1142,6 +1142,128 @@ const PaymentsSection = () => {
   );
 };
 
+/* ============================== NOTIFICATIONS ============================== */
+
+const NotificationsSection = () => {
+  const qc = useQueryClient();
+  const { user } = useAuth();
+  const [form, setForm] = useState({ title: "", body: "", link: "" });
+
+  const { data: items, isLoading } = useQuery({
+    queryKey: ["admin-notifications"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("notifications")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const send = useMutation({
+    mutationFn: async () => {
+      const payload = {
+        title: form.title.trim(),
+        body: form.body.trim() || null,
+        link: form.link.trim() || null,
+        created_by: user?.id ?? null,
+      };
+      const { error } = await supabase.from("notifications").insert(payload);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Notification sent" });
+      setForm({ title: "", body: "", link: "" });
+      qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+      qc.invalidateQueries({ queryKey: ["site-notifications"] });
+    },
+    onError: (e: any) => toast({ variant: "destructive", title: "Failed", description: e.message }),
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("notifications").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Deleted" });
+      qc.invalidateQueries({ queryKey: ["admin-notifications"] });
+      qc.invalidateQueries({ queryKey: ["site-notifications"] });
+    },
+  });
+
+  return (
+    <div className="space-y-5">
+      <SectionHeader
+        title="Notifications"
+        description="Broadcast announcements visible across the site"
+        icon={Bell}
+      />
+
+      <Card className="glass glass-highlight border-border/50 p-5 space-y-3">
+        <div>
+          <Label>Title</Label>
+          <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="New release · Bee AI v2 is live" />
+        </div>
+        <div>
+          <Label>Message</Label>
+          <Textarea rows={3} value={form.body} onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))} placeholder="Tell your community what's new..." />
+        </div>
+        <div>
+          <Label>Link (optional)</Label>
+          <Input value={form.link} onChange={(e) => setForm((f) => ({ ...f, link: e.target.value }))} placeholder="/blogs/bee-ai-engine" />
+        </div>
+        <div className="flex justify-end">
+          <Button
+            onClick={() => send.mutate()}
+            disabled={!form.title.trim() || send.isPending}
+            className="bg-bee text-bee-foreground hover:bg-bee/90"
+          >
+            {send.isPending ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Send className="w-4 h-4 mr-1.5" />}
+            Send notification
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 divide-y divide-border/50">
+        <div className="px-4 py-3">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">
+            Recent notifications · {items?.length ?? 0}
+          </p>
+        </div>
+        {isLoading && <div className="p-6 text-center"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></div>}
+        {(items ?? []).map((n: any) => (
+          <div key={n.id} className="p-4 flex items-start gap-3">
+            <div className="rounded-xl bg-bee/15 text-bee p-2 shrink-0">
+              <Bell className="w-4 h-4" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-medium text-sm">{n.title}</p>
+              {n.body && <p className="text-xs text-foreground/70 mt-0.5 whitespace-pre-wrap break-words">{n.body}</p>}
+              <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                <span className="text-[10px] font-mono text-muted-foreground">{fmtDate(n.created_at)}</span>
+                {n.link && (
+                  <Link to={n.link} className="text-[10px] font-mono text-bee-blue hover:underline inline-flex items-center gap-1">
+                    {n.link} <ExternalLink className="w-3 h-3" />
+                  </Link>
+                )}
+              </div>
+            </div>
+            <Button size="icon" variant="ghost" onClick={() => del.mutate(n.id)} className="text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
+        ))}
+        {!isLoading && (items ?? []).length === 0 && (
+          <div className="p-6 text-center text-sm text-muted-foreground">No notifications sent yet.</div>
+        )}
+      </Card>
+    </div>
+  );
+};
+
 /* ============================== LAYOUT ============================== */
 
 const AdminDashboard = () => {
