@@ -392,23 +392,7 @@ const Overview = () => {
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <RangedExport
-              filename="payments-revenue"
-              className="border-bee/40 text-bee hover:bg-bee/10"
-              fetcher={async (sinceIso) => {
-                let q = supabase
-                  .from("payments")
-                  .select("id, created_at, user_id, provider, package, bee_coins, amount, currency, status, external_id")
-                  .order("created_at", { ascending: false });
-                if (sinceIso) q = q.gte("created_at", sinceIso);
-                const { data, error } = await q;
-                if (error) throw error;
-                return (data ?? []) as any[];
-              }}
-            />
-            <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
-          </div>
+          <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
         </div>
       </Card>
 
