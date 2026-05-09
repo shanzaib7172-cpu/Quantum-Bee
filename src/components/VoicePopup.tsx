@@ -69,35 +69,48 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    // Auto-pick recognition language based on last assistant reply (Urdu script → ur-PK)
     const lastWasUrdu = /[\u0600-\u06FF]/.test(lastAssistant);
     recognition.lang = lastWasUrdu ? "ur-PK" : "en-US";
 
-    recognition.onresult = async (event: any) => {
+    finalizedRef.current = false;
+    let latestText = "";
+
+    const finalize = async () => {
+      if (finalizedRef.current) return;
+      finalizedRef.current = true;
+      if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+      }
+      try { recognition.stop(); } catch {}
+      const text = latestText.trim();
+      setIsListening(false);
+      if (!text) return;
+      setThinking(true);
+      try {
+        const isUrdu = /[\u0600-\u06FF]/.test(text);
+        const prompt = isUrdu ? `${text}\n\n(Reply in Urdu using Urdu script.)` : text;
+        const reply = await onSendMessage(prompt);
+        if (typeof reply === "string" && reply) setLastAssistant(reply);
+      } finally {
+        setThinking(false);
+        setTranscript("");
+      }
+    };
+
+    recognition.onresult = (event: any) => {
       const text = Array.from(event.results)
         .map((r: any) => r[0].transcript)
         .join("");
+      latestText = text;
       setTranscript(text);
-      if (event.results[0].isFinal) {
-        setIsListening(false);
-        setThinking(true);
-        try {
-          const isUrdu = /[\u0600-\u06FF]/.test(text);
-          const prompt = isUrdu
-            ? `${text}\n\n(Reply in Urdu using Urdu script.)`
-            : text;
-          const reply = await onSendMessage(prompt);
-          if (typeof reply === "string" && reply) {
-            setLastAssistant(reply);
-          }
-        } finally {
-          setThinking(false);
-          setTranscript("");
-        }
-      }
+      // Reset silence timer — finalize 700ms after user stops talking
+      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = setTimeout(finalize, 700);
+      if (event.results[event.results.length - 1].isFinal) finalize();
     };
-    recognition.onerror = () => setIsListening(false);
-    recognition.onend = () => setIsListening(false);
+    recognition.onerror = () => { setIsListening(false); };
+    recognition.onend = () => { finalize(); };
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
