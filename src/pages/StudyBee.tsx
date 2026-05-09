@@ -526,7 +526,11 @@ const StudyBee = () => {
             </div>
             <div className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5">
               {members.map((m) => (
-                <div key={m.user_id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5">
+                <button
+                  key={m.user_id}
+                  onClick={() => openMember(m.user_id)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5 text-left transition"
+                >
                   <Avatar className="w-7 h-7">
                     {m.avatar_url && <AvatarImage src={m.avatar_url} alt={m.display_name} />}
                     <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-[10px] font-bold">
@@ -534,11 +538,64 @@ const StudyBee = () => {
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm text-white/70 truncate">{m.display_name}</span>
-                </div>
+                </button>
               ))}
             </div>
           </aside>
         )}
+
+        {/* Member profile popup */}
+        <Dialog open={!!viewUserId} onOpenChange={(o) => { if (!o) { setViewUserId(null); setViewProfile(null); setViewScore(null); } }}>
+          <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white max-w-sm">
+            <DialogHeader><DialogTitle className="sr-only">Member profile</DialogTitle></DialogHeader>
+            {viewLoading || !viewProfile || !viewScore ? (
+              <div className="py-10 flex items-center justify-center"><Loader2 className="w-5 h-5 animate-spin text-[hsl(50,100%,65%)]" /></div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-16 h-16 border-2" style={{ borderColor: ACCENT }}>
+                    {viewProfile.avatar_url && <AvatarImage src={viewProfile.avatar_url} alt={viewProfile.display_name} />}
+                    <AvatarFallback style={{ background: `hsl(${hueFor(viewUserId!)} 70% 45%)` }} className="text-white text-lg font-bold">
+                      {initials(viewProfile.display_name || "B")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <h3 className="font-heading font-bold text-lg truncate">{viewProfile.display_name || "Bee"}</h3>
+                    <span className="inline-block mt-1 text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded" style={{ background: `${ACCENT}20`, color: ACCENT, border: `1px solid ${ACCENT}40` }}>
+                      {viewScore.rank}
+                    </span>
+                  </div>
+                </div>
+
+                {viewProfile.bio ? (
+                  <p className="text-sm text-white/80 italic whitespace-pre-wrap">"{viewProfile.bio}"</p>
+                ) : (
+                  <p className="text-xs text-white/40 italic">No bio yet.</p>
+                )}
+
+                <div className="rounded-xl p-3" style={{ background: `linear-gradient(135deg, ${ACCENT}15, hsl(195 100% 60% / 0.10))`, border: `1px solid ${ACCENT}30` }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">Performance score</span>
+                    <span className="text-2xl font-heading font-bold" style={{ color: ACCENT }}>{viewScore.score}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, (viewScore.score / 500) * 100)}%`, background: `linear-gradient(90deg, ${ACCENT}, hsl(195 100% 60%))` }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    <div className="rounded-lg px-2 py-1.5 bg-white/5">
+                      <div className="text-[9px] uppercase tracking-wider text-white/50">Messages</div>
+                      <div className="text-sm font-semibold">{viewScore.messages}</div>
+                    </div>
+                    <div className="rounded-lg px-2 py-1.5 bg-white/5">
+                      <div className="text-[9px] uppercase tracking-wider text-white/50">Channels</div>
+                      <div className="text-sm font-semibold">{viewScore.channels}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
