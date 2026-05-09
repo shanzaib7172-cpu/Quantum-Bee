@@ -595,6 +595,22 @@ const BlogsSection = () => {
     },
   });
 
+  const { data: clicksMap } = useQuery({
+    queryKey: ["admin-blog-clicks"],
+    queryFn: async () => {
+      const { data } = await supabase.from("blog_clicks").select("slug, clicks");
+      const m = new Map<string, number>();
+      ((data ?? []) as any[]).forEach((r) => m.set(r.slug, Number(r.clicks)));
+      return m;
+    },
+  });
+
+  const totalClicks = useMemo(() => {
+    let t = 0;
+    clicksMap?.forEach((v) => (t += v));
+    return t;
+  }, [clicksMap]);
+
   const reset = () => { setEditing(null); setForm({ title: "", slug: "", excerpt: "", content: "", cover_url: "", published: true }); };
   const openNew = () => { reset(); setOpen(true); };
   const openEdit = (b: any) => { setEditing(b); setForm({ title: b.title, slug: b.slug, excerpt: b.excerpt ?? "", content: b.content, cover_url: b.cover_url ?? "", published: b.published }); setOpen(true); };
