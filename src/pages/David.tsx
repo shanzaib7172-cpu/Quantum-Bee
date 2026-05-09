@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBeeCoins } from "@/hooks/use-bee-coins";
 import davidCharacter from "@/assets/david-character.png";
+import beeLogo from "@/assets/bee-logo.png";
 
 type ChatMsg = { role: "user" | "assistant"; content: string; tasks?: string[] };
 
