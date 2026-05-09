@@ -525,6 +525,140 @@ const Overview = () => {
         </Card>
       </div>
 
+      {/* Sessions chart */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Sessions
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              {trendData.reduce((s, r) => s + r.sessions, 0)} chat sessions · {rangeMeta.label}
+            </p>
+          </div>
+          <Badge variant="outline" className="border-bee-blue/40 text-bee-blue">Live</Badge>
+        </div>
+        <div className="h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trendData}>
+              <defs>
+                <linearGradient id="gSess" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(280 90% 65%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(280 90% 65%)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Area type="monotone" dataKey="sessions" stroke="hsl(280 90% 65%)" fill="url(#gSess)" name="Sessions" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Geography world map */}
+      <GeographySection totalUsers={stats?.totalUsers ?? 0} />
+
+      {/* Traffic history */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Traffic history
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Composite of signups, messages and sessions · {rangeMeta.label}
+            </p>
+          </div>
+        </div>
+        <div className="h-56">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Line type="monotone" dataKey="traffic" stroke="hsl(195 100% 60%)" strokeWidth={2} dot={false} name="Visits" />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Performance data sheet */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
+          Performance data sheet
+        </h3>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Metric</TableHead>
+              <TableHead className="text-right">Value</TableHead>
+              <TableHead className="text-right">Per user</TableHead>
+              <TableHead className="text-right">Trend</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(() => {
+              const u = Math.max(stats?.totalUsers ?? 0, 1);
+              const totalSessions = trendData.reduce((s, r) => s + r.sessions, 0);
+              const totalTraffic = trendData.reduce((s, r) => s + r.traffic, 0);
+              const rangeRev = trendData.reduce((s, r) => s + r.revenue, 0);
+              const rangeMsgs = trendData.reduce((s, r) => s + r.messages, 0);
+              const rangeUsers = trendData.reduce((s, r) => s + r.users, 0);
+              const rows = [
+                { m: "New users", v: rangeUsers, p: (rangeUsers / u).toFixed(2), t: "↗" },
+                { m: "Messages", v: rangeMsgs, p: (rangeMsgs / u).toFixed(2), t: "↗" },
+                { m: "Chat sessions", v: totalSessions, p: (totalSessions / u).toFixed(2), t: "↗" },
+                { m: "Blog clicks", v: stats?.totalClicks ?? 0, p: ((stats?.totalClicks ?? 0) / u).toFixed(2), t: "→" },
+                { m: "Revenue (USD)", v: `$${rangeRev.toFixed(2)}`, p: `$${(rangeRev / u).toFixed(2)}`, t: rangeRev > 0 ? "↗" : "→" },
+                { m: "Traffic score", v: totalTraffic, p: (totalTraffic / u).toFixed(2), t: "↗" },
+              ];
+              return rows.map((r) => (
+                <TableRow key={r.m}>
+                  <TableCell className="font-medium">{r.m}</TableCell>
+                  <TableCell className="text-right font-mono">{r.v}</TableCell>
+                  <TableCell className="text-right font-mono text-muted-foreground">{r.p}</TableCell>
+                  <TableCell className="text-right text-bee">{r.t}</TableCell>
+                </TableRow>
+              ));
+            })()}
+          </TableBody>
+        </Table>
+      </Card>
+
+      {/* Overall combined chart */}
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Everything in one graph
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Users, messages, sessions, traffic and revenue overlaid · {rangeMeta.label}
+            </p>
+          </div>
+        </div>
+        <div className="h-80">
+          <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={trendData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(140 80% 55%)" fontSize={11} tickFormatter={(v) => `$${v}`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
+              <Legend />
+              <Bar yAxisId="left" dataKey="messages" fill="hsl(195 100% 60%)" name="Messages" radius={[4, 4, 0, 0]} />
+              <Bar yAxisId="left" dataKey="sessions" fill="hsl(280 90% 65%)" name="Sessions" radius={[4, 4, 0, 0]} />
+              <Line yAxisId="left" type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" strokeWidth={2} dot={false} name="New users" />
+              <Line yAxisId="left" type="monotone" dataKey="traffic" stroke="hsl(0 80% 65%)" strokeWidth={2} dot={false} strokeDasharray="4 4" name="Traffic" />
+              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="hsl(140 80% 55%)" fill="hsl(140 80% 55% / 0.2)" name="Revenue" />
+            </ComposedChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
       <Card className="glass glass-highlight border-border/50 p-5">
         <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-3">
           Summary in words
