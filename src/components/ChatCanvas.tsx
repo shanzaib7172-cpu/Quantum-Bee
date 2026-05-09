@@ -419,7 +419,12 @@ const ChatCanvas = () => {
   }, [isListening, handleSend]);
 
   const stopSpeaking = useCallback(() => {
-    window.speechSynthesis.cancel();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     setIsSpeaking(false);
   }, []);
 
