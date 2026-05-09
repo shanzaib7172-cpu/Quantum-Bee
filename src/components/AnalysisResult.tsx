@@ -1,4 +1,8 @@
 import { CheckCircle2, AlertTriangle, TrendingUp, Sparkles, X, Bot, Route } from "lucide-react";
+import {
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Cell,
+} from "recharts";
 
 export interface AnalysisData {
   url: string;
