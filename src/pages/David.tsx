@@ -128,7 +128,9 @@ const David = () => {
         <img src={davidCharacter} alt="David" className="w-8 h-8 rounded-lg object-cover border border-[hsl(170,100%,55%)]/40" />
         <div className="min-w-0">
           <div className="font-semibold text-sm leading-tight truncate">David — Web Developer</div>
-          <div className="text-[10px] text-white/50 leading-tight">1 🐝 / build · Balance: {balance.toFixed(1)}</div>
+          <div className="text-[10px] text-white/50 leading-tight flex items-center gap-1">
+            1 <img src={beeLogo} alt="bee coin" className="w-3 h-3 object-contain inline-block" /> / build · Balance: {balance.toFixed(1)}
+          </div>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="ghost" onClick={reset} className="text-xs"><RefreshCw className="w-3.5 h-3.5 mr-1" />New</Button>
