@@ -217,7 +217,9 @@ const David = () => {
                 className="bg-transparent border-0 resize-none focus-visible:ring-0 text-sm"
               />
               <div className="flex items-center justify-between p-2 border-t border-white/10">
-                <span className="text-[10px] text-white/40 font-mono">⌘↵ to send · 1 🐝</span>
+                <span className="text-[10px] text-white/40 font-mono flex items-center gap-1">
+                  ⌘↵ to send · 1 <img src={beeLogo} alt="bee coin" className="w-3 h-3 object-contain inline-block" />
+                </span>
                 <Button size="sm" onClick={send} disabled={busy || !prompt.trim()} className="bg-[hsl(170,100%,45%)] hover:bg-[hsl(170,100%,55%)] text-black font-semibold">
                   {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Send className="w-3.5 h-3.5 mr-1" />Build</>}
                 </Button>
