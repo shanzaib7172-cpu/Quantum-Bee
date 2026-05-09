@@ -117,6 +117,31 @@ const StudyBee = () => {
     () => channels.find((c) => c.id === activeId) ?? null,
     [channels, activeId],
   );
+  const isAdminOnlyChannel = !!activeChannel && ADMIN_ONLY_CHANNELS.has(activeChannel.name);
+  const canPost = !!user && (!isAdminOnlyChannel || isAdmin);
+
+  const handleFile = async (file: File) => {
+    if (!user || !isAdmin) return;
+    setUploading(true);
+    const ext = file.name.split(".").pop() || "bin";
+    const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from("community-uploads").upload(path, file, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: file.type || undefined,
+    });
+    if (error) {
+      toast({ variant: "destructive", title: "Upload failed", description: error.message });
+    } else {
+      const { data: pub } = supabase.storage.from("community-uploads").getPublicUrl(path);
+      setAttachment({
+        url: pub.publicUrl,
+        name: file.name,
+        isImage: (file.type || "").startsWith("image/"),
+      });
+    }
+    setUploading(false);
+  };
 
   // Load channels + profile + members (open to guests)
   useEffect(() => {
