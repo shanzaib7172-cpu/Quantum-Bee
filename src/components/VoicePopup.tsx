@@ -33,6 +33,10 @@ const VoicePopup = ({
   const recognitionRef = useRef<any>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finalizedRef = useRef(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const vadRafRef = useRef<number | null>(null);
 
   // Greet on open
   useEffect(() => {
@@ -50,12 +54,21 @@ const VoicePopup = ({
   // Cleanup on close
   useEffect(() => {
     if (!open) {
-      recognitionRef.current?.stop?.();
       if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = null;
       }
+      if (vadRafRef.current) {
+        cancelAnimationFrame(vadRafRef.current);
+        vadRafRef.current = null;
+      }
       finalizedRef.current = true;
+      try { mediaRecorderRef.current?.stop(); } catch {}
+      mediaRecorderRef.current = null;
+      mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+      mediaStreamRef.current = null;
+      audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
       setIsListening(false);
       setTranscript("");
       stopSpeaking();
@@ -63,21 +76,55 @@ const VoicePopup = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const startListening = useCallback(() => {
-    const SR =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) {
+  const cleanupRecording = useCallback(() => {
+    if (vadRafRef.current) {
+      cancelAnimationFrame(vadRafRef.current);
+      vadRafRef.current = null;
+    }
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+      silenceTimerRef.current = null;
+    }
+    try { mediaRecorderRef.current?.stop(); } catch {}
+    mediaRecorderRef.current = null;
+    mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+    mediaStreamRef.current = null;
+    audioCtxRef.current?.close().catch(() => {});
+    audioCtxRef.current = null;
+  }, []);
+
+  const startListening = useCallback(async () => {
+    if (isSpeaking) stopSpeaking();
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
       alert("Your browser doesn't support voice input. Try Chrome.");
       return;
     }
-    if (isSpeaking) stopSpeaking();
-    const recognition = new SR();
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.lang = "en-US";
 
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+      });
+    } catch {
+      alert("Microphone access denied.");
+      return;
+    }
+
+    mediaStreamRef.current = stream;
     finalizedRef.current = false;
-    let latestText = "";
+    const chunks: Blob[] = [];
+
+    const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+      ? "audio/webm;codecs=opus"
+      : MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : "";
+    const recorder = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    mediaRecorderRef.current = recorder;
+
+    recorder.ondataavailable = (e) => {
+      if (e.data && e.data.size > 0) chunks.push(e.data);
+    };
 
     const finalize = async () => {
       if (finalizedRef.current) return;
@@ -86,42 +133,115 @@ const VoicePopup = ({
         clearTimeout(silenceTimerRef.current);
         silenceTimerRef.current = null;
       }
-      try { recognition.stop(); } catch {}
-      const text = latestText.trim();
+      if (vadRafRef.current) {
+        cancelAnimationFrame(vadRafRef.current);
+        vadRafRef.current = null;
+      }
+
+      // Wait for recorder to flush, then transcribe
+      await new Promise<void>((resolve) => {
+        if (recorder.state === "inactive") return resolve();
+        recorder.onstop = () => resolve();
+        try { recorder.stop(); } catch { resolve(); }
+      });
+      mediaStreamRef.current?.getTracks().forEach((t) => t.stop());
+      mediaStreamRef.current = null;
+      audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
+
       setIsListening(false);
-      if (!text) return;
+      const blob = new Blob(chunks, { type: mime || "audio/webm" });
+      if (blob.size < 1200) return; // basically silent
+
       setThinking(true);
       try {
-        const prompt = text;
+        const fd = new FormData();
+        fd.append("audio", blob, "voice.webm");
+        const resp = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stt`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: fd,
+          }
+        );
+        if (!resp.ok) throw new Error(`STT ${resp.status}`);
+        const data = await resp.json();
+        const text: string = (data.text || "").trim();
+        if (!text) return;
+        setTranscript(text);
+        const isUrdu = /[\u0600-\u06FF]/.test(text);
+        const prompt = isUrdu
+          ? `${text}\n\n(The user spoke in Urdu. Reply ONLY in Urdu using Urdu script.)`
+          : text;
         const reply = await onSendMessage(prompt);
         if (typeof reply === "string" && reply) setLastAssistant(reply);
+      } catch (err) {
+        console.error("STT failed:", err);
       } finally {
         setThinking(false);
         setTranscript("");
       }
     };
 
-    recognition.onresult = (event: any) => {
-      const text = Array.from(event.results)
-        .map((r: any) => r[0].transcript)
-        .join("");
-      latestText = text;
-      setTranscript(text);
-      // Reset silence timer — finalize 700ms after user stops talking
-      if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
-      silenceTimerRef.current = setTimeout(finalize, 700);
-      if (event.results[event.results.length - 1].isFinal) finalize();
-    };
-    recognition.onerror = () => { setIsListening(false); };
-    recognition.onend = () => { finalize(); };
-    recognitionRef.current = recognition;
-    recognition.start();
+    recorder.start(100);
     setIsListening(true);
+
+    // VAD: stop ~900ms after silence; hard cap 15s
+    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    audioCtxRef.current = ctx;
+    const source = ctx.createMediaStreamSource(stream);
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+    source.connect(analyser);
+    const buf = new Uint8Array(analyser.fftSize);
+    const startedAt = Date.now();
+    let hasSpoken = false;
+
+    const tick = () => {
+      analyser.getByteTimeDomainData(buf);
+      let sum = 0;
+      for (let i = 0; i < buf.length; i++) {
+        const v = (buf[i] - 128) / 128;
+        sum += v * v;
+      }
+      const rms = Math.sqrt(sum / buf.length);
+      const speaking = rms > 0.02;
+
+      if (speaking) {
+        hasSpoken = true;
+        if (silenceTimerRef.current) {
+          clearTimeout(silenceTimerRef.current);
+          silenceTimerRef.current = null;
+        }
+      } else if (hasSpoken && !silenceTimerRef.current) {
+        silenceTimerRef.current = setTimeout(finalize, 900);
+      }
+
+      if (Date.now() - startedAt > 15000) {
+        finalize();
+        return;
+      }
+      vadRafRef.current = requestAnimationFrame(tick);
+    };
+    vadRafRef.current = requestAnimationFrame(tick);
   }, [isSpeaking, stopSpeaking, onSendMessage]);
 
   const toggle = () => {
     if (isListening) {
-      recognitionRef.current?.stop();
+      // Manual stop → finalize whatever we have
+      const recorder = mediaRecorderRef.current;
+      if (recorder && recorder.state !== "inactive") {
+        // trigger finalize via VAD path
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+        if (vadRafRef.current) cancelAnimationFrame(vadRafRef.current);
+        vadRafRef.current = null;
+        try { recorder.requestData?.(); } catch {}
+        try { recorder.stop(); } catch {}
+      }
       setIsListening(false);
     } else {
       startListening();
