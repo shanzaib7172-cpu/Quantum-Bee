@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ArrowRight, Atom, Sparkles, Cpu, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, HeartPulse, Orbit, Clock } from "lucide-react";
+import { ArrowRight, Atom, Sparkles, Cpu, Target, MessageSquare, Code2, Palette, Rocket, Shield, Zap, HeartPulse, Orbit, Clock, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import annaCharacter from "@/assets/anna-character.png";
