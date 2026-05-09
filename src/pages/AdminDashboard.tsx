@@ -491,7 +491,7 @@ const UsersSection = () => {
 
   const updateFlag = useMutation({
     mutationFn: async ({ uid, patch }: { uid: string; patch: Record<string, any> }) => {
-      const { error } = await supabase.from("profiles").update(patch).eq("user_id", uid);
+      const { error } = await supabase.from("profiles").update(patch as any).eq("user_id", uid);
       if (error) throw error;
     },
     onSuccess: () => refetchAll(),
