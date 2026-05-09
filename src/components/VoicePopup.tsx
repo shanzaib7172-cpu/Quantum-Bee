@@ -30,6 +30,7 @@ const VoicePopup = ({
   const [transcript, setTranscript] = useState("");
   const [thinking, setThinking] = useState(false);
   const [lastAssistant, setLastAssistant] = useState<string>("");
+  const [lang, setLang] = useState<"en" | "ur">("en");
   const recognitionRef = useRef<any>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const finalizedRef = useRef(false);
@@ -74,8 +75,7 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    const lastWasUrdu = /[\u0600-\u06FF]/.test(lastAssistant);
-    recognition.lang = lastWasUrdu ? "ur-PK" : "en-US";
+    recognition.lang = lang === "ur" ? "ur-PK" : "en-US";
 
     finalizedRef.current = false;
     let latestText = "";
@@ -93,8 +93,10 @@ const VoicePopup = ({
       if (!text) return;
       setThinking(true);
       try {
-        const isUrdu = /[\u0600-\u06FF]/.test(text);
-        const prompt = isUrdu ? `${text}\n\n(Reply in Urdu using Urdu script.)` : text;
+        const isUrdu = lang === "ur" || /[\u0600-\u06FF]/.test(text);
+        const prompt = isUrdu
+          ? `${text}\n\n(Reply ONLY in Urdu using Urdu script. Do not use English.)`
+          : text;
         const reply = await onSendMessage(prompt);
         if (typeof reply === "string" && reply) setLastAssistant(reply);
       } finally {
@@ -119,7 +121,7 @@ const VoicePopup = ({
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  }, [isSpeaking, stopSpeaking, onSendMessage, lastAssistant]);
+  }, [isSpeaking, stopSpeaking, onSendMessage, lang]);
 
   const toggle = () => {
     if (isListening) {
@@ -205,6 +207,28 @@ const VoicePopup = ({
           <p className="mt-2 text-sm text-foreground/90 leading-relaxed line-clamp-3">
             {transcript || lastAssistant}
           </p>
+        </div>
+
+        <div className="flex items-center gap-1 p-1 rounded-full bg-secondary/40 border border-border text-xs">
+          {(["en", "ur"] as const).map((l) => (
+            <button
+              key={l}
+              onClick={() => {
+                if (isListening) {
+                  recognitionRef.current?.stop?.();
+                  setIsListening(false);
+                }
+                setLang(l);
+              }}
+              className={`px-3 py-1 rounded-full transition-colors ${
+                lang === l
+                  ? "bg-bee/25 text-bee font-medium"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {l === "en" ? "English" : "اردو"}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-3">
