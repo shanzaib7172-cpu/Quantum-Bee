@@ -432,7 +432,12 @@ const ChatCanvas = () => {
   }, [isListening, handleSend]);
 
   const stopSpeaking = useCallback(() => {
+    playbackIdRef.current++;
+    ttsAbortRef.current?.abort();
+    ttsAbortRef.current = null;
     if (audioRef.current) {
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current.src = "";
       audioRef.current = null;
