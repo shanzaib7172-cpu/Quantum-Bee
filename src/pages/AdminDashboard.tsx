@@ -1435,6 +1435,7 @@ const AdminDashboard = () => {
     coupons: <CouponsSection />,
     payments: <PaymentsSection />,
     notifications: <NotificationsSection />,
+    expenses: <ExpensesSection />,
   }[section];
 
   return (
