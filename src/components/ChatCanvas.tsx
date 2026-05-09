@@ -144,6 +144,8 @@ const ChatCanvas = () => {
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playbackIdRef = useRef(0);
+  const ttsAbortRef = useRef<AbortController | null>(null);
 
   const fallbackBrowserSpeak = useCallback((cleaned: string, isUrdu: boolean) => {
     if (!("speechSynthesis" in window)) return;
