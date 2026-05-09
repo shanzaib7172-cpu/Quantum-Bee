@@ -403,7 +403,7 @@ const Overview = () => {
           supabase.from("profiles").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
-          supabase.from("payments").select("amount, created_at, status"),
+          supabase.from("payments").select("amount, created_at, status, user_id"),
           supabase.from("chat_sessions").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
           supabase.from("blog_clicks").select("slug, clicks, updated_at"),
         ]);
