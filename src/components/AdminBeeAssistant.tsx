@@ -121,7 +121,7 @@ const AdminBeeAssistant = () => {
       {/* Floating trigger - top right */}
       <button
         onClick={() => setOpen((o) => !o)}
-        className="fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-bee/15 hover:bg-bee/25 border border-bee/40 text-bee font-medium text-sm transition-all shadow-lg"
+        className="fixed top-3 right-3 z-50 flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-bee/15 hover:bg-bee/25 border border-bee/40 text-bee font-medium text-xs sm:text-sm transition-all shadow-lg"
         style={{ boxShadow: "0 0 24px hsl(45 100% 55% / 0.35)" }}
       >
         <Sparkles className="w-4 h-4" />
@@ -129,7 +129,9 @@ const AdminBeeAssistant = () => {
       </button>
 
       {open && (
-        <div className="fixed top-20 right-4 z-50 w-[min(420px,calc(100vw-2rem))] h-[min(600px,calc(100vh-6rem))] glass-strong border border-bee/30 rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-fade-in"
+        <div className="fixed z-50 glass-strong border border-bee/30 shadow-2xl flex flex-col overflow-hidden animate-fade-in
+          inset-x-2 bottom-2 top-16 rounded-2xl
+          sm:inset-auto sm:top-20 sm:right-4 sm:bottom-auto sm:w-[420px] sm:h-[600px] sm:max-h-[calc(100vh-6rem)]"
           style={{ boxShadow: "0 0 40px -10px hsl(45 100% 55% / 0.4)" }}
         >
           <div className="flex items-center justify-between px-4 py-3 border-b border-border/50 bg-background/40">

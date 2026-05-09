@@ -727,7 +727,7 @@ const Overview = () => {
         <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
           Performance data sheet
         </h3>
-        <Table>
+        <div className="overflow-x-auto -mx-4 sm:mx-0"><Table>
           <TableHeader>
             <TableRow>
               <TableHead>Metric</TableHead>
@@ -762,7 +762,7 @@ const Overview = () => {
               ));
             })()}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
 
       {/* Overall combined chart */}
@@ -1256,7 +1256,7 @@ const BlogsSection = () => {
         <div className="px-4 py-3 border-b border-border/50">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Custom blogs (database)</p>
         </div>
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Title</TableHead>
@@ -1292,14 +1292,14 @@ const BlogsSection = () => {
               <TableRow><TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">No custom blogs yet — click "New blog" to create one.</TableCell></TableRow>
             )}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
         <div className="px-4 py-3 border-b border-border/50">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Built-in site blogs</p>
         </div>
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Title</TableHead>
@@ -1322,7 +1322,7 @@ const BlogsSection = () => {
               </TableRow>
             ))}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -1426,7 +1426,7 @@ const CouponsSection = () => {
       />
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Code</TableHead>
@@ -1456,7 +1456,7 @@ const CouponsSection = () => {
               <TableRow><TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">No coupons yet — click "New coupon" to create one.</TableCell></TableRow>
             )}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
@@ -1479,7 +1479,7 @@ const CouponsSection = () => {
             <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
           </div>
         </div>
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Code</TableHead>
@@ -1503,7 +1503,7 @@ const CouponsSection = () => {
               <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No redemptions yet.</TableCell></TableRow>
             )}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -1909,7 +1909,7 @@ const ExpensesSection = () => {
         <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">All expenses · {expenses?.length ?? 0}</p>
         </div>
-        <Table>
+        <div className="overflow-x-auto"><Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Title</TableHead>
@@ -1936,7 +1936,7 @@ const ExpensesSection = () => {
               <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No expenses recorded for this period.</TableCell></TableRow>
             )}
           </TableBody>
-        </Table>
+        </Table></div>
       </Card>
     </div>
   );
@@ -2026,7 +2026,7 @@ const AdminDashboard = () => {
         </aside>
 
         {/* Main */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl">
+        <main className="flex-1 p-3 sm:p-6 lg:p-8 max-w-7xl w-full min-w-0 overflow-x-hidden pt-16 lg:pt-8">
           {SectionView}
         </main>
       </div>
