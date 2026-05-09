@@ -26,6 +26,8 @@ import NotFound from "./pages/NotFound.tsx";
 import Recharge from "./pages/Recharge.tsx";
 import Privacy from "./pages/Privacy.tsx";
 import Terms from "./pages/Terms.tsx";
+import AdminDashboard from "./pages/AdminDashboard.tsx";
+import AdminRoute from "./components/AdminRoute.tsx";
 import BeeCursor from "./components/BeeCursor.tsx";
 import IntroAnimation from "./components/IntroAnimation.tsx";
 
@@ -62,6 +64,14 @@ const App = () => (
           <Route path="/recharge" element={<Recharge />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminDashboard />
+              </AdminRoute>
+            }
+          />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
