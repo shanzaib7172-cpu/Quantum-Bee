@@ -128,7 +128,6 @@ export default function Profile() {
           </p>
           <Button
             onClick={leaveToEarth}
-            disabled={outro}
             className="mt-5 h-11 px-6 text-sm font-semibold border-0 text-white"
             style={{
               background:
@@ -143,7 +142,6 @@ export default function Profile() {
         </section>
         </div>
       </div>
-      {outro && <OutroAnimation onDone={() => navigate("/")} />}
     </div>
   );
 }
