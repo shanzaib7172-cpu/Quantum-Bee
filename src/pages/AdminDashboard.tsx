@@ -333,10 +333,25 @@ const Overview = () => {
       </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
-        <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground mb-4">
-          Activity — Last 30 days
-        </h3>
-        <div className="h-64">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
+              Activity · Users & Revenue
+            </h3>
+            <p className="text-[11px] text-muted-foreground mt-1">{rangeMeta.label}</p>
+          </div>
+          <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+            <SelectTrigger className="w-[180px] h-9 bg-secondary/40 border-border/50">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {RANGE_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={trendData}>
               <defs>
@@ -344,17 +359,19 @@ const Overview = () => {
                   <stop offset="0%" stopColor="hsl(45 100% 55%)" stopOpacity={0.6} />
                   <stop offset="100%" stopColor="hsl(45 100% 55%)" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="gMsgs" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(195 100% 60%)" stopOpacity={0.6} />
-                  <stop offset="100%" stopColor="hsl(195 100% 60%)" stopOpacity={0} />
+                <linearGradient id="gRev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(140 80% 55%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(140 80% 55%)" stopOpacity={0} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
               <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
-              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-              <Area type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" fill="url(#gUsers)" name="New users" />
-              <Area type="monotone" dataKey="messages" stroke="hsl(195 100% 60%)" fill="url(#gMsgs)" name="Messages" />
+              <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis yAxisId="right" orientation="right" stroke="hsl(140 80% 55%)" fontSize={11} tickFormatter={(v) => `$${v}`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} formatter={(v: any, n: any) => n === "Revenue" ? [`$${Number(v).toFixed(2)}`, n] : [v, n]} />
+              <Legend />
+              <Area yAxisId="left" type="monotone" dataKey="users" stroke="hsl(45 100% 55%)" fill="url(#gUsers)" name="New users" />
+              <Area yAxisId="right" type="monotone" dataKey="revenue" stroke="hsl(140 80% 55%)" fill="url(#gRev)" name="Revenue" />
             </AreaChart>
           </ResponsiveContainer>
         </div>
