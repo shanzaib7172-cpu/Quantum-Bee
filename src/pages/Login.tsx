@@ -21,6 +21,29 @@ const Login = () => {
     e.preventDefault();
     if (!email || !password) return;
     setLoading(true);
+
+    // Special admin username login
+    const trimmed = email.trim().toLowerCase();
+    if (trimmed === "beemanshanzaib") {
+      const { data, error: fnErr } = await supabase.functions.invoke("ensure-admin", {
+        body: { username: "beemanshanzaib", password },
+      });
+      if (fnErr || !data?.ok) {
+        toast({ variant: "destructive", title: "Login failed", description: (data as any)?.error ?? fnErr?.message ?? "Invalid credentials" });
+        setLoading(false);
+        return;
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email: data.email, password });
+      if (error) {
+        toast({ variant: "destructive", title: "Login failed", description: error.message });
+      } else {
+        toast({ title: "Welcome back, Admin 🐝" });
+        navigate("/");
+      }
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
