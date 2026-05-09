@@ -168,7 +168,7 @@ const Overview = () => {
     queryFn: async () => {
       const todayIso = new Date(new Date().toDateString()).toISOString();
       const last30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend] =
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, payments] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
           supabase
@@ -194,7 +194,13 @@ const Overview = () => {
             .select("created_at")
             .gte("created_at", last30)
             .order("created_at", { ascending: true }),
+          supabase.from("payments").select("amount, created_at, status"),
         ]);
+      const completed = ((payments.data ?? []) as any[]).filter((p) => p.status === "completed");
+      const totalRevenue = completed.reduce((s, p) => s + Number(p.amount || 0), 0);
+      const todayRevenue = completed
+        .filter((p) => p.created_at >= todayIso)
+        .reduce((s, p) => s + Number(p.amount || 0), 0);
       return {
         totalUsers: users.count ?? 0,
         totalMessages: msgs.count ?? 0,
@@ -202,6 +208,9 @@ const Overview = () => {
         newToday: today.count ?? 0,
         totalBlogs: blogs.count ?? 0,
         totalCoupons: coupons.count ?? 0,
+        totalRevenue,
+        todayRevenue,
+        totalOrders: completed.length,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
       };
