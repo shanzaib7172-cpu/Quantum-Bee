@@ -222,6 +222,53 @@ const RANGE_OPTIONS: { value: RangeKey; label: string; days: number | null }[] =
   { value: "all", label: "All time", days: null },
 ];
 
+const RangedExport = ({
+  filename,
+  fetcher,
+  size = "sm",
+  className = "border-border/60",
+  defaultRange = "30",
+}: {
+  filename: string;
+  fetcher: (sinceIso: string | null, rangeLabel: string) => Promise<Record<string, any>[]>;
+  size?: "sm" | "default";
+  className?: string;
+  defaultRange?: RangeKey;
+}) => {
+  const [range, setRange] = useState<RangeKey>(defaultRange);
+  const [busy, setBusy] = useState(false);
+  const meta = RANGE_OPTIONS.find((r) => r.value === range)!;
+  const onClick = async () => {
+    setBusy(true);
+    try {
+      const sinceIso = meta.days ? new Date(Date.now() - meta.days * 86400000).toISOString() : null;
+      const rows = await fetcher(sinceIso, meta.label);
+      downloadCSV(`${filename}-${range === "all" ? "all-time" : `last-${range}d`}`, rows);
+    } catch (e: any) {
+      toast({ variant: "destructive", title: "Export failed", description: e?.message ?? "Unknown error" });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex items-center gap-2">
+      <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+        <SelectTrigger className={`${size === "sm" ? "h-8 text-xs" : "h-9"} w-[140px] bg-secondary/40 border-border/50`}>
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          {RANGE_OPTIONS.map((o) => (
+            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Button size={size} variant="outline" className={className} disabled={busy} onClick={onClick}>
+        <Download className={`${size === "sm" ? "w-3 h-3" : "w-4 h-4"} mr-1`} />{busy ? "…" : "Export CSV"}
+      </Button>
+    </div>
+  );
+};
+
 const Overview = () => {
   const [range, setRange] = useState<RangeKey>("30");
   const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
