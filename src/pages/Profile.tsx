@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard, FolderKanban, CreditCard, Shield, KeyRound, LogOut,
-  Loader2, Plus, Copy, Trash2, Check, Camera,
+  Loader2, Plus, Copy, Trash2, Check, Camera, Rocket,
 } from "lucide-react";
+import OutroAnimation from "@/components/OutroAnimation";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import TopBar from "@/components/TopBar";
 import StarfieldNight from "@/components/StarfieldNight";
