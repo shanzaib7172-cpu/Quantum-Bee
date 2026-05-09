@@ -144,6 +144,8 @@ const ChatCanvas = () => {
   };
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playbackIdRef = useRef(0);
+  const ttsAbortRef = useRef<AbortController | null>(null);
 
   const fallbackBrowserSpeak = useCallback((cleaned: string, isUrdu: boolean) => {
     if (!("speechSynthesis" in window)) return;
@@ -176,13 +178,20 @@ const ChatCanvas = () => {
       if (!cleaned) return;
       const isUrdu = /[\u0600-\u06FF]/.test(cleaned);
 
-      // Stop any prior playback
+      // Stop any prior playback / in-flight request
+      const myId = ++playbackIdRef.current;
+      ttsAbortRef.current?.abort();
       if (audioRef.current) {
+        audioRef.current.onended = null;
+        audioRef.current.onerror = null;
         audioRef.current.pause();
         audioRef.current.src = "";
         audioRef.current = null;
       }
       if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+      const ac = new AbortController();
+      ttsAbortRef.current = ac;
 
       try {
         setIsSpeaking(true);
@@ -195,23 +204,27 @@ const ChatCanvas = () => {
               Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
             },
             body: JSON.stringify({ text: cleaned, isUrdu }),
+            signal: ac.signal,
           }
         );
+        if (myId !== playbackIdRef.current) return;
         if (!resp.ok) throw new Error(`TTS ${resp.status}`);
         const blob = await resp.blob();
+        if (myId !== playbackIdRef.current) return;
         const url = URL.createObjectURL(blob);
         const audio = new Audio(url);
         audioRef.current = audio;
         audio.onended = () => {
-          setIsSpeaking(false);
+          if (myId === playbackIdRef.current) setIsSpeaking(false);
           URL.revokeObjectURL(url);
         };
         audio.onerror = () => {
-          setIsSpeaking(false);
+          if (myId === playbackIdRef.current) setIsSpeaking(false);
           URL.revokeObjectURL(url);
         };
         await audio.play();
-      } catch (err) {
+      } catch (err: any) {
+        if (err?.name === "AbortError" || myId !== playbackIdRef.current) return;
         console.error("ElevenLabs TTS failed, falling back:", err);
         setIsSpeaking(false);
         fallbackBrowserSpeak(cleaned, isUrdu);
@@ -419,7 +432,12 @@ const ChatCanvas = () => {
   }, [isListening, handleSend]);
 
   const stopSpeaking = useCallback(() => {
+    playbackIdRef.current++;
+    ttsAbortRef.current?.abort();
+    ttsAbortRef.current = null;
     if (audioRef.current) {
+      audioRef.current.onended = null;
+      audioRef.current.onerror = null;
       audioRef.current.pause();
       audioRef.current.src = "";
       audioRef.current = null;
