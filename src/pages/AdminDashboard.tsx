@@ -24,6 +24,7 @@ import {
   Ban,
   PauseCircle,
   Send,
+  Download,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -108,6 +109,33 @@ const fmtDate = (iso: string) =>
     month: "short",
     day: "numeric",
   });
+
+const csvEscape = (v: any) => {
+  if (v === null || v === undefined) return "";
+  const s = String(v);
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+const downloadCSV = (filename: string, rows: Record<string, any>[]) => {
+  if (!rows || rows.length === 0) {
+    toast({ title: "Nothing to export", description: "No data available yet." });
+    return;
+  }
+  const headers = Object.keys(rows[0]);
+  const csv = [
+    headers.join(","),
+    ...rows.map((r) => headers.map((h) => csvEscape(r[h])).join(",")),
+  ].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
 
 const StatCard = ({
   label,
@@ -317,20 +345,26 @@ const Overview = () => {
               </p>
             </div>
           </div>
-          <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-bee/40 text-bee hover:bg-bee/10"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("payments")
+                  .select("id, created_at, user_id, provider, package, bee_coins, amount, currency, status, external_id")
+                  .order("created_at", { ascending: false });
+                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
+                downloadCSV("payments-revenue", (data ?? []) as any[]);
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+            <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+          </div>
         </div>
       </Card>
-
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
-        <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
-        <StatCard label="Admins" value={stats?.totalAdmins ?? 0} icon={ShieldCheck} loading={isLoading} tint="primary" />
-        <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
-        <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
-        <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
-        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
-        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
-      </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -376,6 +410,17 @@ const Overview = () => {
           </ResponsiveContainer>
         </div>
       </Card>
+
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
+        <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
+        <StatCard label="Admins" value={stats?.totalAdmins ?? 0} icon={ShieldCheck} loading={isLoading} tint="primary" />
+        <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
+        <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
+        <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
+        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
+        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
@@ -832,7 +877,38 @@ const BlogsSection = () => {
         title="Blogs"
         description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
-        action={<Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>}
+        action={
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="border-border/60"
+              onClick={() => {
+                const rows = [
+                  ...((blogs ?? []) as any[]).map((b) => ({
+                    type: "custom",
+                    title: b.title,
+                    slug: b.slug,
+                    status: b.published ? "published" : "draft",
+                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    created_at: b.created_at,
+                  })),
+                  ...STATIC_BLOGS.map((b) => ({
+                    type: "built-in",
+                    title: b.title,
+                    slug: b.slug,
+                    status: "published",
+                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    created_at: "",
+                  })),
+                ];
+                downloadCSV("blog-clicks", rows);
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+            <Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>
+          </div>
+        }
       />
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
@@ -1045,7 +1121,24 @@ const CouponsSection = () => {
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
         <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
           <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Redemption history</p>
-          <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-border/60 h-7 text-xs"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("coupon_redemptions")
+                  .select("id, created_at, coupon_code, user_id, order_amount, discount_amount")
+                  .order("created_at", { ascending: false });
+                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
+                downloadCSV("coupon-redemptions", (data ?? []) as any[]);
+              }}
+            >
+              <Download className="w-3 h-3 mr-1" />Export CSV
+            </Button>
+            <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
+          </div>
         </div>
         <Table>
           <TableHeader>
