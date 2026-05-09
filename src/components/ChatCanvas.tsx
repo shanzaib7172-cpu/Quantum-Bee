@@ -19,6 +19,16 @@ interface Message {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+const ANALYSIS_PREFIX = "[[ANALYSIS]]";
+
+const detectAnalyzeIntent = (text: string): string | null => {
+  const urlMatch = text.match(/https?:\/\/[^\s<>"']+|(?:^|\s)((?:www\.)?[a-z0-9-]+\.[a-z]{2,}(?:\/[^\s]*)?)/i);
+  if (!urlMatch) return null;
+  const url = (urlMatch[0] || urlMatch[1] || "").trim().replace(/[.,)\]]+$/, "");
+  if (!url) return null;
+  const wantsAnalysis = /\b(analy[sz]e|audit|review|score|seo|check|suggest|improve|grow|roadmap)\b/i.test(text);
+  return wantsAnalysis ? url : null;
+};
 
 const suggestions: { label: string; prompt: string }[] = [
   {
