@@ -40,7 +40,7 @@ const Login = () => {
         toast({ variant: "destructive", title: "Login failed", description: error.message });
       } else {
         toast({ title: "Welcome back, Admin 🐝" });
-        navigate("/");
+        navigate(redirectTo);
       }
       setLoading(false);
       return;
@@ -51,7 +51,7 @@ const Login = () => {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
     } else {
       toast({ title: "Welcome back! 🐝" });
-      navigate("/");
+      navigate(redirectTo);
     }
     setLoading(false);
   };
