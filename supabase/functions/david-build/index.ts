@@ -116,9 +116,9 @@ serve(async (req) => {
       }
     }
 
-    let r: Response;
-    const aiTimeout = setTimeout(() => controller.abort(), 22000);
     const controller = new AbortController();
+    const aiTimeout = setTimeout(() => controller.abort(), 22000);
+    let r: Response;
     try {
       r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
