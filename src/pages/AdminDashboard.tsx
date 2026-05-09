@@ -184,45 +184,48 @@ const SectionHeader = ({
 
 /* ============================== OVERVIEW ============================== */
 
+type RangeKey = "7" | "30" | "60" | "90" | "365" | "all";
+const RANGE_OPTIONS: { value: RangeKey; label: string; days: number | null }[] = [
+  { value: "7", label: "Last 7 days", days: 7 },
+  { value: "30", label: "Last 30 days", days: 30 },
+  { value: "60", label: "Last 60 days", days: 60 },
+  { value: "90", label: "Last 90 days", days: 90 },
+  { value: "365", label: "Last 1 year", days: 365 },
+  { value: "all", label: "All time", days: null },
+];
+
 const Overview = () => {
+  const [range, setRange] = useState<RangeKey>("30");
+  const rangeMeta = RANGE_OPTIONS.find((r) => r.value === range)!;
+
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["admin-stats-extended"],
+    queryKey: ["admin-stats-extended", range],
     queryFn: async () => {
       const todayIso = new Date(new Date().toDateString()).toISOString();
-      const last30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, payments] =
+      const sinceIso = rangeMeta.days
+        ? new Date(Date.now() - rangeMeta.days * 86400000).toISOString()
+        : new Date("2020-01-01").toISOString();
+
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, paymentsTrend, paymentsAll] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
-          supabase
-            .from("community_messages")
-            .select("*", { count: "exact", head: true }),
-          supabase
-            .from("user_roles")
-            .select("*", { count: "exact", head: true })
-            .eq("role", "admin"),
-          supabase
-            .from("profiles")
-            .select("*", { count: "exact", head: true })
-            .gte("created_at", todayIso),
+          supabase.from("community_messages").select("*", { count: "exact", head: true }),
+          supabase.from("user_roles").select("*", { count: "exact", head: true }).eq("role", "admin"),
+          supabase.from("profiles").select("*", { count: "exact", head: true }).gte("created_at", todayIso),
           supabase.from("blogs").select("*", { count: "exact", head: true }),
           supabase.from("coupons").select("*", { count: "exact", head: true }),
-          supabase
-            .from("profiles")
-            .select("created_at")
-            .gte("created_at", last30)
-            .order("created_at", { ascending: true }),
-          supabase
-            .from("community_messages")
-            .select("created_at")
-            .gte("created_at", last30)
-            .order("created_at", { ascending: true }),
+          supabase.from("profiles").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("community_messages").select("created_at").gte("created_at", sinceIso).order("created_at", { ascending: true }),
+          supabase.from("payments").select("amount, created_at, status").gte("created_at", sinceIso),
           supabase.from("payments").select("amount, created_at, status"),
         ]);
-      const completed = ((payments.data ?? []) as any[]).filter((p) => p.status === "completed");
-      const totalRevenue = completed.reduce((s, p) => s + Number(p.amount || 0), 0);
-      const todayRevenue = completed
+
+      const allCompleted = ((paymentsAll.data ?? []) as any[]).filter((p) => p.status === "completed");
+      const totalRevenue = allCompleted.reduce((s, p) => s + Number(p.amount || 0), 0);
+      const todayRevenue = allCompleted
         .filter((p) => p.created_at >= todayIso)
         .reduce((s, p) => s + Number(p.amount || 0), 0);
+
       return {
         totalUsers: users.count ?? 0,
         totalMessages: msgs.count ?? 0,
@@ -232,35 +235,55 @@ const Overview = () => {
         totalCoupons: coupons.count ?? 0,
         totalRevenue,
         todayRevenue,
-        totalOrders: completed.length,
+        totalOrders: allCompleted.length,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
+        paymentsTrend: ((paymentsTrend.data ?? []) as any[]).filter((p) => p.status === "completed"),
+        sinceIso,
       };
     },
   });
 
   const trendData = useMemo(() => {
-    const days: Record<string, { date: string; users: number; messages: number }> =
-      {};
-    for (let i = 29; i >= 0; i--) {
-      const d = new Date(Date.now() - i * 86400000);
-      const k = d.toISOString().slice(0, 10);
-      days[k] = {
-        date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-        users: 0,
-        messages: 0,
-      };
+    if (!stats) return [];
+    const days = rangeMeta.days ?? Math.max(
+      1,
+      Math.ceil((Date.now() - new Date(stats.sinceIso).getTime()) / 86400000),
+    );
+    const cap = Math.min(days, 400);
+    const bucket: "day" | "month" = days > 90 ? "month" : "day";
+    const map: Record<string, { date: string; users: number; messages: number; revenue: number }> = {};
+
+    if (bucket === "day") {
+      for (let i = cap - 1; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000);
+        const k = d.toISOString().slice(0, 10);
+        map[k] = {
+          date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }),
+          users: 0, messages: 0, revenue: 0,
+        };
+      }
+    } else {
+      const months = Math.max(1, Math.ceil(cap / 30));
+      for (let i = months - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i, 1);
+        const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        map[k] = {
+          date: d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }),
+          users: 0, messages: 0, revenue: 0,
+        };
+      }
     }
-    (stats?.profilesTrend ?? []).forEach((r) => {
-      const k = r.created_at.slice(0, 10);
-      if (days[k]) days[k].users += 1;
-    });
-    (stats?.msgsTrend ?? []).forEach((r) => {
-      const k = r.created_at.slice(0, 10);
-      if (days[k]) days[k].messages += 1;
-    });
-    return Object.values(days);
-  }, [stats]);
+
+    const keyOf = (iso: string) => bucket === "day" ? iso.slice(0, 10) : iso.slice(0, 7);
+
+    stats.profilesTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].users += 1; });
+    stats.msgsTrend.forEach((r) => { const k = keyOf(r.created_at); if (map[k]) map[k].messages += 1; });
+    stats.paymentsTrend.forEach((r: any) => { const k = keyOf(r.created_at); if (map[k]) map[k].revenue += Number(r.amount || 0); });
+
+    return Object.values(map);
+  }, [stats, rangeMeta.days]);
 
   const pieData = [
     { name: "Members", value: Math.max(0, (stats?.totalUsers ?? 0) - (stats?.totalAdmins ?? 0)) },
