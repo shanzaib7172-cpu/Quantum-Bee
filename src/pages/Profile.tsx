@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FolderKanban, CreditCard, Shield, KeyRound, LogOut,
   Loader2, Plus, Copy, Trash2, Check, Camera,
 } from "lucide-react";
-import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
+import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import TopBar from "@/components/TopBar";
 import StarfieldNight from "@/components/StarfieldNight";
 import { supabase } from "@/integrations/supabase/client";
