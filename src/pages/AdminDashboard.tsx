@@ -640,27 +640,31 @@ const BlogsSection = () => {
   });
 
   return (
-    <div>
+    <div className="space-y-5">
       <SectionHeader
         title="Blogs"
-        description="Publish and manage articles"
+        description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
         action={<Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>}
       />
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Custom blogs (database)</p>
+        </div>
         <Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Title</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Clicks</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={5} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>}
+            {isLoading && <TableRow><TableCell colSpan={6} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>}
             {(blogs ?? []).map((b: any) => (
               <TableRow key={b.id} className="border-border/50">
                 <TableCell className="font-medium">{b.title}</TableCell>
@@ -672,6 +676,7 @@ const BlogsSection = () => {
                     <Badge variant="secondary">Draft</Badge>
                   )}
                 </TableCell>
+                <TableCell className="text-right font-mono text-bee-blue">{clicksMap?.get(b.slug) ?? 0}</TableCell>
                 <TableCell className="text-muted-foreground text-xs">{fmtDate(b.created_at)}</TableCell>
                 <TableCell className="text-right">
                   <Button size="icon" variant="ghost" onClick={() => openEdit(b)}><Pencil className="w-4 h-4" /></Button>
@@ -680,8 +685,38 @@ const BlogsSection = () => {
               </TableRow>
             ))}
             {!isLoading && (blogs ?? []).length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No blogs yet — click "New blog" to create one.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">No custom blogs yet — click "New blog" to create one.</TableCell></TableRow>
             )}
+          </TableBody>
+        </Table>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Built-in site blogs</p>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead>Title</TableHead>
+              <TableHead>Path</TableHead>
+              <TableHead className="text-right">Clicks</TableHead>
+              <TableHead className="text-right">Open</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {STATIC_BLOGS.map((b) => (
+              <TableRow key={b.slug} className="border-border/50">
+                <TableCell className="font-medium">{b.title}</TableCell>
+                <TableCell className="text-muted-foreground text-xs font-mono">{b.slug}</TableCell>
+                <TableCell className="text-right font-mono text-bee-blue">{clicksMap?.get(b.slug) ?? 0}</TableCell>
+                <TableCell className="text-right">
+                  <Button asChild size="icon" variant="ghost">
+                    <Link to={b.slug} target="_blank"><ExternalLink className="w-4 h-4" /></Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Card>
