@@ -482,11 +482,20 @@ const Overview = () => {
     return Object.values(map);
   }, [stats, rangeMeta.days]);
 
+  const totalUsers = stats?.totalUsers ?? 0;
+  const admins = stats?.totalAdmins ?? 0;
+  const paid = Math.min(stats?.paidMembers ?? 0, Math.max(totalUsers - admins, 0));
+  const freeMembers = Math.max(0, totalUsers - admins - paid);
   const pieData = [
-    { name: "Members", value: Math.max(0, (stats?.totalUsers ?? 0) - (stats?.totalAdmins ?? 0)) },
-    { name: "Admins", value: stats?.totalAdmins ?? 0 },
+    { name: "Free members", value: freeMembers },
+    { name: "Paid members", value: paid },
+    { name: "Admins", value: admins },
   ];
-  const PIE_COLORS = ["hsl(195 100% 60%)", "hsl(45 100% 55%)"];
+  const PIE_COLORS = ["hsl(195 100% 60%)", "hsl(140 80% 55%)", "hsl(45 100% 55%)"];
+  const membersBarData = [
+    { type: "Free members", count: freeMembers },
+    { type: "Paid members", count: paid },
+  ];
 
   return (
     <div className="space-y-6">
