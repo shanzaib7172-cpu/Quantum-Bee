@@ -53,6 +53,8 @@ const formatTime = (iso: string) => {
   return d.toLocaleString([], { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" });
 };
 
+const ADMIN_ONLY_CHANNELS = new Set(["announcements", "study-hall", "off-topic"]);
+
 const StudyBee = () => {
   const { user, isAdmin, loading } = useAuth();
   const { toast } = useToast();
@@ -68,6 +70,9 @@ const StudyBee = () => {
   const [sending, setSending] = useState(false);
   const [showMembers, setShowMembers] = useState(true);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [attachment, setAttachment] = useState<{ url: string; name: string; isImage: boolean } | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Profile dialog
   const [profileOpen, setProfileOpen] = useState(false);
