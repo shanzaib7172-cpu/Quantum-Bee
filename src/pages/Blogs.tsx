@@ -185,7 +185,7 @@ const Blogs = () => {
                 </h3>
                 <p className="mt-3 text-sm text-foreground/65 leading-relaxed line-clamp-3">{p.excerpt}</p>
                 {(p as any).slug ? (
-                  <Link to={(p as any).slug} className="mt-4 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,75%)] hover:text-[hsl(40,100%,70%)] transition-colors">
+                  <Link to={(p as any).slug} onClick={() => trackBlogClick((p as any).slug)} className="mt-4 inline-flex items-center gap-1.5 text-xs font-mono uppercase tracking-widest text-[hsl(195,100%,75%)] hover:text-[hsl(40,100%,70%)] transition-colors">
                     Read more <ArrowRight className="w-3 h-3" />
                   </Link>
                 ) : (
