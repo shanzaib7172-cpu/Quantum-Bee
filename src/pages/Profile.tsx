@@ -95,10 +95,8 @@ export default function Profile() {
             );
           })}
           <button
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate("/");
-            }}
+            onClick={leaveToEarth}
+            disabled={outro}
             className="w-full flex items-center gap-2.5 px-3 py-2 mt-3 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-transparent transition-all"
           >
             <LogOut className="w-4 h-4" />
