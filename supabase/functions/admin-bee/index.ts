@@ -200,8 +200,10 @@ async function runTool(name: string, args: any, admin: any, adminUserId: string)
       if (error) return { error: error.message };
       return { ok: true, expense: data };
     }
-  }
-  return { error: "unknown tool" };
+    case "open_david": {
+      const url = "/david" + (args.prompt ? `?prompt=${encodeURIComponent(args.prompt)}` : "");
+      return { ok: true, action: "navigate", url, message: "Opening David — Web Developer." };
+    }
 }
 
 serve(async (req) => {
