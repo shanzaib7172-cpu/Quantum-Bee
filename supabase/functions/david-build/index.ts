@@ -100,19 +100,7 @@ serve(async (req) => {
 
     const { messages, currentHtml } = await req.json();
     if (!Array.isArray(messages) || messages.length === 0) {
-      return new Response(JSON.stringify({ error: "messages required" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-
-    // Charge 1 bee coin for a build
-    const { data: deducted, error: deductErr } = await userClient.rpc("deduct_bee_coins", {
-      _amount: 1,
-      _reason: "David web build",
-      _agent: "david",
-    });
-    if (deductErr || deducted === false) {
-      return new Response(JSON.stringify({ error: "insufficient_coins", message: "Not enough Bee Coins. Recharge to keep building." }), {
-        status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return jsonResponse({ error: "messages required" }, 400);
     }
 
     const convo: any[] = [{ role: "system", content: SYSTEM }];
@@ -128,25 +116,30 @@ serve(async (req) => {
       }
     }
 
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-pro",
-        messages: convo,
-        response_format: { type: "json_object" },
-      }),
-    });
+    let r: Response;
+    try {
+      r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-pro",
+          messages: convo,
+          response_format: { type: "json_object" },
+        }),
+      });
+    } catch (e) {
+      console.error("AI gateway fetch failed:", e);
+      return jsonResponse(fallbackBuild(latestUserPrompt(messages)));
+    }
 
     if (!r.ok) {
       const t = await r.text();
       console.error("AI gateway error:", r.status, t);
-      return new Response(JSON.stringify({ error: "ai_error", detail: t }), {
-        status: r.status, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      if (r.status >= 500) return jsonResponse(fallbackBuild(latestUserPrompt(messages)));
+      return jsonResponse({ error: "ai_error", detail: t }, r.status);
     }
 
     const data = await r.json();
