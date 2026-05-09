@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useBeeCoins } from "@/hooks/use-bee-coins";
 import davidCharacter from "@/assets/david-character.png";
+import beeLogo from "@/assets/bee-logo.png";
 
 type ChatMsg = { role: "user" | "assistant"; content: string; tasks?: string[] };
 
@@ -127,7 +128,9 @@ const David = () => {
         <img src={davidCharacter} alt="David" className="w-8 h-8 rounded-lg object-cover border border-[hsl(170,100%,55%)]/40" />
         <div className="min-w-0">
           <div className="font-semibold text-sm leading-tight truncate">David — Web Developer</div>
-          <div className="text-[10px] text-white/50 leading-tight">1 🐝 / build · Balance: {balance.toFixed(1)}</div>
+          <div className="text-[10px] text-white/50 leading-tight flex items-center gap-1">
+            1 <img src={beeLogo} alt="bee coin" className="w-3 h-3 object-contain inline-block" /> / build · Balance: {balance.toFixed(1)}
+          </div>
         </div>
         <div className="ml-auto flex items-center gap-1">
           <Button size="sm" variant="ghost" onClick={reset} className="text-xs"><RefreshCw className="w-3.5 h-3.5 mr-1" />New</Button>
@@ -214,7 +217,9 @@ const David = () => {
                 className="bg-transparent border-0 resize-none focus-visible:ring-0 text-sm"
               />
               <div className="flex items-center justify-between p-2 border-t border-white/10">
-                <span className="text-[10px] text-white/40 font-mono">⌘↵ to send · 1 🐝</span>
+                <span className="text-[10px] text-white/40 font-mono flex items-center gap-1">
+                  ⌘↵ to send · 1 <img src={beeLogo} alt="bee coin" className="w-3 h-3 object-contain inline-block" />
+                </span>
                 <Button size="sm" onClick={send} disabled={busy || !prompt.trim()} className="bg-[hsl(170,100%,45%)] hover:bg-[hsl(170,100%,55%)] text-black font-semibold">
                   {busy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <><Send className="w-3.5 h-3.5 mr-1" />Build</>}
                 </Button>

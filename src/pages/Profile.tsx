@@ -4,7 +4,8 @@ import {
   LayoutDashboard, FolderKanban, CreditCard, Shield, KeyRound, LogOut,
   Loader2, Plus, Copy, Trash2, Check, Camera, Rocket,
 } from "lucide-react";
-import OutroAnimation from "@/components/OutroAnimation";
+import beeLogo from "@/assets/bee-logo.png";
+import { useBeeCoins } from "@/hooks/use-bee-coins";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import TopBar from "@/components/TopBar";
 import StarfieldNight from "@/components/StarfieldNight";
@@ -34,16 +35,14 @@ export default function Profile() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("dashboard");
-  const [outro, setOutro] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
 
   const leaveToEarth = async () => {
-    try { sessionStorage.setItem("beee_intro_played_v11", "1"); } catch {}
-    setOutro(true);
     await supabase.auth.signOut();
+    navigate("/");
   };
 
   if (loading || !user) {
@@ -96,7 +95,6 @@ export default function Profile() {
           })}
           <button
             onClick={leaveToEarth}
-            disabled={outro}
             className="w-full flex items-center gap-2.5 px-3 py-2 mt-3 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-transparent transition-all"
           >
             <LogOut className="w-4 h-4" />
@@ -131,7 +129,6 @@ export default function Profile() {
           </p>
           <Button
             onClick={leaveToEarth}
-            disabled={outro}
             className="mt-5 h-11 px-6 text-sm font-semibold border-0 text-white"
             style={{
               background:
@@ -146,7 +143,6 @@ export default function Profile() {
         </section>
         </div>
       </div>
-      {outro && <OutroAnimation onDone={() => navigate("/")} />}
     </div>
   );
 }
@@ -237,7 +233,7 @@ function Dashboard({ userId }: { userId: string }) {
       </header>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <Stat label="Bee Coins 🐝" value={balance.toFixed(2)} />
+        <Stat label="Bee Coins" icon={beeLogo} value={balance.toFixed(2)} />
         <Stat label="Coins spent" value={totalSpent.toFixed(2)} />
         <Stat label="Projects" value={String(projectCount)} />
         <Stat label="Active API keys" value={String(keyCount)} />
@@ -335,11 +331,14 @@ function Dashboard({ userId }: { userId: string }) {
   );
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, icon }: { label: string; value: string; icon?: string }) {
   return (
     <Card className="p-4 glass border-border/50">
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{label}</p>
-      <p className="text-2xl font-heading font-semibold text-foreground mt-1">{value}</p>
+      <p className="text-2xl font-heading font-semibold text-foreground mt-1 flex items-center gap-2">
+        {icon && <img src={icon} alt="" className="w-6 h-6 object-contain drop-shadow-[0_0_6px_hsl(45_100%_60%/0.7)]" />}
+        {value}
+      </p>
     </Card>
   );
 }
@@ -415,10 +414,17 @@ function Projects({ userId }: { userId: string }) {
 /* ───────── Billing ───────── */
 
 function Billing() {
+  const navigate = useNavigate();
+  const { balance } = useBeeCoins();
   const plans = [
     { name: "Worker Bee", price: "$0", features: ["Bee CEO chat", "1 active agent", "Community access"] },
     { name: "Queen Bee", price: "$29/mo", features: ["All agents unlocked", "10 projects", "Priority support"], featured: true },
     { name: "Hive Master", price: "$99/mo", features: ["Unlimited", "API access", "Dedicated CEO sessions"] },
+  ];
+  const coinPacks = [
+    { coins: 100, price: "$5" },
+    { coins: 500, price: "$20" },
+    { coins: 2000, price: "$70" },
   ];
   return (
     <div className="space-y-5">
@@ -426,6 +432,44 @@ function Billing() {
         <h1 className="text-2xl font-heading font-semibold text-gradient">Billing</h1>
         <p className="text-sm text-muted-foreground mt-1">Pick the plan that fits your hive.</p>
       </header>
+
+      {/* Bee Coin section */}
+      <Card className="p-5 glass border-bee/30 relative overflow-hidden">
+        <div
+          className="absolute inset-0 -z-10 opacity-60"
+          style={{ background: "radial-gradient(ellipse at 0% 0%, hsl(45 100% 55% / 0.18), transparent 60%)" }}
+        />
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <img src={beeLogo} alt="Bee Coin" className="w-12 h-12 object-contain drop-shadow-[0_0_12px_hsl(45_100%_55%/0.8)]" />
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">Bee Coin balance</p>
+              <p className="text-3xl font-heading font-semibold text-bee tabular-nums">
+                {balance.toFixed(balance % 1 === 0 ? 0 : 2)}
+              </p>
+            </div>
+          </div>
+          <Button onClick={() => navigate("/recharge")} className="bg-bee/15 text-bee border border-bee/30 hover:bg-bee/25" variant="ghost">
+            Recharge coins
+          </Button>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-2 mt-5">
+          {coinPacks.map((p) => (
+            <button
+              key={p.coins}
+              onClick={() => navigate("/recharge")}
+              className="rounded-lg border border-border/50 hover:border-bee/40 hover:bg-bee/5 p-3 text-left transition-all"
+            >
+              <div className="flex items-center gap-1.5">
+                <img src={beeLogo} alt="" className="w-4 h-4 object-contain" />
+                <span className="text-sm font-semibold">{p.coins.toLocaleString()} coins</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">{p.price}</p>
+            </button>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid sm:grid-cols-3 gap-3">
         {plans.map((p) => (
           <Card key={p.name} className={`p-5 glass border-border/50 ${p.featured ? "ring-2 ring-bee/40" : ""}`}>
