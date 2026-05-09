@@ -4,7 +4,7 @@ import {
   LayoutDashboard, FolderKanban, CreditCard, Shield, KeyRound, LogOut,
   Loader2, Plus, Copy, Trash2, Check, Camera, Rocket,
 } from "lucide-react";
-import OutroAnimation from "@/components/OutroAnimation";
+import beeLogo from "@/assets/bee-logo.png";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
 import TopBar from "@/components/TopBar";
 import StarfieldNight from "@/components/StarfieldNight";
