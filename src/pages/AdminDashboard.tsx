@@ -763,6 +763,18 @@ const CouponsSection = () => {
     },
   });
 
+  const { data: redemptions } = useQuery({
+    queryKey: ["admin-coupon-redemptions"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("coupon_redemptions")
+        .select("id, coupon_code, order_amount, discount_amount, created_at, user_id")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      return data ?? [];
+    },
+  });
+
   const reset = () => { setEditing(null); setForm({ code: "", discount_percent: 10, description: "", max_uses: "", expires_at: "", active: true }); };
   const openNew = () => { reset(); setOpen(true); };
   const openEdit = (c: any) => { setEditing(c); setForm({ code: c.code, discount_percent: c.discount_percent, description: c.description ?? "", max_uses: c.max_uses?.toString() ?? "", expires_at: c.expires_at ? c.expires_at.slice(0, 10) : "", active: c.active }); setOpen(true); };
