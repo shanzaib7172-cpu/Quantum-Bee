@@ -515,7 +515,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      increment_blog_click: { Args: { _slug: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "member"
