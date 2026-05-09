@@ -855,9 +855,37 @@ const CouponsSection = () => {
         </Table>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader><DialogTitle>{editing ? "Edit coupon" : "New coupon"}</DialogTitle></DialogHeader>
+      <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Redemption history</p>
+          <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead>Code</TableHead>
+              <TableHead>User</TableHead>
+              <TableHead className="text-right">Order</TableHead>
+              <TableHead className="text-right">Discount</TableHead>
+              <TableHead>When</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(redemptions ?? []).map((r: any) => (
+              <TableRow key={r.id} className="border-border/50">
+                <TableCell className="font-mono font-semibold text-bee">{r.coupon_code}</TableCell>
+                <TableCell className="text-xs font-mono text-muted-foreground">{r.user_id ? r.user_id.slice(0, 8) : "—"}</TableCell>
+                <TableCell className="text-right">{r.order_amount != null ? `$${Number(r.order_amount).toFixed(2)}` : "—"}</TableCell>
+                <TableCell className="text-right text-bee-blue">{r.discount_amount != null ? `-$${Number(r.discount_amount).toFixed(2)}` : "—"}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{fmtDate(r.created_at)}</TableCell>
+              </TableRow>
+            ))}
+            {(redemptions ?? []).length === 0 && (
+              <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No redemptions yet.</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
           <div className="space-y-3">
             <div><Label>Code</Label><Input value={form.code} onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))} placeholder="BEE20" /></div>
             <div><Label>Discount %</Label><Input type="number" min={1} max={100} value={form.discount_percent} onChange={(e) => setForm((f) => ({ ...f, discount_percent: Number(e.target.value) }))} /></div>
