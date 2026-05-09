@@ -413,10 +413,17 @@ function Projects({ userId }: { userId: string }) {
 /* ───────── Billing ───────── */
 
 function Billing() {
+  const navigate = useNavigate();
+  const { balance } = useBeeCoins();
   const plans = [
     { name: "Worker Bee", price: "$0", features: ["Bee CEO chat", "1 active agent", "Community access"] },
     { name: "Queen Bee", price: "$29/mo", features: ["All agents unlocked", "10 projects", "Priority support"], featured: true },
     { name: "Hive Master", price: "$99/mo", features: ["Unlimited", "API access", "Dedicated CEO sessions"] },
+  ];
+  const coinPacks = [
+    { coins: 100, price: "$5" },
+    { coins: 500, price: "$20" },
+    { coins: 2000, price: "$70" },
   ];
   return (
     <div className="space-y-5">
@@ -424,6 +431,44 @@ function Billing() {
         <h1 className="text-2xl font-heading font-semibold text-gradient">Billing</h1>
         <p className="text-sm text-muted-foreground mt-1">Pick the plan that fits your hive.</p>
       </header>
+
+      {/* Bee Coin section */}
+      <Card className="p-5 glass border-bee/30 relative overflow-hidden">
+        <div
+          className="absolute inset-0 -z-10 opacity-60"
+          style={{ background: "radial-gradient(ellipse at 0% 0%, hsl(45 100% 55% / 0.18), transparent 60%)" }}
+        />
+        <div className="flex items-center justify-between gap-4 flex-wrap">
+          <div className="flex items-center gap-3">
+            <img src={beeLogo} alt="Bee Coin" className="w-12 h-12 object-contain drop-shadow-[0_0_12px_hsl(45_100%_55%/0.8)]" />
+            <div>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">Bee Coin balance</p>
+              <p className="text-3xl font-heading font-semibold text-bee tabular-nums">
+                {balance.toFixed(balance % 1 === 0 ? 0 : 2)}
+              </p>
+            </div>
+          </div>
+          <Button onClick={() => navigate("/recharge")} className="bg-bee/15 text-bee border border-bee/30 hover:bg-bee/25" variant="ghost">
+            Recharge coins
+          </Button>
+        </div>
+        <div className="grid sm:grid-cols-3 gap-2 mt-5">
+          {coinPacks.map((p) => (
+            <button
+              key={p.coins}
+              onClick={() => navigate("/recharge")}
+              className="rounded-lg border border-border/50 hover:border-bee/40 hover:bg-bee/5 p-3 text-left transition-all"
+            >
+              <div className="flex items-center gap-1.5">
+                <img src={beeLogo} alt="" className="w-4 h-4 object-contain" />
+                <span className="text-sm font-semibold">{p.coins.toLocaleString()} coins</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">{p.price}</p>
+            </button>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid sm:grid-cols-3 gap-3">
         {plans.map((p) => (
           <Card key={p.name} className={`p-5 glass border-border/50 ${p.featured ? "ring-2 ring-bee/40" : ""}`}>
