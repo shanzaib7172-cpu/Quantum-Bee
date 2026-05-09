@@ -75,8 +75,7 @@ const VoicePopup = ({
     const recognition = new SR();
     recognition.continuous = false;
     recognition.interimResults = true;
-    const lastWasUrdu = /[\u0600-\u06FF]/.test(lastAssistant);
-    recognition.lang = lastWasUrdu ? "ur-PK" : "en-US";
+    recognition.lang = lang === "ur" ? "ur-PK" : "en-US";
 
     finalizedRef.current = false;
     let latestText = "";
