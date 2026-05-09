@@ -102,7 +102,7 @@ export default function Profile() {
             className="w-full flex items-center gap-2.5 px-3 py-2 mt-3 rounded-lg text-sm text-muted-foreground hover:text-destructive hover:bg-destructive/10 border border-transparent transition-all"
           >
             <LogOut className="w-4 h-4" />
-            Log in to Earth
+            Log out
           </button>
         </aside>
 
@@ -114,8 +114,41 @@ export default function Profile() {
           {tab === "api" && <ApiKeys />}
         </main>
         </div>
+
+        {/* Last section — Log in to Earth (plays outro) */}
+        <section className="mt-10 relative overflow-hidden rounded-2xl glass border border-bee-blue/20 p-8 text-center">
+          <div
+            className="absolute inset-0 -z-10 opacity-70"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, hsl(200 100% 55% / 0.25), transparent 60%), radial-gradient(ellipse at 50% 100%, hsl(260 90% 55% / 0.18), transparent 60%)",
+            }}
+          />
+          <p className="text-[10px] uppercase tracking-[0.4em] text-bee-blue/80 mb-2">Departure</p>
+          <h2 className="text-2xl sm:text-3xl font-heading font-semibold text-gradient">
+            Ready to return home?
+          </h2>
+          <p className="text-sm text-muted-foreground mt-2 max-w-md mx-auto">
+            Close your hive session and ride the beam back to Earth.
+          </p>
+          <Button
+            onClick={leaveToEarth}
+            disabled={outro}
+            className="mt-5 h-11 px-6 text-sm font-semibold border-0 text-white"
+            style={{
+              background:
+                "linear-gradient(135deg, hsl(200 100% 55%), hsl(220 100% 50%) 60%, hsl(260 90% 55%))",
+              boxShadow:
+                "0 10px 30px hsl(220 100% 40% / 0.5), inset 0 1px 0 hsl(200 100% 90% / 0.4)",
+            }}
+          >
+            <Rocket className="w-4 h-4 mr-2" />
+            Log in to Earth
+          </Button>
+        </section>
         </div>
       </div>
+      {outro && <OutroAnimation onDone={() => navigate("/")} />}
     </div>
   );
 }
