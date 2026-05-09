@@ -404,16 +404,34 @@ const Overview = () => {
             </h3>
             <p className="text-[11px] text-muted-foreground mt-1">{rangeMeta.label}</p>
           </div>
-          <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
-            <SelectTrigger className="w-[180px] h-9 bg-secondary/40 border-border/50">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {RANGE_OPTIONS.map((o) => (
-                <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+              <SelectTrigger className="w-[160px] h-9 bg-secondary/40 border-border/50">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {RANGE_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-border/60"
+              onClick={() => {
+                const rows = trendData.map((r) => ({
+                  period: r.date,
+                  new_users: r.users,
+                  messages: r.messages,
+                  revenue: Number(r.revenue ?? 0).toFixed(2),
+                }));
+                downloadCSV(`activity-${range === "all" ? "all-time" : `last-${range}d`}`, rows);
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+          </div>
         </div>
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
