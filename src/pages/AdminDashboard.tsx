@@ -1413,6 +1413,252 @@ const NotificationsSection = () => {
   );
 };
 
+/* ============================== EXPENSES ============================== */
+
+const ExpensesSection = () => {
+  const qc = useQueryClient();
+  const [range, setRange] = useState<RangeKey>("30");
+  const meta = RANGE_OPTIONS.find((r) => r.value === range)!;
+  const sinceIso = meta.days ? new Date(Date.now() - meta.days * 86400000).toISOString() : null;
+  const [form, setForm] = useState({ title: "", category: "", amount: "", notes: "" });
+
+  const { data: expenses, isLoading } = useQuery({
+    queryKey: ["admin-expenses", range],
+    queryFn: async () => {
+      let q = supabase.from("expenses").select("*").order("incurred_at", { ascending: false });
+      if (sinceIso) q = q.gte("incurred_at", sinceIso);
+      const { data, error } = await q;
+      if (error) throw error;
+      return (data ?? []) as any[];
+    },
+  });
+
+  const { data: payments } = useQuery({
+    queryKey: ["admin-expenses-revenue", range],
+    queryFn: async () => {
+      let q = supabase.from("payments").select("amount, created_at, status");
+      if (sinceIso) q = q.gte("created_at", sinceIso);
+      const { data, error } = await q;
+      if (error) throw error;
+      return ((data ?? []) as any[]).filter((p) => p.status === "completed");
+    },
+  });
+
+  const totalRevenue = (payments ?? []).reduce((s, p) => s + Number(p.amount || 0), 0);
+  const totalExpenses = (expenses ?? []).reduce((s, e) => s + Number(e.amount || 0), 0);
+  const profit = totalRevenue - totalExpenses;
+
+  const trend = useMemo(() => {
+    const days = meta.days ?? 365;
+    const cap = Math.min(days, 400);
+    const bucket: "day" | "month" = days > 90 ? "month" : "day";
+    const map: Record<string, { date: string; revenue: number; expenses: number }> = {};
+    if (bucket === "day") {
+      for (let i = cap - 1; i >= 0; i--) {
+        const d = new Date(Date.now() - i * 86400000);
+        const k = d.toISOString().slice(0, 10);
+        map[k] = { date: d.toLocaleDateString(undefined, { month: "short", day: "numeric" }), revenue: 0, expenses: 0 };
+      }
+    } else {
+      const months = Math.max(1, Math.ceil(cap / 30));
+      for (let i = months - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setMonth(d.getMonth() - i, 1);
+        const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        map[k] = { date: d.toLocaleDateString(undefined, { month: "short", year: "2-digit" }), revenue: 0, expenses: 0 };
+      }
+    }
+    const keyOf = (iso: string) => bucket === "day" ? iso.slice(0, 10) : iso.slice(0, 7);
+    (payments ?? []).forEach((r: any) => { const k = keyOf(r.created_at); if (map[k]) map[k].revenue += Number(r.amount || 0); });
+    (expenses ?? []).forEach((r: any) => { const k = keyOf(r.incurred_at); if (map[k]) map[k].expenses += Number(r.amount || 0); });
+    return Object.values(map);
+  }, [payments, expenses, meta.days]);
+
+  const add = useMutation({
+    mutationFn: async () => {
+      const amt = parseFloat(form.amount);
+      if (!form.title.trim() || isNaN(amt) || amt <= 0) throw new Error("Title and a positive amount are required.");
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from("expenses").insert({
+        title: form.title.trim(),
+        category: form.category.trim() || null,
+        amount: amt,
+        notes: form.notes.trim() || null,
+        created_by: user?.id ?? null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Expense added" });
+      setForm({ title: "", category: "", amount: "", notes: "" });
+      qc.invalidateQueries({ queryKey: ["admin-expenses"] });
+    },
+    onError: (e: any) => toast({ variant: "destructive", title: "Could not save", description: e.message }),
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("expenses").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast({ title: "Removed" });
+      qc.invalidateQueries({ queryKey: ["admin-expenses"] });
+    },
+  });
+
+  return (
+    <div className="space-y-5">
+      <SectionHeader
+        title="Expenses"
+        description="Track operating costs and monitor profitability"
+        icon={Wallet}
+      />
+
+      <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">Revenue vs Expenses</h3>
+            <p className="text-[11px] text-muted-foreground mt-1">{meta.label}</p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Select value={range} onValueChange={(v) => setRange(v as RangeKey)}>
+              <SelectTrigger className="w-[160px] h-9 bg-secondary/40 border-border/50"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {RANGE_OPTIONS.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-border/60"
+              onClick={() => downloadCSV(`expenses-${range === "all" ? "all-time" : `last-${range}d`}`, (expenses ?? []) as any[])}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+          </div>
+        </div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={trend}>
+              <defs>
+                <linearGradient id="gExpRev" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(140 80% 55%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(140 80% 55%)" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="gExpExp" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="hsl(0 80% 60%)" stopOpacity={0.6} />
+                  <stop offset="100%" stopColor="hsl(0 80% 60%)" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.3} />
+              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} tickFormatter={(v) => `$${v}`} />
+              <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} formatter={(v: any, n: any) => [`$${Number(v).toFixed(2)}`, n]} />
+              <Legend />
+              <Area type="monotone" dataKey="revenue" stroke="hsl(140 80% 55%)" fill="url(#gExpRev)" name="Revenue" />
+              <Area type="monotone" dataKey="expenses" stroke="hsl(0 80% 60%)" fill="url(#gExpExp)" name="Expenses" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <Card className="glass glass-highlight border-border/50 p-5">
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-emerald-500/15 text-emerald-400 p-3"><DollarSign className="w-5 h-5" /></div>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Total Revenue</p>
+              <p className="text-2xl font-heading font-bold mt-0.5">${totalRevenue.toFixed(2)}</p>
+            </div>
+          </div>
+        </Card>
+        <Card className="glass glass-highlight border-border/50 p-5">
+          <div className="flex items-center gap-3">
+            <div className="rounded-2xl bg-rose-500/15 text-rose-400 p-3"><Receipt className="w-5 h-5" /></div>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Total Expenses</p>
+              <p className="text-2xl font-heading font-bold mt-0.5">${totalExpenses.toFixed(2)}</p>
+            </div>
+          </div>
+        </Card>
+        <Card className={`glass glass-highlight p-5 ${profit >= 0 ? "border-bee/40 bg-gradient-to-br from-bee/10 to-transparent" : "border-rose-500/40 bg-gradient-to-br from-rose-500/10 to-transparent"}`}>
+          <div className="flex items-center gap-3">
+            <div className={`rounded-2xl p-3 ${profit >= 0 ? "bg-bee/20 text-bee" : "bg-rose-500/20 text-rose-400"}`}><TrendingUp className="w-5 h-5" /></div>
+            <div>
+              <p className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground">Profit</p>
+              <p className={`text-2xl font-heading font-bold mt-0.5 ${profit >= 0 ? "text-bee" : "text-rose-400"}`}>${profit.toFixed(2)}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">Revenue − Expenses</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      <Card className="glass glass-highlight border-border/50 p-5 space-y-3">
+        <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Add expense</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <Label>Title</Label>
+            <Input value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Server hosting · Vercel" />
+          </div>
+          <div>
+            <Label>Category</Label>
+            <Input value={form.category} onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))} placeholder="Infrastructure" />
+          </div>
+          <div>
+            <Label>Amount (USD)</Label>
+            <Input type="number" step="0.01" value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} placeholder="49.00" />
+          </div>
+          <div>
+            <Label>Notes</Label>
+            <Input value={form.notes} onChange={(e) => setForm((f) => ({ ...f, notes: e.target.value }))} placeholder="Optional" />
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={() => add.mutate()} disabled={add.isPending} className="bg-bee text-bee-foreground hover:bg-bee/90">
+            {add.isPending ? <Loader2 className="w-4 h-4 mr-1.5 animate-spin" /> : <Plus className="w-4 h-4 mr-1.5" />}
+            Add expense
+          </Button>
+        </div>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">All expenses · {expenses?.length ?? 0}</p>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead>Title</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead className="text-right">Amount</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading && (<TableRow><TableCell colSpan={5} className="text-center py-6"><Loader2 className="w-4 h-4 animate-spin inline text-bee" /></TableCell></TableRow>)}
+            {(expenses ?? []).map((e: any) => (
+              <TableRow key={e.id} className="border-border/50">
+                <TableCell className="font-medium">{e.title}{e.notes && <p className="text-[10px] text-muted-foreground mt-0.5">{e.notes}</p>}</TableCell>
+                <TableCell><Badge variant="secondary" className="text-[10px]">{e.category || "—"}</Badge></TableCell>
+                <TableCell className="text-right font-mono text-rose-400">−${Number(e.amount).toFixed(2)}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{fmtDate(e.incurred_at)}</TableCell>
+                <TableCell className="text-right">
+                  <Button size="icon" variant="ghost" onClick={() => del.mutate(e.id)} className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"><Trash2 className="w-4 h-4" /></Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {!isLoading && (expenses ?? []).length === 0 && (
+              <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No expenses recorded for this period.</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+    </div>
+  );
+};
+
 /* ============================== LAYOUT ============================== */
 
 const AdminDashboard = () => {
