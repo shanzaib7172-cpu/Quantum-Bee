@@ -34,16 +34,14 @@ export default function Profile() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>("dashboard");
-  const [outro, setOutro] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/login");
   }, [user, loading, navigate]);
 
   const leaveToEarth = async () => {
-    try { sessionStorage.setItem("beee_intro_played_v11", "1"); } catch {}
-    setOutro(true);
     await supabase.auth.signOut();
+    navigate("/");
   };
 
   if (loading || !user) {
