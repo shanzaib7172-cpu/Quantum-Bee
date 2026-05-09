@@ -82,11 +82,16 @@ const David = () => {
       const tasks: string[] = (data as any).tasks || [];
       const summary: string = (data as any).summary || "Done.";
       const newHtml: string = (data as any).html;
+      const fallback = Boolean((data as any).fallback);
       setHtml(newHtml);
       setChat((c) => [...c, { role: "assistant", content: summary, tasks }]);
       setActiveTasks([]);
-      refresh();
-      toast({ title: "David shipped it ✨", description: `${tasks.length} steps completed.` });
+      if (!fallback) refresh();
+      toast({
+        variant: fallback ? "default" : undefined,
+        title: fallback ? "David is temporarily busy" : "David shipped it ✨",
+        description: fallback ? "A starter preview was created without charging Bee Coins." : `${tasks.length} steps completed.`,
+      });
     } catch (e: any) {
       setActiveTasks([]);
       setChat((c) => [...c, { role: "assistant", content: `⚠️ ${e?.message || "Build failed"}` }]);
