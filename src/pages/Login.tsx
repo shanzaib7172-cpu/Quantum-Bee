@@ -21,6 +21,29 @@ const Login = () => {
     e.preventDefault();
     if (!email || !password) return;
     setLoading(true);
+
+    // Special admin username login
+    const trimmed = email.trim().toLowerCase();
+    if (trimmed === "beemanshanzaib") {
+      const { data, error: fnErr } = await supabase.functions.invoke("ensure-admin", {
+        body: { username: "beemanshanzaib", password },
+      });
+      if (fnErr || !data?.ok) {
+        toast({ variant: "destructive", title: "Login failed", description: (data as any)?.error ?? fnErr?.message ?? "Invalid credentials" });
+        setLoading(false);
+        return;
+      }
+      const { error } = await supabase.auth.signInWithPassword({ email: data.email, password });
+      if (error) {
+        toast({ variant: "destructive", title: "Login failed", description: error.message });
+      } else {
+        toast({ title: "Welcome back, Admin 🐝" });
+        navigate("/");
+      }
+      setLoading(false);
+      return;
+    }
+
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
@@ -49,12 +72,12 @@ const Login = () => {
         </div>
       <form onSubmit={handleLogin} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email</Label>
+          <Label htmlFor="email" className="text-xs uppercase tracking-wider text-white/60">Email or username</Label>
           <div className="relative">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
             <Input
               id="email"
-              type="email"
+              type="text"
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

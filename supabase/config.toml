@@ -1,1 +1,4 @@
 project_id = "ngtkfzhxvaprsozmvclh"
+
+[functions.ensure-admin]
+verify_jwt = false
