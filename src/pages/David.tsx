@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Sparkles, Loader2, Send, Download, RefreshCw, Code2, Eye, ListChecks, Monitor, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +20,7 @@ const DEFAULT_HTML = `<!doctype html><html><head><meta charset="utf-8"><meta nam
 const David = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { balance, refresh } = useBeeCoins();
   const [prompt, setPrompt] = useState("");
   const [busy, setBusy] = useState(false);
@@ -35,6 +36,17 @@ const David = () => {
   useEffect(() => {
     if (!user) navigate("/login");
   }, [user, navigate]);
+
+  useEffect(() => {
+    const seeded = searchParams.get("prompt");
+    if (seeded && !prompt) {
+      setPrompt(seeded);
+      const next = new URLSearchParams(searchParams);
+      next.delete("prompt");
+      setSearchParams(next, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => { localStorage.setItem(STORAGE_HTML, html); }, [html]);
   useEffect(() => { localStorage.setItem(STORAGE_CHAT, JSON.stringify(chat.slice(-30))); }, [chat]);
