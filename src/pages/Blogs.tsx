@@ -115,7 +115,7 @@ const Blogs = () => {
 
       {/* Featured */}
       <section data-reveal className="relative z-10 px-6 max-w-6xl mx-auto w-full">
-        <Link to="/blogs/discovery-of-planet-bee" className="block group">
+        <Link to="/blogs/discovery-of-planet-bee" onClick={() => trackBlogClick("/blogs/discovery-of-planet-bee")} className="block group">
           <div className="relative rounded-2xl overflow-hidden border border-[hsl(40,100%,55%)]/30 bg-gradient-to-br from-[hsl(220,40%,8%)]/80 via-[hsl(220,40%,6%)]/80 to-[hsl(220,40%,4%)]/80 backdrop-blur-xl grid md:grid-cols-2 gap-0 transition-all hover:border-[hsl(40,100%,55%)]/60 hover:shadow-[0_0_60px_-10px_hsl(40,100%,55%,0.5)]">
             <div className="relative h-64 md:h-full min-h-[320px] overflow-hidden">
               <img src={blogCover} alt="The Discovery of Planet Bee" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
