@@ -204,6 +204,8 @@ async function runTool(name: string, args: any, admin: any, adminUserId: string)
       const url = "/david" + (args.prompt ? `?prompt=${encodeURIComponent(args.prompt)}` : "");
       return { ok: true, action: "navigate", url, message: "Opening David — Web Developer." };
     }
+  }
+  return { error: "unknown tool" };
 }
 
 serve(async (req) => {
