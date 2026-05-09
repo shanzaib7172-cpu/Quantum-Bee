@@ -1538,6 +1538,9 @@ const PaymentsSection = () => {
     { name: "Paddle", desc: "Merchant of record — handles tax, VAT, compliance automatically.", color: "hsl(195 100% 60%)" },
     { name: "PayPal", desc: "Wallet checkout, popular for one-time purchases.", color: "hsl(45 100% 55%)" },
     { name: "Razorpay", desc: "Best for India — UPI, netbanking, cards.", color: "hsl(330 90% 60%)" },
+    { name: "EasyPaisa", desc: "Pakistan's leading mobile wallet — accept payments via mobile account or OTC.", color: "hsl(140 70% 45%)" },
+    { name: "JazzCash", desc: "Pakistan mobile wallet by Jazz — wallet, card, and bank transfer payments.", color: "hsl(0 85% 55%)" },
+    { name: "NayaPay", desc: "Pakistan digital wallet — instant transfers, cards and QR payments.", color: "hsl(265 80% 60%)" },
   ];
   return (
     <div className="space-y-5">
