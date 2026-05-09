@@ -292,43 +292,6 @@ function Dashboard({ userId }: { userId: string }) {
         )}
       </Card>
 
-      <Card className="p-4 glass border-border/50">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Activity over time</p>
-        <div className="h-56">
-          <ResponsiveContainer>
-            <LineChart data={series}>
-              <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.3} />
-              <XAxis dataKey="d" stroke="hsl(var(--muted-foreground))" fontSize={10} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={10} />
-              <Tooltip contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-              <Line type="monotone" dataKey="v" stroke="hsl(45,100%,55%)" strokeWidth={2} dot={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">Total activity score: {totalScore}</p>
-      </Card>
-
-      <Card className="p-4 glass border-border/50">
-        <p className="text-xs uppercase tracking-wider text-muted-foreground mb-3">Score by agent</p>
-        <div className="space-y-3">
-          {AGENTS.map((agent) => {
-            const score = activity.filter((r) => r.agent === agent).reduce((s, r) => s + Number(r.value || 1), 0);
-            const max = Math.max(1, ...AGENTS.map((a) => activity.filter((r) => r.agent === a).reduce((s, r) => s + Number(r.value || 1), 0)));
-            const pct = (score / max) * 100;
-            return (
-              <div key={agent} className="space-y-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-foreground">{agent}</span>
-                  <span className="text-muted-foreground">{score}</span>
-                </div>
-                <div className="h-2 rounded-full bg-secondary/40 overflow-hidden">
-                  <div className="h-full bg-gradient-to-r from-bee to-bee-blue" style={{ width: `${pct}%` }} />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </Card>
     </div>
   );
 }
