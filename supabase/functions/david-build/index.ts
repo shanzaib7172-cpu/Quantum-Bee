@@ -103,6 +103,16 @@ serve(async (req) => {
       return jsonResponse({ error: "messages required" }, 400);
     }
 
+    const { data: coinBalance, error: balanceErr } = await userClient
+      .from("bee_coin_balances")
+      .select("balance")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (balanceErr) console.error("Bee Coin balance check failed:", balanceErr);
+    if (balanceErr || Number(coinBalance?.balance || 0) < 1) {
+      return jsonResponse({ error: "insufficient_coins", message: "Not enough Bee Coins. Recharge to keep building." }, 402);
+    }
+
     const convo: any[] = [{ role: "system", content: SYSTEM }];
     if (currentHtml) {
       convo.push({
