@@ -122,6 +122,24 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_clicks: {
+        Row: {
+          clicks: number
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          clicks?: number
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          clicks?: number
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blogs: {
         Row: {
           author_id: string | null
@@ -282,6 +300,36 @@ export type Database = {
           },
         ]
       }
+      coupon_redemptions: {
+        Row: {
+          coupon_code: string
+          coupon_id: string
+          created_at: string
+          discount_amount: number | null
+          id: string
+          order_amount: number | null
+          user_id: string | null
+        }
+        Insert: {
+          coupon_code: string
+          coupon_id: string
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          order_amount?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          coupon_code?: string
+          coupon_id?: string
+          created_at?: string
+          discount_amount?: number | null
+          id?: string
+          order_amount?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       coupons: {
         Row: {
           active: boolean
@@ -321,6 +369,45 @@ export type Database = {
           max_uses?: number | null
           updated_at?: string
           uses?: number
+        }
+        Relationships: []
+      }
+      payments: {
+        Row: {
+          amount: number
+          bee_coins: number | null
+          created_at: string
+          currency: string
+          external_id: string | null
+          id: string
+          package: string | null
+          provider: string | null
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          bee_coins?: number | null
+          created_at?: string
+          currency?: string
+          external_id?: string | null
+          id?: string
+          package?: string | null
+          provider?: string | null
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          bee_coins?: number | null
+          created_at?: string
+          currency?: string
+          external_id?: string | null
+          id?: string
+          package?: string | null
+          provider?: string | null
+          status?: string
+          user_id?: string | null
         }
         Relationships: []
       }

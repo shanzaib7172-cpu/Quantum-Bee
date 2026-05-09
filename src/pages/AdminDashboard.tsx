@@ -61,6 +61,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
+import { STATIC_BLOGS } from "@/lib/blogClicks";
 
 type Section =
   | "overview"
@@ -167,7 +168,7 @@ const Overview = () => {
     queryFn: async () => {
       const todayIso = new Date(new Date().toDateString()).toISOString();
       const last30 = new Date(Date.now() - 30 * 86400000).toISOString();
-      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend] =
+      const [users, msgs, admins, today, blogs, coupons, profilesTrend, msgsTrend, payments] =
         await Promise.all([
           supabase.from("profiles").select("*", { count: "exact", head: true }),
           supabase
@@ -193,7 +194,13 @@ const Overview = () => {
             .select("created_at")
             .gte("created_at", last30)
             .order("created_at", { ascending: true }),
+          supabase.from("payments").select("amount, created_at, status"),
         ]);
+      const completed = ((payments.data ?? []) as any[]).filter((p) => p.status === "completed");
+      const totalRevenue = completed.reduce((s, p) => s + Number(p.amount || 0), 0);
+      const todayRevenue = completed
+        .filter((p) => p.created_at >= todayIso)
+        .reduce((s, p) => s + Number(p.amount || 0), 0);
       return {
         totalUsers: users.count ?? 0,
         totalMessages: msgs.count ?? 0,
@@ -201,6 +208,9 @@ const Overview = () => {
         newToday: today.count ?? 0,
         totalBlogs: blogs.count ?? 0,
         totalCoupons: coupons.count ?? 0,
+        totalRevenue,
+        todayRevenue,
+        totalOrders: completed.length,
         profilesTrend: (profilesTrend.data ?? []) as { created_at: string }[],
         msgsTrend: (msgsTrend.data ?? []) as { created_at: string }[],
       };
@@ -244,6 +254,28 @@ const Overview = () => {
         icon={LayoutDashboard}
       />
 
+      <Card className="glass glass-highlight border-bee/30 p-5 sm:p-6 bg-gradient-to-br from-bee/10 via-transparent to-bee-blue/10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="rounded-2xl bg-bee/15 p-3 text-bee">
+              <CreditCard className="w-6 h-6" />
+            </div>
+            <div>
+              <p className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-muted-foreground">
+                Total Revenue
+              </p>
+              <p className="mt-1 text-3xl sm:text-4xl font-heading font-bold text-foreground">
+                ${(stats?.totalRevenue ?? 0).toFixed(2)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {stats?.totalOrders ?? 0} completed orders · ${(stats?.todayRevenue ?? 0).toFixed(2)} today
+              </p>
+            </div>
+          </div>
+          <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+        </div>
+      </Card>
+
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
         <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
@@ -251,8 +283,8 @@ const Overview = () => {
         <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
         <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
         <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
-        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="blue" hint="msgs per user" />
-        <StatCard label="Status" value={"Online"} icon={LayoutDashboard} loading={isLoading} tint="accent" />
+        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
+        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
       </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
@@ -563,6 +595,22 @@ const BlogsSection = () => {
     },
   });
 
+  const { data: clicksMap } = useQuery({
+    queryKey: ["admin-blog-clicks"],
+    queryFn: async () => {
+      const { data } = await supabase.from("blog_clicks").select("slug, clicks");
+      const m = new Map<string, number>();
+      ((data ?? []) as any[]).forEach((r) => m.set(r.slug, Number(r.clicks)));
+      return m;
+    },
+  });
+
+  const totalClicks = useMemo(() => {
+    let t = 0;
+    clicksMap?.forEach((v) => (t += v));
+    return t;
+  }, [clicksMap]);
+
   const reset = () => { setEditing(null); setForm({ title: "", slug: "", excerpt: "", content: "", cover_url: "", published: true }); };
   const openNew = () => { reset(); setOpen(true); };
   const openEdit = (b: any) => { setEditing(b); setForm({ title: b.title, slug: b.slug, excerpt: b.excerpt ?? "", content: b.content, cover_url: b.cover_url ?? "", published: b.published }); setOpen(true); };
@@ -592,27 +640,31 @@ const BlogsSection = () => {
   });
 
   return (
-    <div>
+    <div className="space-y-5">
       <SectionHeader
         title="Blogs"
-        description="Publish and manage articles"
+        description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
         action={<Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>}
       />
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Custom blogs (database)</p>
+        </div>
         <Table>
           <TableHeader>
             <TableRow className="border-border/50 hover:bg-transparent">
               <TableHead>Title</TableHead>
               <TableHead>Slug</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead className="text-right">Clicks</TableHead>
               <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={5} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>}
+            {isLoading && <TableRow><TableCell colSpan={6} className="text-center py-8"><Loader2 className="w-4 h-4 animate-spin mx-auto text-bee" /></TableCell></TableRow>}
             {(blogs ?? []).map((b: any) => (
               <TableRow key={b.id} className="border-border/50">
                 <TableCell className="font-medium">{b.title}</TableCell>
@@ -624,6 +676,7 @@ const BlogsSection = () => {
                     <Badge variant="secondary">Draft</Badge>
                   )}
                 </TableCell>
+                <TableCell className="text-right font-mono text-bee-blue">{clicksMap?.get(b.slug) ?? 0}</TableCell>
                 <TableCell className="text-muted-foreground text-xs">{fmtDate(b.created_at)}</TableCell>
                 <TableCell className="text-right">
                   <Button size="icon" variant="ghost" onClick={() => openEdit(b)}><Pencil className="w-4 h-4" /></Button>
@@ -632,8 +685,38 @@ const BlogsSection = () => {
               </TableRow>
             ))}
             {!isLoading && (blogs ?? []).length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No blogs yet — click "New blog" to create one.</TableCell></TableRow>
+              <TableRow><TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">No custom blogs yet — click "New blog" to create one.</TableCell></TableRow>
             )}
+          </TableBody>
+        </Table>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Built-in site blogs</p>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead>Title</TableHead>
+              <TableHead>Path</TableHead>
+              <TableHead className="text-right">Clicks</TableHead>
+              <TableHead className="text-right">Open</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {STATIC_BLOGS.map((b) => (
+              <TableRow key={b.slug} className="border-border/50">
+                <TableCell className="font-medium">{b.title}</TableCell>
+                <TableCell className="text-muted-foreground text-xs font-mono">{b.slug}</TableCell>
+                <TableCell className="text-right font-mono text-bee-blue">{clicksMap?.get(b.slug) ?? 0}</TableCell>
+                <TableCell className="text-right">
+                  <Button asChild size="icon" variant="ghost">
+                    <Link to={b.slug} target="_blank"><ExternalLink className="w-4 h-4" /></Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </Card>
@@ -680,6 +763,18 @@ const CouponsSection = () => {
     },
   });
 
+  const { data: redemptions } = useQuery({
+    queryKey: ["admin-coupon-redemptions"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("coupon_redemptions")
+        .select("id, coupon_code, order_amount, discount_amount, created_at, user_id")
+        .order("created_at", { ascending: false })
+        .limit(100);
+      return data ?? [];
+    },
+  });
+
   const reset = () => { setEditing(null); setForm({ code: "", discount_percent: 10, description: "", max_uses: "", expires_at: "", active: true }); };
   const openNew = () => { reset(); setOpen(true); };
   const openEdit = (c: any) => { setEditing(c); setForm({ code: c.code, discount_percent: c.discount_percent, description: c.description ?? "", max_uses: c.max_uses?.toString() ?? "", expires_at: c.expires_at ? c.expires_at.slice(0, 10) : "", active: c.active }); setOpen(true); };
@@ -718,7 +813,7 @@ const CouponsSection = () => {
   });
 
   return (
-    <div>
+    <div className="space-y-5">
       <SectionHeader
         title="Coupons & Offers"
         description="Create discount codes for Bee Coin packs"
@@ -755,6 +850,38 @@ const CouponsSection = () => {
             ))}
             {!isLoading && (coupons ?? []).length === 0 && (
               <TableRow><TableCell colSpan={6} className="text-center py-8 text-sm text-muted-foreground">No coupons yet — click "New coupon" to create one.</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Card>
+
+      <Card className="glass glass-highlight border-border/50 overflow-hidden">
+        <div className="px-4 py-3 border-b border-border/50 flex items-center justify-between">
+          <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground">Redemption history</p>
+          <Badge variant="secondary" className="text-[10px]">{redemptions?.length ?? 0} recent</Badge>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/50 hover:bg-transparent">
+              <TableHead>Code</TableHead>
+              <TableHead>User</TableHead>
+              <TableHead className="text-right">Order</TableHead>
+              <TableHead className="text-right">Discount</TableHead>
+              <TableHead>When</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {(redemptions ?? []).map((r: any) => (
+              <TableRow key={r.id} className="border-border/50">
+                <TableCell className="font-mono font-semibold text-bee">{r.coupon_code}</TableCell>
+                <TableCell className="text-xs font-mono text-muted-foreground">{r.user_id ? r.user_id.slice(0, 8) : "—"}</TableCell>
+                <TableCell className="text-right">{r.order_amount != null ? `$${Number(r.order_amount).toFixed(2)}` : "—"}</TableCell>
+                <TableCell className="text-right text-bee-blue">{r.discount_amount != null ? `-$${Number(r.discount_amount).toFixed(2)}` : "—"}</TableCell>
+                <TableCell className="text-xs text-muted-foreground">{fmtDate(r.created_at)}</TableCell>
+              </TableRow>
+            ))}
+            {(redemptions ?? []).length === 0 && (
+              <TableRow><TableCell colSpan={5} className="text-center py-8 text-sm text-muted-foreground">No redemptions yet.</TableCell></TableRow>
             )}
           </TableBody>
         </Table>
