@@ -11,7 +11,6 @@ const PACKS = [
   { coins: 100, price: 15, label: "Starter", perk: "Try every agent" },
   { coins: 200, price: 25, label: "Buzzing", perk: "Save 17%", highlight: false },
   { coins: 500, price: 50, label: "Hive Power", perk: "Save 33%", highlight: true },
-  { coins: 1000, price: 75, label: "Queen Bee", perk: "Save 50%", highlight: false },
 ];
 
 const Recharge = () => {
