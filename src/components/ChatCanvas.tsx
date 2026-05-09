@@ -649,7 +649,8 @@ const ChatCanvas = () => {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
 
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start animate-fade-in">
