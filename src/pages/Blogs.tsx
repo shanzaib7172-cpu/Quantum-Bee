@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Calendar, Clock, Tag } from "lucide-react";
+import { trackBlogClick } from "@/lib/blogClicks";
 import { Button } from "@/components/ui/button";
 import { useReveal } from "@/hooks/use-reveal";
 import beeLogo from "@/assets/bee-logo.png";
