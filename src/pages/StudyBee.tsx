@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import TopBar from "@/components/TopBar";
 import beeLogo from "@/assets/bee-logo.png";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -216,7 +216,7 @@ const StudyBee = () => {
   // ----- Auth gate -----
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[hsl(220,60%,3%)]">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <Loader2 className="w-6 h-6 animate-spin text-[hsl(50,100%,65%)]" />
       </div>
     );
@@ -225,8 +225,8 @@ const StudyBee = () => {
 
   // ----- Discord-style layout -----
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
-      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
+    <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <TopBar />
       {/* back button removed */}
 

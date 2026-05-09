@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TopBar from "@/components/TopBar";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -47,8 +47,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(228,30%,5%)] text-foreground relative overflow-hidden">
-      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
+    <div className="min-h-screen bg-black text-foreground relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <div
         className="fixed inset-0 pointer-events-none z-0"
         style={{
