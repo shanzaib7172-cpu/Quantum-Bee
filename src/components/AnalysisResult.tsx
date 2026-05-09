@@ -125,6 +125,76 @@ export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose?
         ))}
       </div>
 
+      {/* Visual graphs */}
+      {(() => {
+        const chartData = Object.entries(analysis.categories).map(([k, v]) => ({
+          name: k.charAt(0).toUpperCase() + k.slice(1),
+          value: Math.max(0, Math.min(100, Math.round(v as number))),
+        }));
+        const barColor = (val: number) =>
+          val >= 80 ? "hsl(142 76% 55%)" : val >= 60 ? "hsl(45 100% 55%)" : val >= 40 ? "hsl(25 95% 55%)" : "hsl(0 84% 60%)";
+        const agentChart = agentRecs
+          .slice(0, 6)
+          .map((a) => ({ name: a.agent, fit: Math.max(0, Math.min(100, Math.round(a.fit))) }));
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="rounded-lg border border-border/40 bg-secondary/20 p-2">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 px-1">Score radar</p>
+              <div className="h-44 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadarChart data={chartData} outerRadius="75%">
+                    <PolarGrid stroke="hsl(var(--border))" />
+                    <PolarAngleAxis dataKey="name" tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }} />
+                    <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                    <Radar
+                      dataKey="value"
+                      stroke="hsl(45 100% 55%)"
+                      fill="hsl(45 100% 55%)"
+                      fillOpacity={0.35}
+                    />
+                  </RadarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            <div className="rounded-lg border border-border/40 bg-secondary/20 p-2">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1 px-1">
+                {agentChart.length > 0 ? "Agent fit" : "Category scores"}
+              </p>
+              <div className="h-44 w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={agentChart.length > 0 ? agentChart : chartData}
+                    margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
+                  >
+                    <XAxis
+                      dataKey="name"
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      domain={[0, 100]}
+                      tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Bar
+                      dataKey={agentChart.length > 0 ? "fit" : "value"}
+                      radius={[4, 4, 0, 0]}
+                    >
+                      {(agentChart.length > 0 ? agentChart : chartData).map((d: any, i) => (
+                        <Cell key={i} fill={barColor(d.fit ?? d.value)} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
+
       {analysis.strengths.length > 0 && (
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
