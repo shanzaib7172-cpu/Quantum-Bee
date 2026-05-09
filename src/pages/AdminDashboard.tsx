@@ -1285,6 +1285,7 @@ const AdminDashboard = () => {
     blogs: <BlogsSection />,
     coupons: <CouponsSection />,
     payments: <PaymentsSection />,
+    notifications: <NotificationsSection />,
   }[section];
 
   return (
