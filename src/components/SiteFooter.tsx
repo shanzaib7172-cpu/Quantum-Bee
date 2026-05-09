@@ -11,6 +11,7 @@ const LINKS = [
   { to: "/study-bee#community", label: "Community", color: "hsl(140,80%,65%)" },
   { to: "/terms", label: "Terms of Service", color: "hsl(40,100%,65%)" },
   { to: "/privacy", label: "Privacy Policy", color: "hsl(200,100%,70%)" },
+  { to: "/admin", label: "Admin Panel", color: "hsl(45,100%,65%)" },
 ];
 
 const SiteFooter = () => (

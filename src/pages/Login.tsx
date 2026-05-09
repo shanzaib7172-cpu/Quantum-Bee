@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { LogIn, Loader2, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,8 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,7 +40,7 @@ const Login = () => {
         toast({ variant: "destructive", title: "Login failed", description: error.message });
       } else {
         toast({ title: "Welcome back, Admin 🐝" });
-        navigate("/");
+        navigate(redirectTo);
       }
       setLoading(false);
       return;
@@ -49,7 +51,7 @@ const Login = () => {
       toast({ variant: "destructive", title: "Login failed", description: error.message });
     } else {
       toast({ title: "Welcome back! 🐝" });
-      navigate("/");
+      navigate(redirectTo);
     }
     setLoading(false);
   };
