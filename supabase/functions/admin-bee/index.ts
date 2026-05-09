@@ -101,6 +101,19 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "open_david",
+      description: "Open David, the Web Developer agent, optionally with a starter prompt for the user. Use this when the admin asks to build, prototype, design or generate a website, landing page, tool, or web app.",
+      parameters: {
+        type: "object",
+        properties: {
+          prompt: { type: "string", description: "Initial prompt to seed David with" },
+        },
+      },
+    },
+  },
 ];
 
 async function runTool(name: string, args: any, admin: any, adminUserId: string) {
@@ -186,6 +199,10 @@ async function runTool(name: string, args: any, admin: any, adminUserId: string)
       }).select().single();
       if (error) return { error: error.message };
       return { ok: true, expense: data };
+    }
+    case "open_david": {
+      const url = "/david" + (args.prompt ? `?prompt=${encodeURIComponent(args.prompt)}` : "");
+      return { ok: true, action: "navigate", url, message: "Opening David — Web Developer." };
     }
   }
   return { error: "unknown tool" };
