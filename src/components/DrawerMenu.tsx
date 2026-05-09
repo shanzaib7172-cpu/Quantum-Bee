@@ -41,7 +41,7 @@ const agentCards: AgentCard[] = [
   { name: "Anna", desc: "Leads Generator", avatar: annaCharacter, link: "/leads-generator" },
   { name: "Sophia", desc: "Product Model Shoot AI", avatar: sophiaCharacter, link: "/product-shoot" },
   { name: "Jack", desc: "WhatsApp Automation", avatar: jackCharacter, link: "/jack" },
-  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, link: "/david" },
+  { name: "David", desc: "Web Developer Agent", avatar: davidCharacter, locked: true },
   { name: "Mark", desc: "Business Management", avatar: markCharacter, locked: true },
   { name: "Peter", desc: "Product image & UGC ads", avatar: peterCharacter, locked: true },
 ];
