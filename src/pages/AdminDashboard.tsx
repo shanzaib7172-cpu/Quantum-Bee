@@ -345,20 +345,26 @@ const Overview = () => {
               </p>
             </div>
           </div>
-          <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              size="sm"
+              variant="outline"
+              className="border-bee/40 text-bee hover:bg-bee/10"
+              onClick={async () => {
+                const { data, error } = await supabase
+                  .from("payments")
+                  .select("id, created_at, user_id, provider, package, bee_coins, amount, currency, status, external_id")
+                  .order("created_at", { ascending: false });
+                if (error) { toast({ variant: "destructive", title: "Export failed", description: error.message }); return; }
+                downloadCSV("payments-revenue", (data ?? []) as any[]);
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+            <Badge className="bg-bee/20 text-bee border-bee/40">USD</Badge>
+          </div>
         </div>
       </Card>
-
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
-        <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
-        <StatCard label="Admins" value={stats?.totalAdmins ?? 0} icon={ShieldCheck} loading={isLoading} tint="primary" />
-        <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
-        <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
-        <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
-        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
-        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
-      </section>
 
       <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
@@ -404,6 +410,17 @@ const Overview = () => {
           </ResponsiveContainer>
         </div>
       </Card>
+
+      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <StatCard label="Total Users" value={stats?.totalUsers ?? 0} icon={Users} loading={isLoading} tint="bee" hint={`${stats?.newToday ?? 0} new today`} />
+        <StatCard label="Messages" value={stats?.totalMessages ?? 0} icon={MessageSquare} loading={isLoading} tint="blue" />
+        <StatCard label="Admins" value={stats?.totalAdmins ?? 0} icon={ShieldCheck} loading={isLoading} tint="primary" />
+        <StatCard label="New Today" value={stats?.newToday ?? 0} icon={UserPlus} loading={isLoading} tint="accent" />
+        <StatCard label="Blogs" value={stats?.totalBlogs ?? 0} icon={FileText} loading={isLoading} tint="primary" />
+        <StatCard label="Coupons" value={stats?.totalCoupons ?? 0} icon={Ticket} loading={isLoading} tint="bee" />
+        <StatCard label="Orders" value={stats?.totalOrders ?? 0} icon={CreditCard} loading={isLoading} tint="blue" />
+        <StatCard label="Engagement" value={stats ? Math.round((stats.totalMessages / Math.max(stats.totalUsers, 1)) * 10) / 10 : 0} icon={TrendingUp} loading={isLoading} tint="accent" hint="msgs per user" />
+      </section>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="glass glass-highlight border-border/50 p-4 sm:p-5">
