@@ -90,6 +90,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import beeLogo from "@/assets/bee-logo.png";
 import { STATIC_BLOGS } from "@/lib/blogClicks";
+import AdminBeeAssistant from "@/components/AdminBeeAssistant";
 
 type Section =
   | "overview"
@@ -1968,6 +1969,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
+      <AdminBeeAssistant />
       <div
         className="fixed inset-0 pointer-events-none -z-10"
         style={{
