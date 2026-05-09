@@ -66,6 +66,8 @@ const Login = () => {
   };
 
   return (
+    <>
+    {outro && <OutroAnimation onDone={() => navigate(redirectTo)} />}
     <AuthScene
       title="Re-enter Planet Bee"
       subtitle="Sign in to your hive command center"
