@@ -3,14 +3,14 @@ import { Orbit, Satellite, Rocket, Radio, Globe2, ArrowRight, ArrowLeft, CheckCi
 import { Button } from "@/components/ui/button";
 import TopBar from "@/components/TopBar";
 import SocialLinks from "@/components/SocialLinks";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 
 const ACCENT = "hsl(220,100%,72%)";
 
 const SpaceBee = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-      <SpaceBackground density={1.4} rocks={6} blackhole={false} planets />
+    <div className="min-h-screen flex flex-col bg-black text-foreground relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <TopBar />
       {/* back button removed */}
 

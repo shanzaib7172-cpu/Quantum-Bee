@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import TopBar from "@/components/TopBar";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -47,8 +47,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-[hsl(228,30%,5%)] text-foreground relative overflow-hidden">
-      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
+    <div className="min-h-screen bg-black text-foreground relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <div
         className="fixed inset-0 pointer-events-none z-0"
         style={{
@@ -520,10 +520,11 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
 
   const saveName = async () => {
     if (!name.trim()) return;
-    await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
+    const { error } = await supabase.from("profiles").update({ display_name: name.trim() }).eq("user_id", userId);
+    if (error) { toast({ variant: "destructive", title: "Failed", description: error.message }); return; }
     setProfile((p) => p ? { ...p, display_name: name.trim() } : { display_name: name.trim(), avatar_url: null, bio: "" });
-
-    // saveBio defined below
+    setEditingName(false);
+    toast({ title: "Name updated" });
   };
 
   const saveBio = async () => {
@@ -534,8 +535,6 @@ function ProfileHeader({ userId, email }: { userId: string; email: string }) {
     setProfile((p) => p ? { ...p, bio: bio.trim() || null } : { display_name: name, avatar_url: null, bio: bio.trim() || null });
     setEditingBio(false);
     toast({ title: "Bio updated ✨" });
-    setEditingName(false);
-    toast({ title: "Name updated" });
   };
 
   const initial = (profile?.display_name || email || "B").trim().charAt(0).toUpperCase();

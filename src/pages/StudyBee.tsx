@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import TopBar from "@/components/TopBar";
 import beeLogo from "@/assets/bee-logo.png";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
@@ -79,6 +79,31 @@ const StudyBee = () => {
   const [newChOpen, setNewChOpen] = useState(false);
   const [newChName, setNewChName] = useState("");
   const [newChDesc, setNewChDesc] = useState("");
+
+  // Member profile popup (view someone else's profile)
+  const [viewUserId, setViewUserId] = useState<string | null>(null);
+  const [viewProfile, setViewProfile] = useState<{ display_name: string; bio: string | null; avatar_url: string | null } | null>(null);
+  const [viewScore, setViewScore] = useState<{ messages: number; channels: number; score: number; rank: string } | null>(null);
+  const [viewLoading, setViewLoading] = useState(false);
+
+  const openMember = async (uid: string) => {
+    setViewUserId(uid);
+    setViewProfile(null);
+    setViewScore(null);
+    setViewLoading(true);
+    const [{ data: prof }, { count: msgCount }, { data: channelsActive }] = await Promise.all([
+      supabase.from("profiles").select("display_name, bio, avatar_url").eq("user_id", uid).maybeSingle(),
+      supabase.from("community_messages").select("*", { count: "exact", head: true }).eq("user_id", uid),
+      supabase.from("community_messages").select("channel_id").eq("user_id", uid).limit(500),
+    ]);
+    const msgs = msgCount ?? 0;
+    const channelSet = new Set((channelsActive ?? []).map((r: any) => r.channel_id));
+    const score = msgs * 5 + channelSet.size * 10;
+    const rank = score >= 500 ? "Hive Master" : score >= 200 ? "Queen Bee" : score >= 50 ? "Worker Bee" : "New Bee";
+    setViewProfile((prof as any) ?? { display_name: "Bee", bio: null, avatar_url: null });
+    setViewScore({ messages: msgs, channels: channelSet.size, score, rank });
+    setViewLoading(false);
+  };
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -216,7 +241,7 @@ const StudyBee = () => {
   // ----- Auth gate -----
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[hsl(220,60%,3%)]">
+      <div className="min-h-screen flex items-center justify-center bg-black">
         <Loader2 className="w-6 h-6 animate-spin text-[hsl(50,100%,65%)]" />
       </div>
     );
@@ -225,8 +250,8 @@ const StudyBee = () => {
 
   // ----- Discord-style layout -----
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(228,30%,5%)] text-white relative overflow-hidden">
-      <SpaceBackground density={0.4} rocks={0} blackhole={false} planets />
+    <div className="min-h-screen flex flex-col bg-black text-white relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <TopBar />
       {/* back button removed */}
 
@@ -422,12 +447,14 @@ const StudyBee = () => {
                 <div key={m.id} className={`group flex gap-3 px-2 py-0.5 rounded hover:bg-white/[0.02] ${grouped ? "" : "mt-3"}`}>
                   <div className="w-10 flex-shrink-0">
                     {!grouped ? (
-                      <Avatar className="w-10 h-10 mt-0.5 border border-white/10">
-                        {prof?.avatar_url && <AvatarImage src={prof.avatar_url} alt={name} />}
-                        <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-sm font-bold">
-                          {initials(name)}
-                        </AvatarFallback>
-                      </Avatar>
+                      <button onClick={() => openMember(m.user_id)} aria-label={`View ${name}'s profile`}>
+                        <Avatar className="w-10 h-10 mt-0.5 border border-white/10 cursor-pointer hover:ring-2 hover:ring-[hsl(50,100%,65%)]/40 transition">
+                          {prof?.avatar_url && <AvatarImage src={prof.avatar_url} alt={name} />}
+                          <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-sm font-bold">
+                            {initials(name)}
+                          </AvatarFallback>
+                        </Avatar>
+                      </button>
                     ) : (
                       <span className="text-[10px] text-white/0 group-hover:text-white/30 block text-center mt-1">
                         {new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -437,7 +464,7 @@ const StudyBee = () => {
                   <div className="flex-1 min-w-0">
                     {!grouped && (
                       <div className="flex items-baseline gap-2">
-                        <span className="font-semibold text-white" style={{ color: `hsl(${hueFor(m.user_id)} 80% 75%)` }}>{name}</span>
+                        <button onClick={() => openMember(m.user_id)} className="font-semibold text-white hover:underline" style={{ color: `hsl(${hueFor(m.user_id)} 80% 75%)` }}>{name}</button>
                         <span className="text-[10px] text-white/40">{formatTime(m.created_at)}</span>
                       </div>
                     )}
@@ -499,7 +526,11 @@ const StudyBee = () => {
             </div>
             <div className="flex-1 overflow-y-auto px-2 py-2 space-y-0.5">
               {members.map((m) => (
-                <div key={m.user_id} className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5">
+                <button
+                  key={m.user_id}
+                  onClick={() => openMember(m.user_id)}
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5 text-left transition"
+                >
                   <Avatar className="w-7 h-7">
                     {m.avatar_url && <AvatarImage src={m.avatar_url} alt={m.display_name} />}
                     <AvatarFallback style={{ background: `hsl(${hueFor(m.user_id)} 70% 45%)` }} className="text-white text-[10px] font-bold">
@@ -507,11 +538,64 @@ const StudyBee = () => {
                     </AvatarFallback>
                   </Avatar>
                   <span className="text-sm text-white/70 truncate">{m.display_name}</span>
-                </div>
+                </button>
               ))}
             </div>
           </aside>
         )}
+
+        {/* Member profile popup */}
+        <Dialog open={!!viewUserId} onOpenChange={(o) => { if (!o) { setViewUserId(null); setViewProfile(null); setViewScore(null); } }}>
+          <DialogContent className="bg-[hsl(228,22%,9%)] border-white/10 text-white max-w-sm">
+            <DialogHeader><DialogTitle className="sr-only">Member profile</DialogTitle></DialogHeader>
+            {viewLoading || !viewProfile || !viewScore ? (
+              <div className="py-10 flex items-center justify-center"><Loader2 className="w-5 h-5 animate-spin text-[hsl(50,100%,65%)]" /></div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Avatar className="w-16 h-16 border-2" style={{ borderColor: ACCENT }}>
+                    {viewProfile.avatar_url && <AvatarImage src={viewProfile.avatar_url} alt={viewProfile.display_name} />}
+                    <AvatarFallback style={{ background: `hsl(${hueFor(viewUserId!)} 70% 45%)` }} className="text-white text-lg font-bold">
+                      {initials(viewProfile.display_name || "B")}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="min-w-0">
+                    <h3 className="font-heading font-bold text-lg truncate">{viewProfile.display_name || "Bee"}</h3>
+                    <span className="inline-block mt-1 text-[10px] font-mono uppercase tracking-widest px-2 py-0.5 rounded" style={{ background: `${ACCENT}20`, color: ACCENT, border: `1px solid ${ACCENT}40` }}>
+                      {viewScore.rank}
+                    </span>
+                  </div>
+                </div>
+
+                {viewProfile.bio ? (
+                  <p className="text-sm text-white/80 italic whitespace-pre-wrap">"{viewProfile.bio}"</p>
+                ) : (
+                  <p className="text-xs text-white/40 italic">No bio yet.</p>
+                )}
+
+                <div className="rounded-xl p-3" style={{ background: `linear-gradient(135deg, ${ACCENT}15, hsl(195 100% 60% / 0.10))`, border: `1px solid ${ACCENT}30` }}>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/60">Performance score</span>
+                    <span className="text-2xl font-heading font-bold" style={{ color: ACCENT }}>{viewScore.score}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div className="h-full rounded-full" style={{ width: `${Math.min(100, (viewScore.score / 500) * 100)}%`, background: `linear-gradient(90deg, ${ACCENT}, hsl(195 100% 60%))` }} />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mt-3">
+                    <div className="rounded-lg px-2 py-1.5 bg-white/5">
+                      <div className="text-[9px] uppercase tracking-wider text-white/50">Messages</div>
+                      <div className="text-sm font-semibold">{viewScore.messages}</div>
+                    </div>
+                    <div className="rounded-lg px-2 py-1.5 bg-white/5">
+                      <div className="text-[9px] uppercase tracking-wider text-white/50">Channels</div>
+                      <div className="text-sm font-semibold">{viewScore.channels}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

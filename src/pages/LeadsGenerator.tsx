@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import TopBar from "@/components/TopBar";
-import SpaceBackground from "@/components/SpaceBackground";
+import StarfieldNight from "@/components/StarfieldNight";
 import beeLogo from "@/assets/bee-logo.png";
 import annaCharacter from "@/assets/anna-character.png";
 import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
@@ -137,10 +137,10 @@ const LeadsGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[hsl(220,60%,3%)] text-foreground relative overflow-hidden">
-      <SpaceBackground density={0.9} rocks={0} blackhole={false} planets />
+    <div className="min-h-screen flex flex-col bg-black text-foreground relative overflow-hidden">
+      <StarfieldNight density={0.7} />
       <TopBar />
-      <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-[hsl(220,60%,3%)]/60">
+      <div className="relative z-30 flex items-center gap-3 px-5 py-2 border-b border-border/50 bg-black/60">
         <Link to="/bee-ai" aria-label="Back to agents" className="glass-icon glass-icon-sm w-9 h-9 flex items-center justify-center rounded-full text-white active:scale-95 active:translate-y-[1px] transition">
           <ArrowLeft className="w-4 h-4" />
         </Link>
