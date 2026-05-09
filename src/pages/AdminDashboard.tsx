@@ -877,7 +877,38 @@ const BlogsSection = () => {
         title="Blogs"
         description={`${(blogs?.length ?? 0) + STATIC_BLOGS.length} total · ${totalClicks} clicks`}
         icon={FileText}
-        action={<Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>}
+        action={
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="border-border/60"
+              onClick={() => {
+                const rows = [
+                  ...((blogs ?? []) as any[]).map((b) => ({
+                    type: "custom",
+                    title: b.title,
+                    slug: b.slug,
+                    status: b.published ? "published" : "draft",
+                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    created_at: b.created_at,
+                  })),
+                  ...STATIC_BLOGS.map((b) => ({
+                    type: "built-in",
+                    title: b.title,
+                    slug: b.slug,
+                    status: "published",
+                    clicks: clicksMap?.get(b.slug) ?? 0,
+                    created_at: "",
+                  })),
+                ];
+                downloadCSV("blog-clicks", rows);
+              }}
+            >
+              <Download className="w-4 h-4 mr-1" />Export CSV
+            </Button>
+            <Button onClick={openNew} className="bg-bee text-bee-foreground hover:bg-bee/90"><Plus className="w-4 h-4 mr-1" />New blog</Button>
+          </div>
+        }
       />
 
       <Card className="glass glass-highlight border-border/50 overflow-hidden">
