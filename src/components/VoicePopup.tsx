@@ -117,7 +117,7 @@ const VoicePopup = ({
     recognitionRef.current = recognition;
     recognition.start();
     setIsListening(true);
-  }, [isSpeaking, stopSpeaking, onSendMessage, lang]);
+  }, [isSpeaking, stopSpeaking, onSendMessage]);
 
   const toggle = () => {
     if (isListening) {
