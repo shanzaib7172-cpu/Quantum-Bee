@@ -164,7 +164,7 @@ export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose?
               <div className="h-44 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={agentChart.length > 0 ? agentChart : chartData}
+                    data={(agentChart.length > 0 ? agentChart : chartData) as any[]}
                     margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
                   >
                     <XAxis
