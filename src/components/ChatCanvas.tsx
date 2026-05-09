@@ -8,6 +8,7 @@ import AnimatedBee from "./AnimatedBee";
 import VoicePopup from "./VoicePopup";
 import { ChartBlock, extractCharts, type ChartSpec } from "./ChartBlock";
 import { generatePlanPdf } from "@/lib/pdfPlan";
+import { AnalysisResult, type AnalysisData } from "@/components/AnalysisResult";
 import { useBeeCoins, COIN_COSTS } from "@/hooks/use-bee-coins";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -18,6 +19,16 @@ interface Message {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
+const ANALYSIS_PREFIX = "[[ANALYSIS]]";
+
+const detectAnalyzeIntent = (text: string): string | null => {
+  const urlMatch = text.match(/https?:\/\/[^\s<>"']+|(?:^|\s)((?:www\.)?[a-z0-9-]+\.[a-z]{2,}(?:\/[^\s]*)?)/i);
+  if (!urlMatch) return null;
+  const url = (urlMatch[0] || urlMatch[1] || "").trim().replace(/[.,)\]]+$/, "");
+  if (!url) return null;
+  const wantsAnalysis = /\b(analy[sz]e|audit|review|score|seo|check|suggest|improve|grow|roadmap)\b/i.test(text);
+  return wantsAnalysis ? url : null;
+};
 
 const suggestions: { label: string; prompt: string }[] = [
   {
@@ -349,6 +360,30 @@ const ChatCanvas = () => {
       }
 
       try {
+        // Intercept "analyze this website" intents → run our analyzer & render rich card
+        const analyzeUrl = detectAnalyzeIntent(msg);
+        if (analyzeUrl) {
+          const { data, error } = await supabase.functions.invoke("analyze-website", {
+            body: { url: analyzeUrl },
+          });
+          if (error || !data || (data as any).error) {
+            throw new Error((data as any)?.error || error?.message || "Analyze failed");
+          }
+          const cardContent = ANALYSIS_PREFIX + JSON.stringify(data);
+          const summary = (data as any)?.analysis?.summary || "Here's your website analysis.";
+          setMessages((prev) => [...prev, { role: "assistant", content: cardContent }]);
+          setTimeout(() => speakText(summary), 300);
+          if (sid && user) {
+            await supabase.from("chat_messages").insert({
+              session_id: sid, user_id: user.id, role: "assistant", content: cardContent,
+            });
+            await supabase.from("chat_sessions")
+              .update({ updated_at: new Date().toISOString() })
+              .eq("id", sid);
+          }
+          return cardContent;
+        }
+
         const response = await streamChat(newMessages);
         if (response) {
           setTimeout(() => speakText(response), 300);
@@ -570,7 +605,23 @@ const ChatCanvas = () => {
                 <AnimatedBee isSpeaking={isSpeaking || isLoading} />
               </div>
 
-              {messages.map((msg, i) => (
+              {messages.map((msg, i) => {
+                const isAnalysis =
+                  msg.role === "assistant" && msg.content.startsWith(ANALYSIS_PREFIX);
+                let analysisData: AnalysisData | null = null;
+                if (isAnalysis) {
+                  try {
+                    analysisData = JSON.parse(msg.content.slice(ANALYSIS_PREFIX.length));
+                  } catch {}
+                }
+                if (isAnalysis && analysisData) {
+                  return (
+                    <div key={i} className="animate-fade-in">
+                      <AnalysisResult data={analysisData} />
+                    </div>
+                  );
+                }
+                return (
                 <div
                   key={i}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"} animate-fade-in`}
@@ -598,7 +649,8 @@ const ChatCanvas = () => {
                     )}
                   </div>
                 </div>
-              ))}
+                );
+              })}
 
               {isLoading && messages[messages.length - 1]?.role === "user" && (
                 <div className="flex justify-start animate-fade-in">

@@ -78,7 +78,7 @@ const CategoryBar = ({ label, value }: { label: string; value: number }) => {
   );
 };
 
-export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose: () => void }) => {
+export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose?: () => void }) => {
   const { analysis, meta, url } = data;
 
   const agentRecs = analysis.agent_recommendations ?? [];
@@ -91,12 +91,14 @@ export const AnalysisResult = ({ data, onClose }: { data: AnalysisData; onClose:
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">Analyzed</p>
           <p className="text-xs font-medium text-foreground truncate">{url}</p>
         </div>
-        <button
-          onClick={onClose}
-          className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground shrink-0"
-        >
-          <X className="w-3.5 h-3.5" />
-        </button>
+        {onClose && (
+          <button
+            onClick={onClose}
+            className="p-1 rounded-md hover:bg-secondary text-muted-foreground hover:text-foreground shrink-0"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
 
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 sm:gap-4">
